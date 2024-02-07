@@ -8,7 +8,7 @@ scrapy startproject (insert name of project here)
     -This will set up the scrapy project
     -Ex: scrapy startproject bookscraper
 
-scrapy genspider (name of spider) (url to be scraped)
+scrapy genspider [name of spider] (url to be scraped)
     -This will create a spider to crawl a website
     -Perform this in the spiders folder
     -Ex: scrapy genspider bookspider books.toscrape.com
@@ -16,8 +16,13 @@ scrapy genspider (name of spider) (url to be scraped)
 pip3 install ipython
     -This will install a different shell that is easier to read
 
-scrapy shell
+scrapy view [url]
+    -Opens a page the way a spider will see it
+        -Good option to examine if a spider is running into catchas
+
+scrapy shell [url]
     -Opens scrapy in the new shell
+    -Additional option to fetch a url immediately
 
 scrapy crawl (spider name)
     -This will push the spider to crawl a website to collect the target information
@@ -76,4 +81,17 @@ Yield is like return but the data is not saved in the memory
 TypeError: 'NoneType' object is not subscriptable.
     -This error occurs when the spider does not match all the items in the class for items in item.py
 
-scrapy view --spider=SPIDER https://www.zillow.com/homedetails/2572-2574-Mayfield-Rd-Cleveland-OH-44106/2053049885_zpid/
+scrapy view https://www.zillow.com/homedetails/2572-2574-Mayfield-Rd-Cleveland-OH-44106/2053049885_zpid/
+
+URL: response.url
+Address: response.css('div.styles__AddressWrapper-sc-13x5vko-0.bCvhGr h1').get()
+    Note: Potentially just use the url and extract the address from there
+Price: response.css('span[data-testid="price"] span::text').get()
+Beds: response.css('div[data-testid="bed-bath-sqft-facts"] span.Text-c11n-8-84-3__sc-aiai24-0.styles__StyledValueText-sc-12ivusx-1::text').get()
+Baths:
+SQFT:
+
+response.xpath('//ul[@class="styles__StyledFactCategoryFactsList-sc-1i5yjpk-1"]/li/span/text()').get()
+
+
+<ul class="List-c11n-8-84-3__sc-1smrmqp-0 styles__StyledFactCategoryFactsList-sc-1i5yjpk-1 dQcvzF gpBiYn"><li class="ListItem-c11n-8-84-3__sc-10e22w8-0 cQoGMA"><span class="Text-c11n-8-84-3__sc-aiai24-0 hrfydd">Bedrooms: 10</span></li><li class="ListItem-c11n-8-84-3__sc-10e22w8-0 cQoGMA"><span class="Text-c11n-8-84-3__sc-aiai24-0 hrfydd">Bathrooms: 4</span></li><li class="ListItem-c11n-8-84-3__sc-10e22w8-0 cQoGMA"><span class="Text-c11n-8-84-3__sc-aiai24-0 hrfydd">Full bathrooms: 4</span></li></ul>
