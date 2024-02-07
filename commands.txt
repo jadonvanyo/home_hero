@@ -1,0 +1,77 @@
+Command line:
+python3 -m venv venv
+    -This will set up a virtual environment
+source venv/bin/activate
+    -This will activate the virtual environment
+
+scrapy startproject (insert name of project here)
+    -This will set up the scrapy project
+    -Ex: scrapy startproject bookscraper
+
+scrapy genspider (name of spider) (url to be scraped)
+    -This will create a spider to crawl a website
+    -Perform this in the spiders folder
+    -Ex: scrapy genspider bookspider books.toscrape.com
+
+pip3 install ipython
+    -This will install a different shell that is easier to read
+
+scrapy shell
+    -Opens scrapy in the new shell
+
+scrapy crawl (spider name)
+    -This will push the spider to crawl a website to collect the target information
+    -Note: If the FEEDS is created in settings, it will automatically save to that feed format
+    -Ex: scrapy crawl bookspider
+
+scrapy crawl (spider name) -o (name of csv or json file)
+    -This will allow your crawl to return a csv file with all of the information gathered
+    -The '-o' will append to a file, and '-O' will overwrite to a file
+    -Ex: scrapy crawl bookspider -O bookdata.csv
+    -Ex: scrapy crawl bookspider -o bookdata.json
+
+/usr/local/mysql/bin/mysql -u root -p
+    -This command will set up the SQL database for a given project
+    -SQL needs to have been downloaded, installed, and running
+    -After this, you will be prompted for a password that you used when setting up SQL
+
+export PATH=${PATH}:/usr/local/mysql/bin/
+    -This command will append the path to MySQL to your environment variables
+    -Follow this command with the mysql -u root -p command
+
+mysql -u root -p
+    -This command will log you in as the root user and prompt you to enter the password used when setting up the database
+    -Enter that and you can get into the database
+
+
+SQL Commands:
+SHOW databases;
+    -This will show all of the databases saved in SQL
+
+USE (name of database);
+    -This will direct into a particular database
+    -This will allow you to use normal SQL commands (SELECT, INSERT, ect.)
+    -Ex: use books;
+
+DROP TABLE (table name);
+    -This will completely delete a table
+
+
+In scrapy shell:
+fetch('(enter url you want to look through here)')
+    -This will get the HTML from the URL entered and enter it into the response variable
+
+response.css('css selector here').get()
+    -This will get the information stored in a particular css selector
+    -Ex: response.css('.product_main h1::text').get()
+
+response.xpath("(enter the xpath here)").get()
+    -This will get the information from a xpath that cannot be easily access using css
+    -Use for when there is no class name or id on a particular HTML tag (just <p>, or <a>, or <h2>, ect.)
+    -Ex: response.xpath("//ul[@class='breadcrumb']/li[@class='active']/preceding-sibling::li[1]/a/text()").get()
+
+Notes:
+Yield is like return but the data is not saved in the memory
+
+TypeError: 'NoneType' object is not subscriptable.
+    -This error occurs when the spider does not match all the items in the class for items in item.py
