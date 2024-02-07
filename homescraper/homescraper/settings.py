@@ -17,7 +17,7 @@ NEWSPIDER_MODULE = "homescraper.spiders"
 #USER_AGENT = "homescraper (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -37,10 +37,22 @@ ROBOTSTXT_OBEY = True
 #TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-#DEFAULT_REQUEST_HEADERS = {
-#    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-#    "Accept-Language": "en",
-#}
+DEFAULT_REQUEST_HEADERS = {
+    'authority': 'www.zillow.com',
+    'pragma': 'no-cache',
+    'cache-control': 'no-cache',
+    'sec-ch-ua': '"Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"macOS"',
+    'upgrade-insecure-requests': '1',
+    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36',
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'sec-fetch-site': 'none',
+    'sec-fetch-mode': 'navigate',
+    'sec-fetch-user': '?1',
+    'sec-fetch-dest': 'document',
+    'accept-language': 'en-GB,en;q=0.9,en-US;q=0.8,lt;q=0.7',
+}
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html

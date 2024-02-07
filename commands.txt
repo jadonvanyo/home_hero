@@ -75,3 +75,5 @@ Yield is like return but the data is not saved in the memory
 
 TypeError: 'NoneType' object is not subscriptable.
     -This error occurs when the spider does not match all the items in the class for items in item.py
+
+scrapy view --spider=SPIDER https://www.zillow.com/homedetails/2572-2574-Mayfield-Rd-Cleveland-OH-44106/2053049885_zpid/
