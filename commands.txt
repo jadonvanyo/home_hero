@@ -29,7 +29,7 @@ scrapy crawl (spider name)
     -Note: If the FEEDS is created in settings, it will automatically save to that feed format
     -Ex: scrapy crawl bookspider
 
-scrapy crawl (spider name) -o (name of csv or json file)
+scrapy crawl (spider name) -O (name of csv or json file)
     -This will allow your crawl to return a csv file with all of the information gathered
     -The '-o' will append to a file, and '-O' will overwrite to a file
     -Ex: scrapy crawl bookspider -O bookdata.csv
@@ -103,10 +103,3 @@ house_links = response.xpath('//a[contains(@data-test, "property-card-link")]/@h
 
 https://www.zillow.com/lakewood-oh-44107/duplex/
 
-<a href="https://www.zillow.com/homedetails/11801-Franklin-Blvd-Lakewood-OH-44107/33503273_zpid/" data-test="property-card-link" class="StyledPropertyCardDataArea-c11n-8-84-3__sc-yipmu-0 jnnxAW property-card-link" tabindex="0"><address data-test="property-card-addr">11801 Franklin Blvd, Lakewood, OH 44107</address></a>
-
-response.xpath('//a[contains(@data-test, "property-card-link")]/@href').get()
-response.xpath('//div[contains(@class, property-card-data)]/a/href').get()
-response.css('a[data-test="property-card-link"] a::attr(href)').get()
-
-<a href="https://www.zillow.com/homedetails/11801-Franklin-Blvd-Lakewood-OH-44107/33503273_zpid/" data-test="property-card-link" class="StyledPropertyCardDataArea-c11n-8-84-3__sc-yipmu-0 jnnxAW property-card-link" tabindex="0"><address data-test="property-card-addr">11801 Franklin Blvd, Lakewood, OH 44107</address></a>

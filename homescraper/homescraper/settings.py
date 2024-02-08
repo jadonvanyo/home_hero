@@ -16,6 +16,11 @@ NEWSPIDER_MODULE = "homescraper.spiders"
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "homescraper (+http://www.yourdomain.com)"
 
+# Give a specific file and format to always save the data to
+FEEDS = {
+    'homedata.json': {'format': 'json', 'overwrite': True}
+}
+
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
