@@ -98,8 +98,6 @@ Year Built: response.xpath('//ul/li/span[contains(text(), "Year built")]/text()[
 Property Subtype: response.xpath('//ul/li/span[contains(text(), "Property subType")]/text()[3]').get()
 Days on Market: ???
 
-
 house_links = response.xpath('//a[contains(@data-test, "property-card-link")]/@href').getall()
 
-https://www.zillow.com/lakewood-oh-44107/duplex/
 
