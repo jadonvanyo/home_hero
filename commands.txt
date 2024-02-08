@@ -96,3 +96,17 @@ Rent: REQUIRES A DIFFERENT SPIDER
 Description: response.xpath('//div[contains(@class, "Text-c11n-8-84-3__sc-aiai24-0")]/text()').get()
 Year Built: response.xpath('//ul/li/span[contains(text(), "Year built")]/text()[3]').get()
 Property Subtype: response.xpath('//ul/li/span[contains(text(), "Property subType")]/text()[3]').get()
+Days on Market: ???
+
+
+house_links = response.xpath('//a[contains(@data-test, "property-card-link")]/@href').getall()
+
+https://www.zillow.com/lakewood-oh-44107/duplex/
+
+<a href="https://www.zillow.com/homedetails/11801-Franklin-Blvd-Lakewood-OH-44107/33503273_zpid/" data-test="property-card-link" class="StyledPropertyCardDataArea-c11n-8-84-3__sc-yipmu-0 jnnxAW property-card-link" tabindex="0"><address data-test="property-card-addr">11801 Franklin Blvd, Lakewood, OH 44107</address></a>
+
+response.xpath('//a[contains(@data-test, "property-card-link")]/@href').get()
+response.xpath('//div[contains(@class, property-card-data)]/a/href').get()
+response.css('a[data-test="property-card-link"] a::attr(href)').get()
+
+<a href="https://www.zillow.com/homedetails/11801-Franklin-Blvd-Lakewood-OH-44107/33503273_zpid/" data-test="property-card-link" class="StyledPropertyCardDataArea-c11n-8-84-3__sc-yipmu-0 jnnxAW property-card-link" tabindex="0"><address data-test="property-card-addr">11801 Franklin Blvd, Lakewood, OH 44107</address></a>
