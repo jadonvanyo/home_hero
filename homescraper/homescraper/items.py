@@ -12,6 +12,7 @@ import scrapy
 #     pass
 
 # This will define the fields for the item
+# TODO: Add region, subdivision
 class HomeItem(scrapy.Item):
     url = scrapy.Field()
     address = scrapy.Field()

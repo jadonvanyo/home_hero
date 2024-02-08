@@ -28,7 +28,7 @@ class HomespiderSpider(scrapy.Spider):
         """Crawl and gather all of the information on a particular house's page"""
         
         home_item = HomeItem()
-        
+        # TODO: Add region, subdivision
         home_item['url'] = response.url
         home_item['address'] = response.css('div.styles__AddressWrapper-sc-13x5vko-0.bCvhGr h1::text').getall()
         home_item['price'] = response.css('span[data-testid="price"] span::text').get()

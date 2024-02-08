@@ -97,6 +97,8 @@ Description: response.xpath('//div[contains(@class, "Text-c11n-8-84-3__sc-aiai24
 Year Built: response.xpath('//ul/li/span[contains(text(), "Year built")]/text()[3]').get()
 Property Subtype: response.xpath('//ul/li/span[contains(text(), "Property subType")]/text()[3]').get()
 Days on Market: ???
+Region: response.xpath('//ul/li/span[contains(text(), "Region")]/text()[3]').get()
+Subdivision: response.xpath('//ul/li/span[contains(text(), "Subdivision")]/text()[3]').get()
 
 house_links = response.xpath('//a[contains(@data-test, "property-card-link")]/@href').getall()
 
