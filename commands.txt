@@ -81,19 +81,18 @@ Yield is like return but the data is not saved in the memory
 TypeError: 'NoneType' object is not subscriptable.
     -This error occurs when the spider does not match all the items in the class for items in item.py
 
-scrapy view https://www.zillow.com/homedetails/2572-2574-Mayfield-Rd-Cleveland-OH-44106/2053049885_zpid/
 
 URL: response.url
 Address: response.css('div.styles__AddressWrapper-sc-13x5vko-0.bCvhGr h1::text').getall()
     Note: Returns a list of 3 items that contain the address, fix in pipelines
 Price: response.css('span[data-testid="price"] span::text').get()
-Beds: response.css('div[data-testid="bed-bath-sqft-facts"] span.Text-c11n-8-84-3__sc-aiai24-0.styles__StyledValueText-sc-12ivusx-1::text').get()
-Baths: response.xpath('//ul/li/span[contains(text(), "Bathrooms")]/text()').getall()
-    Note: Returns a list of 3 items, the 3rd is the number we want, fix in pipelines
-SQFT:
-
-response.xpath('//ul[@class="List-c11n-8-84-3__sc-1smrmqp-0"]/li[1]/span/text()').get()
-response.xpath("//ul[@class='breadcrumb']/li[@class='active']/preceding-sibling::li[1]/a/text()").get()
-response.xpath('//ul/li/span/text()').getall()
-
-<ul class="List-c11n-8-84-3__sc-1smrmqp-0 styles__StyledFactCategoryFactsList-sc-1i5yjpk-1 dQcvzF gpBiYn"><li class="ListItem-c11n-8-84-3__sc-10e22w8-0 cQoGMA"><span class="Text-c11n-8-84-3__sc-aiai24-0 hrfydd">Bedrooms: 10</span></li><li class="ListItem-c11n-8-84-3__sc-10e22w8-0 cQoGMA"><span class="Text-c11n-8-84-3__sc-aiai24-0 hrfydd">Bathrooms: 4</span></li><li class="ListItem-c11n-8-84-3__sc-10e22w8-0 cQoGMA"><span class="Text-c11n-8-84-3__sc-aiai24-0 hrfydd">Full bathrooms: 4</span></li></ul>
+Beds: response.xpath('//ul/li/span[contains(text(), "Bedrooms")]/text()[3]').get()
+Baths: response.xpath('//ul/li/span[contains(text(), "Bathrooms")]/text()[3]').get()
+SQFT: response.xpath('//ul/li/span[contains(text(), "Total interior livable area")]/text()[3]').get()
+Taxes: REQUIRES A DIFFERENT SPIDER
+    Note: Use https://www.countyoffice.org/
+Insurance: REQUIRES A DIFFERENT SPIDER
+Rent: REQUIRES A DIFFERENT SPIDER
+Description: response.xpath('//div[contains(@class, "Text-c11n-8-84-3__sc-aiai24-0")]/text()').get()
+Year Built: response.xpath('//ul/li/span[contains(text(), "Year built")]/text()[3]').get()
+Property Subtype: response.xpath('//ul/li/span[contains(text(), "Property subType")]/text()[3]').get()
