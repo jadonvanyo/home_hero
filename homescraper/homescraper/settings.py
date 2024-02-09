@@ -58,6 +58,11 @@ DEFAULT_REQUEST_HEADERS = {
     'accept-language': 'en-GB,en;q=0.9,en-US;q=0.8,lt;q=0.7',
 }
 
+# Change the headers to escape being blocked by a website
+SCRAPEOPS_API_KEY = '4aac2734-0c08-4286-885f-91878b766e16'
+SCRAPEOPS_FAKE_HEADERS_ENABLED = True
+SCRAPEOPS_NUM_RESULTS = 5
+
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
