@@ -18,3 +18,12 @@ for item in data:
         # value = value[1][::-1]
     print(address_number)
     print(new_url)
+
+# 1486
+# https://www.countyoffice.org/olivewood-ave-lakewood-oh-property-records/
+# 2040
+# https://www.countyoffice.org/marlowe-ave-lakewood-oh-property-records/
+# 11850
+# https://www.countyoffice.org/edgewater-dr-apt-212-lakewood-oh-property-records/
+# 12929
+# https://www.countyoffice.org/plover-st-lakewood-oh-property-records/

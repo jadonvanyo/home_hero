@@ -17,9 +17,9 @@ NEWSPIDER_MODULE = "homescraper.spiders"
 #USER_AGENT = "homescraper (+http://www.yourdomain.com)"
 
 # Give a specific file and format to always save the data to
-FEEDS = {
-    'homedata.json': {'format': 'json', 'overwrite': True}
-}
+# FEEDS = {
+#     'homedata.json': {'format': 'json', 'overwrite': True}
+# }
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -43,7 +43,6 @@ DOWNLOAD_DELAY = 3
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
-    'authority': 'www.zillow.com',
     'pragma': 'no-cache',
     'cache-control': 'no-cache',
     'sec-ch-ua': '"Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"',
@@ -65,6 +64,7 @@ DEFAULT_REQUEST_HEADERS = {
 #    "homescraper.middlewares.HomescraperSpiderMiddleware": 543,
 #}
 
+# TODO: Create middleware to rotate proxies and headers
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
