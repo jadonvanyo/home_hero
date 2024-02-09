@@ -28,7 +28,6 @@ class HomespiderSpider(scrapy.Spider):
         """Crawl and gather all of the information on a particular house's page"""
         
         home_item = HomeItem()
-        # TODO: Add region, subdivision
         home_item['url'] = response.url
         home_item['address'] = response.css('div.styles__AddressWrapper-sc-13x5vko-0.bCvhGr h1::text').getall()
         home_item['price'] = response.css('span[data-testid="price"] span::text').get()
@@ -38,6 +37,8 @@ class HomespiderSpider(scrapy.Spider):
         home_item['description'] = response.xpath('//div[contains(@class, "Text-c11n-8-84-3__sc-aiai24-0")]/text()').get()
         home_item['year_built'] = response.xpath('//ul/li/span[contains(text(), "Year built")]/text()[3]').get()
         home_item['property_subtype'] = response.xpath('//ul/li/span[contains(text(), "Property subType")]/text()[3]').get()
+        home_item['region'] = response.xpath('//ul/li/span[contains(text(), "Region")]/text()[3]').get()
+        home_item['subdivision'] = response.xpath('//ul/li/span[contains(text(), "Subdivision")]/text()[3]').get()
         
         yield home_item
         

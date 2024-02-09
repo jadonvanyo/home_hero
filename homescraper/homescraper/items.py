@@ -12,7 +12,6 @@ import scrapy
 #     pass
 
 # This will define the fields for the item
-# TODO: Add region, subdivision
 class HomeItem(scrapy.Item):
     url = scrapy.Field()
     address = scrapy.Field()
@@ -23,3 +22,5 @@ class HomeItem(scrapy.Item):
     description = scrapy.Field()
     year_built = scrapy.Field()
     property_subtype = scrapy.Field()
+    region = scrapy.Field()
+    subdivision = scrapy.Field()
