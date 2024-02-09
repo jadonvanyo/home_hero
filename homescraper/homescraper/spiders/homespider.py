@@ -6,7 +6,7 @@ class HomespiderSpider(scrapy.Spider):
     allowed_domains = ["www.zillow.com"]
     start_urls = ["https://www.zillow.com/lakewood-oh-44107/duplex/"]
 
-    # Overwrite any of the settings.py settings
+    # Overwrite any of the settings.py settings for this particular spider \
     custom_settings = {
         # Close the spider after 2 items have been selected
         'CLOSESPIDER_ITEMCOUNT': 2,
@@ -32,6 +32,11 @@ class HomespiderSpider(scrapy.Spider):
         # Give a specific file and format to always save the data to
         'FEEDS': {
             'homedata.json': {'format': 'json', 'overwrite': True}
+        },
+        
+        # Configure custom item pipelines
+        'ITEM_PIPELINES': {
+            "homescraper.pipelines.HomescraperPipeline": 300,
         }
     }
 
