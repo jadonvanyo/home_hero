@@ -28,7 +28,7 @@ class TaxspiderSpider(scrapy.Spider):
             tax_url = "https://www.countyoffice.org/" + value + "-property-records/"
             
             # TODO: Navigate to one page, then navigate to the property details page
-            yield response.follow(tax_url, callback=self.parse_county_office_page)
+            yield response.follow(tax_url, callback=self.parse_tax_page, meta={'address_number': address_number})
         
 
     def parse_county_office_page(self, response):
