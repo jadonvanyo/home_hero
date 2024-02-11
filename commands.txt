@@ -102,4 +102,6 @@ Subdivision: response.xpath('//ul/li/span[contains(text(), "Subdivision")]/text(
 
 house_links = response.xpath('//a[contains(@data-test, "property-card-link")]/@href').getall()
 
+response.xpath('//ul/li/a[contains(@href, "1486")]/@href').get()
 
+response.xpath('//table[contains(@id, "taxes")]/tbody/tr[0]/td[2]/text()').get()
