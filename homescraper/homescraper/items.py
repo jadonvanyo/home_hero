@@ -20,8 +20,3 @@ class HomeItem(scrapy.Item):
     subdivision = scrapy.Field()
     tax_url = scrapy.Field()
     tax = scrapy.Field()
-    
-# This will define the fields for the TaxItem
-class TaxItem(scrapy.Item):
-    url = scrapy.Field()
-    tax = scrapy.Field()
