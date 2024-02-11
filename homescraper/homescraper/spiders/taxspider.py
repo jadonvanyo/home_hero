@@ -6,6 +6,7 @@ class TaxspiderSpider(scrapy.Spider):
     name = "taxspider"
     allowed_domains = ["www.countyoffice.org"]
     start_urls = ["https://www.countyoffice.org/"]
+    # handle_httpstatus_list = [404]  # Handle 404 errors
     
         # Overwrite any of the settings.py settings for this particular spider \
     custom_settings = {
@@ -63,7 +64,11 @@ class TaxspiderSpider(scrapy.Spider):
         # Extract address_number from meta
         address_number = response.meta.get('address_number')
         
-        # TODO: Add error response if the property cannot be found
+        # # TODO: Return null for the url and tax if no url is found
+        # if response.status == 404:
+        #     # Update the JSON with a null value for the target property
+        #     update_json_null
+        # else:   
         # Find the link for the specific house data
         property_page_url = 'https://www.countyoffice.org' + response.xpath(f'//ul/li/a[contains(@href, "{address_number}")]/@href').get()
         
@@ -74,8 +79,16 @@ class TaxspiderSpider(scrapy.Spider):
         """Crawl and gather the tax information for a given house"""
         
         # TODO: Potentially add structure rating, previous owners, ect from this search
-        home_item = TaxItem()
-        home_item['url'] = response.url
-        home_item['tax'] = response.xpath('//table[contains(@id, "taxes")]/tbody/tr[1]/td[2]/text()').get()
+        tax_item = TaxItem()
+        tax_item['url'] = response.url
+        tax_item['tax'] = response.xpath('//table[contains(@id, "taxes")]/tbody/tr[1]/td[2]/text()').get()
         
-        yield home_item
+        yield tax_item
+        
+def update_json_null():
+    """Update the fields in taxspider.json to null"""
+    
+    # Set each of the fields to null
+    tax_item = TaxItem()
+    tax_item['url'] = None
+    tax_item['tax'] = None

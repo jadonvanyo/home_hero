@@ -26,4 +26,7 @@ class TaxscraperPipeline:
         adapter = ItemAdapter(item)
         
         # Remove all the '$' and ','
-        adapter['tax'] = adapter.get('tax').replace('$', '').replace(',', '')
+        value = adapter.get('tax').replace('$', '').replace(',', '')
+        adapter['tax'] = value
+        
+        return item
