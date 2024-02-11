@@ -59,7 +59,7 @@ class TaxspiderSpider(scrapy.Spider):
         address_number = response.meta.get('address_number')
         
         # Find the link for the specific house data
-        property_page_url = 'https://www.countyoffice.org/' + response.xpath(f'//ul/li/a[contains(@href, "{address_number}")]/@href').get()
+        property_page_url = 'https://www.countyoffice.org' + response.xpath(f'//ul/li/a[contains(@href, "{address_number}")]/@href').get()
         
         # Navigate to the property page to pull the required information
         yield response.follow(property_page_url, callback=self.parse_property_page)
