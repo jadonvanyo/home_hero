@@ -10,7 +10,7 @@ from itemadapter import ItemAdapter
 
 class HomescraperPipeline:
     def process_item(self, item, spider):
-        """Clean data before entering it into the json"""
+        """Clean house data before entering it into the json"""
         
         adapter = ItemAdapter(item)
         
@@ -19,3 +19,11 @@ class HomescraperPipeline:
         adapter['address'] = value[0] + " " + value[2]
         
         return item
+    
+class TaxscraperPipeline:
+    def process_item(self, item, spider):
+        
+        adapter = ItemAdapter(item)
+        
+        # Remove all the '$' and ','
+        adapter['tax'] = adapter.get('tax').replace('$', '').replace(',', '')

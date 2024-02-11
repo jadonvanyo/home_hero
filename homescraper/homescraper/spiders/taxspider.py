@@ -32,6 +32,11 @@ class TaxspiderSpider(scrapy.Spider):
         'FEEDS': {
             'taxdata.json': {'format': 'json', 'overwrite': True}
         },
+        
+        # Configure custom item pipelines
+        'ITEM_PIPELINES': {
+            "homescraper.pipelines.TaxscraperPipeline": 300,
+        }
     }
 
     def parse(self, response):
@@ -58,6 +63,7 @@ class TaxspiderSpider(scrapy.Spider):
         # Extract address_number from meta
         address_number = response.meta.get('address_number')
         
+        # TODO: Add error response if the property cannot be found
         # Find the link for the specific house data
         property_page_url = 'https://www.countyoffice.org' + response.xpath(f'//ul/li/a[contains(@href, "{address_number}")]/@href').get()
         
@@ -67,6 +73,7 @@ class TaxspiderSpider(scrapy.Spider):
     def parse_property_page(self, response):
         """Crawl and gather the tax information for a given house"""
         
+        # TODO: Potentially add structure rating, previous owners, ect from this search
         home_item = TaxItem()
         home_item['url'] = response.url
         home_item['tax'] = response.xpath('//table[contains(@id, "taxes")]/tbody/tr[1]/td[2]/text()').get()
