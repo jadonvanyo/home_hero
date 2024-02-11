@@ -1,4 +1,4 @@
-from homescraper.items import TaxItem
+from homescraper.items import HomeItem
 import json
 import scrapy
 
@@ -6,7 +6,6 @@ class TaxspiderSpider(scrapy.Spider):
     name = "taxspider"
     allowed_domains = ["www.countyoffice.org"]
     start_urls = ["https://www.countyoffice.org/"]
-    # handle_httpstatus_list = [404]  # Handle 404 errors
     
         # Overwrite any of the settings.py settings for this particular spider \
     custom_settings = {
@@ -31,7 +30,7 @@ class TaxspiderSpider(scrapy.Spider):
         
         # Give a specific file and format to always save the data to
         'FEEDS': {
-            'taxdata.json': {'format': 'json', 'overwrite': True}
+            'homedata.json': {'format': 'json', 'overwrite': True}
         },
         
         # Configure custom item pipelines
@@ -56,39 +55,30 @@ class TaxspiderSpider(scrapy.Spider):
             tax_url = "https://www.countyoffice.org/" + value + "-property-records/"
             
             # Navigate to the street page with the address numbers
-            yield response.follow(tax_url, callback=self.parse_street_page, meta={'address_number': address_number})
+            yield response.follow(tax_url, callback=self.parse_street_page, meta={'address_number': address_number, 'house': house})
         
     def parse_street_page(self, response):
         """Parse the tax page and navigate further based on address_number"""
         
-        # Extract address_number from meta
+        # Extract address_number and house from meta
         address_number = response.meta.get('address_number')
-        
-        # # TODO: Return null for the url and tax if no url is found
-        # if response.status == 404:
-        #     # Update the JSON with a null value for the target property
-        #     update_json_null
-        # else:   
+        house = response.meta.get('house')
+         
         # Find the link for the specific house data
         property_page_url = 'https://www.countyoffice.org' + response.xpath(f'//ul/li/a[contains(@href, "{address_number}")]/@href').get()
         
         # Navigate to the property page to pull the required information
-        yield response.follow(property_page_url, callback=self.parse_property_page)
+        yield response.follow(property_page_url, callback=self.parse_property_page, meta={'house': house})
 
     def parse_property_page(self, response):
         """Crawl and gather the tax information for a given house"""
+        # Extract house data from meta
+        house = response.meta.get('house')
         
-        # TODO: Potentially add structure rating, previous owners, ect from this search
-        tax_item = TaxItem()
-        tax_item['url'] = response.url
-        tax_item['tax'] = response.xpath('//table[contains(@id, "taxes")]/tbody/tr[1]/td[2]/text()').get()
+        # TODO: Add additional data like structure condition, quality, property owner
+        # Update the house data with tax information
+        house['tax_url'] = response.url
+        house['tax'] = response.xpath('//table[contains(@id, "taxes")]/tbody/tr[1]/td[2]/text()').get()
         
-        yield tax_item
+        yield house
         
-def update_json_null():
-    """Update the fields in taxspider.json to null"""
-    
-    # Set each of the fields to null
-    tax_item = TaxItem()
-    tax_item['url'] = None
-    tax_item['tax'] = None

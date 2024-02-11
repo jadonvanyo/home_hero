@@ -5,12 +5,6 @@
 
 import scrapy
 
-
-# class HomescraperItem(scrapy.Item):
-#     # define the fields for your item here like:
-#     # name = scrapy.Field()
-#     pass
-
 # This will define the fields for the HomeItem
 class HomeItem(scrapy.Item):
     url = scrapy.Field()
@@ -24,6 +18,8 @@ class HomeItem(scrapy.Item):
     property_subtype = scrapy.Field()
     region = scrapy.Field()
     subdivision = scrapy.Field()
+    tax_url = scrapy.Field()
+    tax = scrapy.Field()
     
 # This will define the fields for the TaxItem
 class TaxItem(scrapy.Item):
