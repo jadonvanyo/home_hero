@@ -69,6 +69,7 @@ class HomespiderSpider(scrapy.Spider):
         home_item['subdivision'] = response.xpath('//ul/li/span[contains(text(), "Subdivision")]/text()[3]').get()
         home_item['tax_url'] = None
         home_item['tax'] = None
+        home_item['rent'] = None
         
         yield home_item
         
