@@ -20,4 +20,5 @@ class HomeItem(scrapy.Item):
     subdivision = scrapy.Field()
     tax_url = scrapy.Field()
     tax = scrapy.Field()
+    rent_url = scrapy.Field()
     rent = scrapy.Field()

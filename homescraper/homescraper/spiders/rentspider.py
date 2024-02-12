@@ -1,3 +1,5 @@
+import json
+import re
 import scrapy
 
 
@@ -30,11 +32,41 @@ class RentspiderSpider(scrapy.Spider):
         'FEEDS': {
             'homedata.json': {'format': 'json', 'overwrite': True}
         },
-        
-        # Configure custom item pipelines
-        'ITEM_PIPELINES': {
-        }
     }
 
     def parse(self, response):
-        pass
+        """Navigate to the page for each of the houses from homedata.json"""
+        
+        # Get all of the house data from homedata.json
+        with open('homedata.json') as file:
+            data = json.load(file)
+            
+        # Loop through each house in the home data and pull the address information
+        for house in data:
+            value = house.get('url').split("/")[4].lower()
+            rent_url = "https://www.zillow.com/rental-manager/price-my-rental/results/" + value + "/"
+        
+            # Navigate to the street page with the address numbers
+            yield response.follow(rent_url, callback=self.parse_rent_page, meta={'house': house})
+
+    def parse_rent_page(self, response):
+        """Crawl and gather the rent information for a given house"""
+        # Extract house data from meta
+        house = response.meta.get('house')
+        
+        # Extract javascript script from the page
+        javascript = response.xpath('//script[contains(@type, "text/javascript")]/text()').get()
+        
+        # TODO: Create a smart rent feature to look for the closest rent comp
+        # Define the regular expression pattern for the rent
+        pattern = r'"rentZestimate":(\d+)'
+
+        # Search for the pattern in the JavaScript code
+        match = re.search(pattern, javascript)
+        
+        # Update the house data with rent information if it was found
+        if match:
+            house['rent_url'] = response.url
+            house['rent'] = match.group(1)
+        
+        yield house
