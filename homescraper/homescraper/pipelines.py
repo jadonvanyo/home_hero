@@ -15,8 +15,16 @@ class HomescraperPipeline:
         adapter = ItemAdapter(item)
         
         # Convert the address list to a single line
-        value = adapter.get('address')
-        adapter['address'] = value[0] + " " + value[2]
+        raw_address = adapter.get('address')
+        adapter['address'] = raw_address[0] + " " + raw_address[2]
+        
+        # Remove all the '$' and ',' from price
+        value = adapter.get('price').replace('$', '').replace(',', '')
+        adapter['price'] = value
+        
+        # Remove all the ' sqft' and ',' from sqft
+        value = adapter.get('sqft').replace(' sqft', '').replace(',', '')
+        adapter['sqft'] = value
         
         return item
     
@@ -25,7 +33,7 @@ class TaxscraperPipeline:
         
         adapter = ItemAdapter(item)
         
-        # Remove all the '$' and ','
+        # Remove all the '$' and ',' from tax
         value = adapter.get('tax').replace('$', '').replace(',', '')
         adapter['tax'] = value
         
