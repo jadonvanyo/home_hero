@@ -4,7 +4,7 @@ from homescraper.items import HomeItem
 class HomespiderSpider(scrapy.Spider):
     name = "homespider"
     allowed_domains = ["www.zillow.com"]
-    start_urls = ["https://www.zillow.com/lakewood-oh-44107/duplex/"]
+    start_urls = ["https://www.zillow.com/ohio-city-cleveland-oh/duplex/"]
 
     # Overwrite any of the settings.py settings for this particular spider \
     custom_settings = {
@@ -44,7 +44,7 @@ class HomespiderSpider(scrapy.Spider):
         """Navigate through each of the houses on a given page"""
         
         # Get all of the links for all the houses on the page
-        house_links = response.xpath('//a[contains(@data-test, "property-card-link")]/@href').getall()
+        house_links = response.xpath('//div[1]/ul/li/div/div/article/div/div/a[contains(@data-test, "property-card-link")]/@href').getall()
         
         # Loop though all of the links to houses on the given zillow page
         for link in house_links:

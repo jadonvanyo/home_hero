@@ -92,8 +92,9 @@ SQFT: response.xpath('//ul/li/span[contains(text(), "Total interior livable area
 Taxes: response.xpath('//table[contains(@id, "taxes")]/tbody/tr[0]/td[2]/text()').get()
     Note: Use https://www.countyoffice.org/
 Insurance: Calculate this using the general rule of thumb: 0.5% to 1% of the property's value for yearly insurance then divide that by 12
-Rent: REQUIRES A DIFFERENT SPIDER
+Rent: response.xpath('//script[contains(@type, "text/javascript")]/text()').get()
     Note: Use https://www.zillow.com/rental-manager/price-my-rental/
+          Need to parse through the javascript to pull the required information
 Description: response.xpath('//div[contains(@class, "Text-c11n-8-84-3__sc-aiai24-0")]/text()').get()
 Year Built: response.xpath('//ul/li/span[contains(text(), "Year built")]/text()[3]').get()
 Property Subtype: response.xpath('//ul/li/span[contains(text(), "Property subType")]/text()[3]').get()
@@ -101,6 +102,5 @@ Days on Market: ???
 Region: response.xpath('//ul/li/span[contains(text(), "Region")]/text()[3]').get()
 Subdivision: response.xpath('//ul/li/span[contains(text(), "Subdivision")]/text()[3]').get()
 
-house_links = response.xpath('//a[contains(@data-test, "property-card-link")]/@href').getall()
+house_links = response.xpath('//div[1]/ul/li/div/div/article/div/div/a[contains(@data-test, "property-card-link")]/@href').getall()
 
-response.xpath('//script[contains(@type, "text/javascript")]/text()').get()
