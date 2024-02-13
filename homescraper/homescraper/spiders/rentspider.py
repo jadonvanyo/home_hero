@@ -58,15 +58,25 @@ class RentspiderSpider(scrapy.Spider):
         javascript = response.xpath('//script[contains(@type, "text/javascript")]/text()').get()
         
         # TODO: Create a smart rent feature to look for the closest rent comp
-        # Define the regular expression pattern for the rent
-        pattern = r'"rentZestimate":(\d+)'
+        # Define the regular expression pattern for the suggested, min, and max comp rents
+        suggested_rent_pattern = r'"rentZestimate":(\d+)'
+        min_rent_pattern = r'"min":(\d+)'
+        max_rent_pattern = r'"max":(\d+)'
 
         # Search for the pattern in the JavaScript code
-        match = re.search(pattern, javascript)
+        suggested_rent = re.search(suggested_rent_pattern, javascript)
+        min_rent = re.search(min_rent_pattern, javascript)
+        max_rent = re.search(max_rent_pattern, javascript)
         
         # Update the house data with rent information if it was found
-        if match:
+        if suggested_rent and min_rent and max_rent:
             house['rent_url'] = response.url
-            house['rent'] = match.group(1)
+            house['rent'] = suggested_rent.group(1)
+            house['min_rent'] = min_rent.group(1)
+            house['max_rent'] = max_rent.group(1)
+        
+        elif suggested_rent:
+            house['rent_url'] = response.url
+            house['rent'] = suggested_rent.group(1)
         
         yield house

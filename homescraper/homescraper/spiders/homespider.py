@@ -71,6 +71,8 @@ class HomespiderSpider(scrapy.Spider):
         home_item['tax'] = None
         home_item['rent_url'] = None
         home_item['rent'] = None
+        home_item['min_rent'] = None
+        home_item['max_rent'] = None
         
         yield home_item
         

@@ -22,3 +22,5 @@ class HomeItem(scrapy.Item):
     tax = scrapy.Field()
     rent_url = scrapy.Field()
     rent = scrapy.Field()
+    min_rent = scrapy.Field()
+    max_rent = scrapy.Field()
