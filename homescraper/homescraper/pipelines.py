@@ -26,6 +26,11 @@ class HomescraperPipeline:
         value = adapter.get('sqft').replace(' sqft', '').replace(',', '')
         adapter['sqft'] = value
         
+        # Remove the multifamily tag, strip, and lowercase for the property subtype
+        if ', Multi Family' in adapter.get('property_subtype'):
+            value = adapter.get('property_subtype').replace(', Multi Family', '').strip().lower()
+            adapter['property_subtype'] = value
+        
         return item
     
 class TaxscraperPipeline:
