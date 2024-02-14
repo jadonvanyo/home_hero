@@ -1,16 +1,17 @@
 import json
 
 # Global variables for analysis
-closing_costs = 0.03
+closing_cost_buyer_decimal = 0.03 # Usually between 0.02 and 0.05
+closing_cost_seller_decimal = 0.08 # Usually between 0.06 and 0.10
 expected_annual_growth = 0.02
 down_payment_decimal = 0.12
 interest_rate = 0.06
 loan_term_yrs = 30
-expected_repairs_monthly = 0.05
-expected_vacancy_monthly = 0.09
-expected_capx_monthly = 0.1
-expected_management_monthly = 0.1
-insurance_rate_yearly = 0.006
+expected_repairs_monthly = 0.05 # Usually between 0.04 and 0.08
+expected_vacancy_monthly = 0.09 # Usually between 0.06 and 0.12 (3-6 weeks per year)
+expected_capx_monthly = 0.1 # Usually between 0.08 and 0.12
+expected_management_monthly = 0.1 # Usually between 0.9 and 0.12
+insurance_rate_yearly = 0.006 # Usually between 0.005 and 0.01
 
 # Get all of the house data from homedata.json
 with open('homedata.json') as file:
@@ -40,7 +41,7 @@ else:
         print(f'Loan: {loan}')
         
         # Calculate the closing costs required
-        closing_costs = int(house.get('price')) * closing_costs
+        closing_costs = int(house.get('price')) * closing_cost_buyer_decimal
         print(f'Closing costs: {closing_costs}')
         
         # Calculate the monthly principle and interest payments
@@ -119,6 +120,33 @@ else:
         pro_forma_cap_decimal = round(net_operating_income / float(house.get('price')), 4)
         print(f'Pro Forma Cap {pro_forma_cap_decimal * 100}')
         
-        # TODO: Loop though all the years of the loan term to determine the cash flow, profits, and annualized return
+        # Declare lists for the property value, equity, loan balance, rent_growth, cashflow, profit if sold, and annualized return
+        property_value = []
+        loan_balance = []
+        equity = []
+        rent_growth = []
+        profit_if_sold = []
+        cash_flow_yearly = []
+        annualized_return_percent = []
         
+        # TODO: Loop though all the years of the loan term to determine yearly statistics of the property
+        for x in range(loan_term_yrs + 1):
+            property_value.append(round(float(house.get('price')) * (1 + expected_annual_growth) ** x, 2))
+            loan_balance.append(round((principle_interest_monthly / (interest_rate / 12)) * (1 - (1 / ((1 + interest_rate / 12) ** (loan_term_yrs * 12 - x * 12)))), 2))
+            equity.append(round(property_value[x] - loan_balance[x], 2))
+            rent_growth.append(round(suggested_total_rent_monthly * (1 + expected_annual_growth) ** x, 2))
+            profit_if_sold.append(round(property_value[x] * (1 - closing_cost_seller_decimal) + sum(cash_flow_yearly) - cash_needed_total - loan_balance[x], 2))
+            cash_flow_yearly.append(round((rent_growth[x] * (1 - expected_repairs_monthly - expected_vacancy_monthly - expected_capx_monthly - expected_management_monthly) - (1 + expected_annual_growth) ** x * (insurance_monthly + taxes_monthly) - principle_interest_monthly)  * 12, 2))
+            annualized_return_percent.append(round((((profit_if_sold[x] + cash_needed_total) / cash_needed_total) ** (1 / (x + 1)) - 1) * 100, 2))
+            
+            
+            
+        print(f'Property values: {property_value}')
+        print(f'Loan Balance: {loan_balance}')
+        print(f'Rent Growth: {rent_growth}')
+        print(f'Equity: {equity}')
+        print(f'Profit if sold: {profit_if_sold}')
+        print(f'Yearly Cash Flow: {cash_flow_yearly}')
+        print(f'Annualized Return:{annualized_return_percent}')
+        # TODO: Create a list of dictionaries, each dictionary will have all the required information on a given house
         
