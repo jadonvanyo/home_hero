@@ -13,6 +13,11 @@ expected_capx_monthly = 0.1 # Usually between 0.08 and 0.12
 expected_management_monthly = 0.1 # Usually between 0.9 and 0.12
 insurance_rate_yearly = 0.006 # Usually between 0.005 and 0.01
 
+# Create a list to store all the analyzed homes
+analyzed_homes = []
+
+# TODO: Create a class for each analyzed home
+
 # Get all of the house data from homedata.json
 with open('homedata.json') as file:
     data = json.load(file)
@@ -129,7 +134,7 @@ else:
         cash_flow_yearly = []
         annualized_return_percent = []
         
-        # TODO: Loop though all the years of the loan term to determine yearly statistics of the property
+        # Loop though all the years of the loan term to determine yearly statistics of the property
         for x in range(loan_term_yrs + 1):
             property_value.append(round(float(house.get('price')) * (1 + expected_annual_growth) ** x, 2))
             loan_balance.append(round((principle_interest_monthly / (interest_rate / 12)) * (1 - (1 / ((1 + interest_rate / 12) ** (loan_term_yrs * 12 - x * 12)))), 2))
@@ -139,8 +144,6 @@ else:
             cash_flow_yearly.append(round((rent_growth[x] * (1 - expected_repairs_monthly - expected_vacancy_monthly - expected_capx_monthly - expected_management_monthly) - (1 + expected_annual_growth) ** x * (insurance_monthly + taxes_monthly) - principle_interest_monthly)  * 12, 2))
             annualized_return_percent.append(round((((profit_if_sold[x] + cash_needed_total) / cash_needed_total) ** (1 / (x + 1)) - 1) * 100, 2))
             
-            
-            
         print(f'Property values: {property_value}')
         print(f'Loan Balance: {loan_balance}')
         print(f'Rent Growth: {rent_growth}')
@@ -148,5 +151,6 @@ else:
         print(f'Profit if sold: {profit_if_sold}')
         print(f'Yearly Cash Flow: {cash_flow_yearly}')
         print(f'Annualized Return:{annualized_return_percent}')
+        
         # TODO: Create a list of dictionaries, each dictionary will have all the required information on a given house
         
