@@ -143,8 +143,10 @@ class House:
             self.cash_flow_yearly.append(round((self.rent_growth[x] * (1 - self.expected_repairs_monthly - self.expected_vacancy_monthly - self.expected_capx_monthly - self.expected_management_monthly) - (1 + self.expected_annual_growth) ** x * (self.insurance_monthly + self.taxes_monthly) - self.principle_interest_monthly)  * 12, 2))
             self.annualized_return_percent.append(round((((self.profit_if_sold[x] + self.cash_needed_total) / self.cash_needed_total) ** (1 / (x + 1)) - 1) * 100, 2))
             
+            
     # TODO: Create a method to load all the required information into an email format
-    def email_format(self):
+    def email_format_html(self):
+        """Method to load all the required information into HTMl format for an email"""
         # TODO: Delete the html and body tags to apply those later in the proccess
         # Add all the appropriate labels and rows for the table
         formatted_table_data = [
@@ -162,35 +164,61 @@ class House:
         yearly_statistics_table_html = tabulate(formatted_table_data, tablefmt='html')
         
         house_email_html = f"""
-            <html>
-                <body>
-                    <div>
-                        <h4>
-                            <a href="{self.url}">{self.address}</a>
-                        </h4>
-                        <ul>
-                            <li>Price: ${self.price}</li>
-                            <li>Type: {self.property_subtype}</li>
-                            <li>Layout: Beds: {self.beds} Baths: {self.baths} SQFT: {self.sqft} sqft</li>
-                            <li>Price per SQFT: {self.price_per_sqft}</li>
-                            <li>Estimated Monthly Rent: <a href="{self.rent_url}">${self.suggested_total_rent_monthly}</a></li>
-                            <li>Monthly Operating Expenses: ${self.total_operating_costs_monthly}</li>
-                            <li>Total Monthly Expenses: ${self.total_expenses_monthly}</li>
-                            <li>Monthly Cash Flow: ${self.cash_flow_monthly}</li>
-                            <li>1% Rule: {self.percent_rule_decimal * 100}%</li>
-                            <li>50% Rule Cash Flow: ${self.cash_flow_50}</li>
-                            <li>Estimated Total Cash Needed: ${self.cash_needed_total}</li>
-                        </ul>
-                        <div>
-                            {yearly_statistics_table_html}
-                        </div>
-                    </div>
-                </body>
-            </html>
+            <div>
+                <h4>
+                    <a href="{self.url}">{self.address}</a>
+                </h4>
+                <ul>
+                    <li>Price: ${self.price}</li>
+                    <li>Type: {self.property_subtype}</li>
+                    <li>Layout: Beds: {self.beds} Baths: {self.baths} SQFT: {self.sqft} sqft</li>
+                    <li>Price per SQFT: {self.price_per_sqft}</li>
+                    <li>Estimated Monthly Rent: <a href="{self.rent_url}">${self.suggested_total_rent_monthly}</a></li>
+                    <li>Monthly Operating Expenses: ${self.total_operating_costs_monthly}</li>
+                    <li>Total Monthly Expenses: ${self.total_expenses_monthly}</li>
+                    <li>Monthly Cash Flow: ${self.cash_flow_monthly}</li>
+                    <li>1% Rule: {self.percent_rule_decimal * 100}%</li>
+                    <li>50% Rule Cash Flow: ${self.cash_flow_50}</li>
+                    <li>Estimated Total Cash Needed: ${self.cash_needed_total}</li>
+                </ul>
+                <h6>First 5 years yearly breakdown</h6>
+                {yearly_statistics_table_html}
+            </div>
         """
         
         return house_email_html
     
+    
+    def email_format_plain(self):
+        """Method to load all the required information into a plain text format for email"""
+        
+        house_email_plain = f"""
+            Link: {self.url}
+            Address: {self.address}
+            Price: ${self.price}
+            Type: {self.property_subtype}
+            Layout: Beds: {self.beds} Baths: {self.baths} SQFT: {self.sqft} sqft
+            Price per SQFT: {self.price_per_sqft}
+            Estimated Monthly Rent: ${self.suggested_total_rent_monthly}
+            Rent URL: {self.rent_url}
+            Monthly Operating Expenses: ${self.total_operating_costs_monthly}
+            Total Monthly Expenses: ${self.total_expenses_monthly}
+            Monthly Cash Flow: ${self.cash_flow_monthly}
+            1% Rule: {self.percent_rule_decimal * 100}%
+            50% Rule Cash Flow: ${self.cash_flow_50}
+            Estimated Total Cash Needed: ${self.cash_needed_total}
+            First 5 years yearly breakdown:
+            {['Year'] + self.year[:6]}
+            {['Property Value'] + self.property_value[:6]}
+            {['Loan Balance'] + self.loan_balance[:6]}
+            {['Equity'] + self.equity[:6]}
+            {['Expected Rents'] + self.rent_growth[:6]}
+            {['Profit if Sold'] + self.profit_if_sold[:6]}
+            {['Yearly Cash Flow'] + self.cash_flow_yearly[:6]}
+            {['Annualized Return'] + self.annualized_return_percent[:6]}
+        """
+        
+        return house_email_plain
     # TODO: Create a method to determine if a home should be a feature home
     # TODO: Create a method to eport the house data to an excel sheet
         
@@ -207,10 +235,22 @@ if not data:
     print("No houses found")
     
 else:
-    # Loop through each of the houses in the dataset
+    # Create the beggining of the email body for all of the analyzed houses in plain text and HTML
+    email_content_plain = ""
+    email_content_html = "<html>\n\t<body>"
+    
+    # Loop through each of the houses in the dataset and add them to a list of analyzed houses
     for house_data in data:
         house = House(house_data)
-        html = house.email_format()
+        # TODO: Potentially eliminate this
         analyzed_homes.append(house)
-        print(html)
-
+        
+        # Add the individual house HTMl content to the total HTML content
+        email_content_html += house.email_format_html()
+        
+        # Add the individual house plain text content to the total plain text content
+        email_content_plain += house.email_format_plain()
+        
+    email_content_html += "\t</body>\n</html>"
+    print(email_content_html)
+    print(email_content_plain)
