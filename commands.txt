@@ -104,3 +104,35 @@ Subdivision: response.xpath('//ul/li/span[contains(text(), "Subdivision")]/text(
 
 house_links = response.xpath('//div[1]/ul/li/div/div/article/div/div/a[contains(@data-test, "property-card-link")]/@href').getall()
 
+    def store_to_dict(self):
+        """Method to store all the house information in a dictionary for easy conversion to JSON and CSV"""
+        house_dict = {
+            "price": f"{self.price}",
+            'sqft': f'{self.sqft}',
+            'tax': f'{self.tax}',
+            'rent': f'{self.rent}',
+            'property_subtype': f'{self.property_subtype}',
+            'address': f'{self.address}',
+            'beds': f'{self.beds}',
+            'baths': f'{self.baths}',
+            'description': self.description
+            'year_built': self.year_built
+            'region': self.region
+            'subdivision': self.subdivision
+            'tax_url': self.tax_url
+            'rent_url': self.rent_url
+            'url': self.url
+            'min_rent': self.min_rent
+            'max_rent': self.max_rent
+            'down_payment_decimal': self.down_payment_decimal
+            'closing_cost_buyer_decimal': self.closing_cost_buyer_decimal
+            'closing_cost_seller_decimal': self.closing_cost_seller_decimal
+            'expected_annual_growth': self.expected_annual_growth
+            'interest_rate': self.interest_rate
+            'loan_term_yrs': self.loan_term_yrs
+            'expected_repairs_monthly': self.expected_repairs_monthly
+            'expected_vacancy_monthly': self.expected_vacancy_monthly
+            'expected_capx_monthly': self.expected_capx_monthly
+            'expected_management_monthly': self.expected_management_monthly
+            'insurance_rate_yearly': self.insurance_rate_yearly
+        }

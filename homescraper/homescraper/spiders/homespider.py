@@ -8,7 +8,7 @@ class HomespiderSpider(scrapy.Spider):
 
     # Overwrite any of the settings.py settings for this particular spider \
     custom_settings = {
-        # Close the spider after 2 items have been selected
+        # Close the spider after 6 items have been selected
         'CLOSESPIDER_ITEMCOUNT': 6,
         
         # Override the default request headers:
