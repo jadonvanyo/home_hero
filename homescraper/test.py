@@ -1,5 +1,6 @@
 from tabulate import tabulate
 import json
+import smtplib, ssl
 
 class House:
     def __init__(
@@ -144,10 +145,8 @@ class House:
             self.annualized_return_percent.append(round((((self.profit_if_sold[x] + self.cash_needed_total) / self.cash_needed_total) ** (1 / (x + 1)) - 1) * 100, 2))
             
             
-    # TODO: Create a method to load all the required information into an email format
     def email_format_html(self):
         """Method to load all the required information into HTMl format for an email"""
-        # TODO: Delete the html and body tags to apply those later in the proccess
         # Add all the appropriate labels and rows for the table
         formatted_table_data = [
             ['Year'] + self.year[:6],
@@ -183,6 +182,7 @@ class House:
                 </ul>
                 <h6>First 5 years yearly breakdown</h6>
                 {yearly_statistics_table_html}
+                <p>Description: {self.description}</p>
             </div>
         """
         
@@ -216,11 +216,12 @@ class House:
             {['Profit if Sold'] + self.profit_if_sold[:6]}
             {['Yearly Cash Flow'] + self.cash_flow_yearly[:6]}
             {['Annualized Return'] + self.annualized_return_percent[:6]}
+            Description: {self.description}
         """
         
         return house_email_plain
     # TODO: Create a method to determine if a home should be a feature home
-    # TODO: Create a method to eport the house data to an excel sheet
+    # TODO: Create a method to export the house data to an excel sheet
         
 
 # Create a list to store all the analyzed homes
@@ -252,5 +253,16 @@ else:
         email_content_plain += house.email_format_plain()
         
     email_content_html += "\t</body>\n</html>"
-    print(email_content_html)
-    print(email_content_plain)
+    
+# TODO: Send a plain text email
+port = 465  # For SSL
+smtp_server = "smtp.gmail.com"
+sender_email = "jv.developer72@gmail.com"  # Enter your address
+receiver_email = "jv.developer72@gmail.com"  # Enter receiver address
+password = input("Type your password and press enter: ")
+message = email_content_plain
+
+context = ssl.create_default_context()
+with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+    server.login(sender_email, password)
+    server.sendmail(sender_email, receiver_email, message)
