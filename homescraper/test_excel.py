@@ -224,9 +224,10 @@ class House:
         
         return house_email_plain
     # TODO: Create a method to determine if a home should be a feature home
-    # TODO: Create a method to create pandas data frames for the data
+    
     def house_excel_sheet_creator(self, wb):
         """Create a new sheet populated with all the required data from a house"""
+        # TODO: Format the cells for percentages, currencies, ect.
         # Create a new name for each sheet
         sheet_name = self.address.replace(',', '').replace(' ', '-')
         
@@ -277,10 +278,10 @@ class House:
         sheet['B17'] = self.suggested_total_rent_monthly
         sheet['B20'] = self.taxes_monthly
         sheet['B21'] = self.insurance_monthly
-        sheet['B22'] = self.total_repairs_monthly
-        sheet['B23'] = self.total_vacancy_monthly
-        sheet['B24'] = self.total_capx_monthly
-        sheet['B25'] = self.total_management_monthly
+        sheet['B22'] = self.expected_repairs_monthly
+        sheet['B23'] = self.expected_vacancy_monthly
+        sheet['B24'] = self.expected_capx_monthly
+        sheet['B25'] = self.expected_management_monthly
         sheet['B27'] = 0
         sheet['B28'] = '=B3*(1+B6)^B27'
         sheet['B29'] = '=B28-B30'
@@ -288,7 +289,7 @@ class House:
         sheet['B31'] = '=(B17*(1+B6)^B27)'
         sheet['B32'] = '=(B31-B31*B22-B31*B23-B31*B24-B31*B25-B21*(1+B6)^B27-B20*(1+B6)^B27-B14)*12'
         sheet['B33'] = f'=B28*(1-{self.closing_cost_seller_decimal})-E6-B30' # This is the one that was changed
-        sheet['B34'] = '=((B28/B3)-1)/1'
+        sheet['B34'] = '=((B33+E6)/E6)^(1/(B27+1))-1'
         sheet['C1'] = 'Beds'
         sheet['C19'] = 'Monthly'
         sheet['C20'] = '=B20'
@@ -304,7 +305,7 @@ class House:
         sheet['C31'] = '=(B17*(1+B6)^C27)'
         sheet['C32'] = '=(C31-C31*B22-C31*B23-C31*B24-C31*B25-B21*(1+B6)^C27-B20*(1+B6)^C27-B14)*12'
         sheet['C33'] = f'=C28*(1-{self.closing_cost_seller_decimal})+B32-E6-C30'
-        sheet['C34'] = '=((C33+E6)/E6)^(1/C27)-1'
+        sheet['C34'] = '=((C33+E6)/E6)^(1/(C27+1))-1'
         sheet['D1'] = self.beds
         sheet['D3'] = 'Income (mo)'
         sheet['D4'] = 'Operate Cost (mo)'
@@ -331,7 +332,7 @@ class House:
         sheet['D31'] = '=(B17*(1+B6)^D27)'
         sheet['D32'] = '=(D31-D31*B22-D31*B23-D31*B24-D31*B25-B21*(1+B6)^D27-B20*(1+B6)^D27-B14)*12'
         sheet['D33'] = '=D28*(1-B5)+sum(B32:C32)-E6-D30'
-        sheet['D34'] = '=((D33+E6)/E6)^(1/D27)-1'
+        sheet['D34'] = '=((D33+E6)/E6)^(1/(D27+1))-1'
         sheet['E1'] = 'Baths'
         sheet['E3'] = '=B17'
         sheet['E4'] = '=B14+B20+B21'
@@ -351,7 +352,7 @@ class House:
         sheet['E31'] = '=(B17*(1+B6)^E27)'
         sheet['E32'] = '=(E31-E31*B22-E31*B23-E31*B24-E31*B25-B21*(1+B6)^E27-B20*(1+B6)^E27-B14)*12'
         sheet['E33'] = '=E28*(1-B5)+sum(B32:D32)-E6-E30'
-        sheet['E34'] = '=((E33+E6)/E6)^(1/E27)-1'
+        sheet['E34'] = '=((E33+E6)/E6)^(1/(E27+1))-1'
         sheet['F1'] = self.baths
         sheet['F27'] = 4
         sheet['F28'] = '=B3*(1+B6)^F27'
@@ -360,7 +361,7 @@ class House:
         sheet['F31'] = '=(B17*(1+B6)^F27)'
         sheet['F32'] = '=(F31-F31*B22-F31*B23-F31*B24-F31*B25-B21*(1+B6)^F27-B20*(1+B6)^F27-B14)*12'
         sheet['F33'] = '=F28*(1-B5)+sum(B32:E32)-E6-F30'
-        sheet['F34'] = '=((F33+E6)/E6)^(1/F27)-1'
+        sheet['F34'] = '=((F33+E6)/E6)^(1/(F27+1))-1'
         sheet['G1'] = 'SQFT'
         sheet['G27'] = 5
         sheet['G28'] = '=B3*(1+B6)^G27'
@@ -369,7 +370,7 @@ class House:
         sheet['G31'] = '=(B17*(1+B6)^G27)'
         sheet['G32'] = '=(G31-G31*B22-G31*B23-G31*B24-G31*B25-B21*(1+B6)^G27-B20*(1+B6)^G27-B14)*12'
         sheet['G33'] = '=G28*(1-B5)+sum(B32:F32)-E6-G30'
-        sheet['G34'] = '=((G33+E6)/E6)^(1/G27)-1'
+        sheet['G34'] = '=((G33+E6)/E6)^(1/(G27+1))-1'
         sheet['H1'] = self.sqft
         sheet['H27'] = 10
         sheet['H28'] = '=B3*(1+B6)^H27'
