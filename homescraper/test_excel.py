@@ -1,7 +1,7 @@
 from datetime import date
 import json
 import pandas as pd
-import openpyxl
+from openpyxl import Workbook
 import smtplib, ssl
 from tabulate import tabulate
 
@@ -225,171 +225,166 @@ class House:
         return house_email_plain
     # TODO: Create a method to determine if a home should be a feature home
     # TODO: Create a method to create pandas data frames for the data
-    def house_pd_df(self):
-        """Create a pandas data frame with the required structure to populate an excel sheet"""
-        # Create an empty DataFrame with the desired structure
-        # index=range(1, 34), columns=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
-        df = pd.DataFrame()
+    def house_excel_sheet_creator(self, wb):
+        """Create a new sheet populated with all the required data from a house"""
+        # Create a new name for each sheet
+        sheet_name = self.address.replace(',', '').replace(' ', '-')
         
-        # Populate the DataFrame with house values
-        df.at[1, 'A'] = 'Address'
-        df.at[3, 'A'] = 'Purchase Price'
-        df.at[4, 'A'] = 'Closing Costs'
-        df.at[5, 'A'] = 'Closing Costs (%)'
-        df.at[6, 'A'] = 'Annual Growth'
-        df.at[8, 'A'] = 'Loan'
-        df.at[9, 'A'] = 'Downpayment (%)'
-        df.at[10, 'A'] = 'Downpayment ($)'
-        df.at[11, 'A'] = 'Loan'
-        df.at[12, 'A'] = 'Interest Rate (%)'
-        df.at[13, 'A'] = 'Loan Term (Yrs)'
-        df.at[14, 'A'] = 'Monthly Payment'
-        df.at[16, 'A'] = 'Rental Income'
-        df.at[17, 'A'] = 'Rent'
-        df.at[19, 'A'] = 'Expenses'
-        df.at[20, 'A'] = 'Property Taxes (mo)'
-        df.at[21, 'A'] = 'Insurance (mo)'
-        df.at[22, 'A'] = 'Repairs (%-mo)'
-        df.at[23, 'A'] = 'Vacancy (%-mo)'
-        df.at[24, 'A'] = 'Capital Expenses (%-mo)'
-        df.at[25, 'A'] = 'Management Fees (%-mo)'
-        df.at[27, 'A'] = 'Year'
-        df.at[28, 'A'] = 'Property Value'
-        df.at[29, 'A'] = 'Equity'
-        df.at[30, 'A'] = 'Loan Balance'
-        df.at[31, 'A'] = 'Rent'
-        df.at[32, 'A'] = 'Cash Flow'
-        df.at[33, 'A'] = 'Profit If Sold'
-        df.at[34, 'A'] = 'Annualized Return'
-        df.at[1, 'B'] = self.address
-        df.at[3, 'B'] = self.price
-        df.at[4, 'B'] = '=B5*B3'
-        df.at[5, 'B'] = self.closing_cost_buyer_decimal
-        df.at[6, 'B'] = self.expected_annual_growth
-        df.at[9, 'B'] = self.down_payment_decimal
-        df.at[10, 'B'] = '=B3*B9'
-        df.at[11, 'B'] = '=B3-B10'
-        df.at[12, 'B'] = self.interest_rate
-        df.at[13, 'B'] = self.loan_term_yrs
-        df.at[14, 'B'] = '=(B11*(B12/12)*(1+B12/12)^(B13*12))/((1+B12/12)^(B13*12)-1)'
-        df.at[17, 'B'] = self.suggested_total_rent_monthly
-        df.at[20, 'B'] = self.taxes_monthly
-        df.at[21, 'B'] = self.insurance_monthly
-        df.at[22, 'B'] = self.total_repairs_monthly
-        df.at[23, 'B'] = self.total_vacancy_monthly
-        df.at[24, 'B'] = self.total_capx_monthly
-        df.at[25, 'B'] = self.total_management_monthly
-        df.at[27, 'B'] = 0
-        df.at[28, 'B'] = '=B3*(1+B6)^B27'
-        df.at[29, 'B'] = '=B28-B30'
-        df.at[30, 'B'] = '=B3-B10'
-        df.at[31, 'B'] = '=(B17*(1+B6)^B27)'
-        df.at[32, 'B'] = '=(B31-B31*B22-B31*B23-B31*B24-B31*B25-B21*(1+B6)^B27-B20*(1+B6)^B27-B14)*12'
-        df.at[33, 'B'] = f'=B28*(1-{self.closing_cost_seller_decimal})-E6-B30' # This is the one that was changed
-        df.at[34, 'B'] = '=((B28/B3)-1)/1'
-        df.at[1, 'C'] = 'Beds'
-        df.at[19, 'C'] = 'Monthly'
-        df.at[20, 'C'] = '=B20'
-        df.at[21, 'C'] = '=B21'
-        df.at[22, 'C'] = '=B22*B17'
-        df.at[23, 'C'] = '=B23*B17'
-        df.at[24, 'C'] = '=B24*B17'
-        df.at[25, 'C'] = '=B25*B17'
-        df.at[27, 'C'] = 1
-        df.at[28, 'C'] = '=B3*(1+B6)^C27'
-        df.at[29, 'C'] = '=C28-C30'
-        df.at[30, 'C'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-C27*12))))'
-        df.at[31, 'C'] = '=(B17*(1+B6)^C27)'
-        df.at[32, 'C'] = '=(C31-C31*B22-C31*B23-C31*B24-C31*B25-B21*(1+B6)^C27-B20*(1+B6)^C27-B14)*12'
-        df.at[33, 'C'] = f'=C28*(1-{self.closing_cost_seller_decimal})+B32-E6-C30'
-        df.at[34, 'C'] = '=((C33+E6)/E6)^(1/C27)-1'
-        df.at[1, 'D'] = self.beds
-        df.at[3, 'D'] = 'Income (mo)'
-        df.at[4, 'D'] = 'Operate Cost (mo)'
-        df.at[5, 'D'] = 'Expenses (mo)'
-        df.at[6, 'D'] = 'Cash Needed'
-        df.at[8, 'D'] = 'Total CF (mo)'
-        df.at[9, 'D'] = 'CoC'
-        df.at[11, 'D'] = '1-2% Rule'
-        df.at[12, 'D'] = '50% Rule'
-        df.at[13, 'D'] = '50% Rule (CF)'
-        df.at[16, 'D'] = 'NOI (P&I not included)'
-        df.at[17, 'D'] = 'Pro Forma Cap'
-        df.at[19, 'D'] = 'Yearly'
-        df.at[20, 'D'] = '=C20*12'
-        df.at[21, 'D'] = '=C21*12'
-        df.at[22, 'D'] = '=C22*12'
-        df.at[23, 'D'] = '=C23*12'
-        df.at[24, 'D'] = '=C24*12'
-        df.at[25, 'D'] = '=C25*12'
-        df.at[27, 'D'] = 2
-        df.at[28, 'D'] = '=B3*(1+B6)^D27'
-        df.at[29, 'D'] = '=D28-D30'
-        df.at[30, 'D'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-D27*12))))'
-        df.at[31, 'D'] = '=(B17*(1+B6)^D27)'
-        df.at[32, 'D'] = '=(D31-D31*B22-D31*B23-D31*B24-D31*B25-B21*(1+B6)^D27-B20*(1+B6)^D27-B14)*12'
-        df.at[33, 'D'] = '=D28*(1-B5)+sum(B32:C32)-E6-D30'
-        df.at[34, 'D'] = '=((D33+E6)/E6)^(1/D27)-1'
-        df.at[1, 'E'] = 'Baths'
-        df.at[3, 'E'] = '=B17'
-        df.at[4, 'E'] = '=B14+B20+B21'
-        df.at[5, 'E'] = '=B14+B20+B21+C22+C23+C24+C25'
-        df.at[6, 'E'] = '=B4+B10'
-        df.at[8, 'E'] = '=E3-E5'
-        df.at[9, 'E'] = '=B17/B10'
-        df.at[11, 'E'] = '=B17/B3'
-        df.at[12, 'E'] = '=B17/2'
-        df.at[13, 'E'] = '=E12-B14'
-        df.at[16, 'E'] = '=B17*12-D22-D23-D24-D25-B20*12-B21*12'
-        df.at[17, 'E'] = '=E16/B3'
-        df.at[19, 'E'] = 'Yearly'
-        df.at[20, 'E'] = '=C20*12'
-        df.at[21, 'E'] = '=C21*12'
-        df.at[22, 'E'] = '=C22*12'
-        df.at[23, 'E'] = '=C23*12'
-        df.at[24, 'E'] = '=C24*12'
-        df.at[25, 'E'] = '=C25*12'
-        df.at[27, 'E'] = 3
-        df.at[28, 'E'] = '=B3*(1+B6)^E27'
-        df.at[29, 'E'] = '=E28-E30'
-        df.at[30, 'E'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-E27*12))))'
-        df.at[31, 'E'] = '=(B17*(1+B6)^E27)'
-        df.at[32, 'E'] = '=(E31-E31*B22-E31*B23-E31*B24-E31*B25-B21*(1+B6)^E27-B20*(1+B6)^E27-B14)*12'
-        df.at[33, 'E'] = '=E28*(1-B5)+sum(B32:D32)-E6-E30'
-        df.at[34, 'E'] = '=((E33+E6)/E6)^(1/E27)-1'
-        df.at[1, 'F'] = self.baths
-        df.at[27, 'F'] = 4
-        df.at[28, 'F'] = '=B3*(1+B6)^F27'
-        df.at[29, 'F'] = '=F28-F30'
-        df.at[30, 'F'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-F27*12))))'
-        df.at[31, 'F'] = '=(B17*(1+B6)^F27)'
-        df.at[32, 'F'] = '=(F31-F31*B22-F31*B23-F31*B24-F31*B25-B21*(1+B6)^F27-B20*(1+B6)^F27-B14)*12'
-        df.at[33, 'F'] = '=F28*(1-B5)+sum(B32:E32)-E6-F30'
-        df.at[34, 'F'] = '=((F33+E6)/E6)^(1/F27)-1'
-        df.at[1, 'G'] = 'SQFT'
-        df.at[27, 'G'] = 5
-        df.at[28, 'G'] = '=B3*(1+B6)^G27'
-        df.at[29, 'G'] = '=G28-G30'
-        df.at[30, 'G'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-G27*12))))'
-        df.at[31, 'G'] = '=(B17*(1+B6)^G27)'
-        df.at[32, 'G'] = '=(G31-G31*B22-G31*B23-G31*B24-G31*B25-B21*(1+B6)^G27-B20*(1+B6)^G27-B14)*12'
-        df.at[33, 'G'] = '=G28*(1-B5)+sum(B32:F32)-E6-G30'
-        df.at[34, 'G'] = '=((G33+E6)/E6)^(1/G27)-1'
-        df.at[1, 'H'] = self.sqft
-        df.at[27, 'H'] = 10
-        df.at[28, 'H'] = '=B3*(1+B6)^H27'
-        df.at[29, 'H'] = '=H28-H30'
-        df.at[30, 'H'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-H27*12))))'
-        df.at[31, 'H'] = '=(B17*(1+B6)^H27)'
-        df.at[32, 'H'] = '=(H31-H31*B22-H31*B23-H31*B24-H31*B25-B21*(1+B6)^H27-B20*(1+B6)^H27-B14)*12'
-        df.at[27, 'I'] = 10
-        df.at[28, 'I'] = '=B3*(1+B6)^I27'
-        df.at[29, 'I'] = '=I28-I30'
-        df.at[30, 'I'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-I27*12))))'
-        df.at[31, 'I'] = '=(B17*(1+B6)^I27)'
-        df.at[32, 'I'] = '=(I31-I31*B22-I31*B23-I31*B24-I31*B25-B21*(1+B6)^I27-B20*(1+B6)^I27-B14)*12'
+        # Create a new sheet with the specified name
+        sheet = wb.create_sheet(title=sheet_name)
+        
+        # Populate the sheet with the required values and formulas
+        sheet['A1'] = 'Address'
+        sheet['A3'] = 'Purchase Price'
+        sheet['A4'] = 'Closing Costs'
+        sheet['A5'] = 'Closing Costs (%)'
+        sheet['A6'] = 'Annual Growth'
+        sheet['A8'] = 'Loan'
+        sheet['A9'] = 'Downpayment (%)'
+        sheet['A10'] = 'Downpayment ($)'
+        sheet['A11'] = 'Loan'
+        sheet['A12'] = 'Interest Rate (%)'
+        sheet['A13'] = 'Loan Term (Yrs)'
+        sheet['A14'] = 'Monthly Payment'
+        sheet['A16'] = 'Rental Income'
+        sheet['A17'] = 'Rent'
+        sheet['A19'] = 'Expenses'
+        sheet['A20'] = 'Property Taxes (mo)'
+        sheet['A21'] = 'Insurance (mo)'
+        sheet['A22'] = 'Repairs (%-mo)'
+        sheet['A23'] = 'Vacancy (%-mo)'
+        sheet['A24'] = 'Capital Expenses (%-mo)'
+        sheet['A25'] = 'Management Fees (%-mo)'
+        sheet['A27'] = 'Year'
+        sheet['A28'] = 'Property Value'
+        sheet['A29'] = 'Equity'
+        sheet['A30'] = 'Loan Balance'
+        sheet['A31'] = 'Rent'
+        sheet['A32'] = 'Cash Flow'
+        sheet['A33'] = 'Profit If Sold'
+        sheet['A34'] = 'Annualized Return'
+        sheet['B1'] = self.address
+        sheet['B3'] = self.price
+        sheet['B4'] = '=B5*B3'
+        sheet['B5'] = self.closing_cost_buyer_decimal
+        sheet['B6'] = self.expected_annual_growth
+        sheet['B9'] = self.down_payment_decimal
+        sheet['B10'] = '=B3*B9'
+        sheet['B11'] = '=B3-B10'
+        sheet['B12'] = self.interest_rate
+        sheet['B13'] = self.loan_term_yrs
+        sheet['B14'] = '=(B11*(B12/12)*(1+B12/12)^(B13*12))/((1+B12/12)^(B13*12)-1)'
+        sheet['B17'] = self.suggested_total_rent_monthly
+        sheet['B20'] = self.taxes_monthly
+        sheet['B21'] = self.insurance_monthly
+        sheet['B22'] = self.total_repairs_monthly
+        sheet['B23'] = self.total_vacancy_monthly
+        sheet['B24'] = self.total_capx_monthly
+        sheet['B25'] = self.total_management_monthly
+        sheet['B27'] = 0
+        sheet['B28'] = '=B3*(1+B6)^B27'
+        sheet['B29'] = '=B28-B30'
+        sheet['B30'] = '=B3-B10'
+        sheet['B31'] = '=(B17*(1+B6)^B27)'
+        sheet['B32'] = '=(B31-B31*B22-B31*B23-B31*B24-B31*B25-B21*(1+B6)^B27-B20*(1+B6)^B27-B14)*12'
+        sheet['B33'] = f'=B28*(1-{self.closing_cost_seller_decimal})-E6-B30' # This is the one that was changed
+        sheet['B34'] = '=((B28/B3)-1)/1'
+        sheet['C1'] = 'Beds'
+        sheet['C19'] = 'Monthly'
+        sheet['C20'] = '=B20'
+        sheet['C21'] = '=B21'
+        sheet['C22'] = '=B22*B17'
+        sheet['C23'] = '=B23*B17'
+        sheet['C24'] = '=B24*B17'
+        sheet['C25'] = '=B25*B17'
+        sheet['C27'] = 1
+        sheet['C28'] = '=B3*(1+B6)^C27'
+        sheet['C29'] = '=C28-C30'
+        sheet['C30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-C27*12))))'
+        sheet['C31'] = '=(B17*(1+B6)^C27)'
+        sheet['C32'] = '=(C31-C31*B22-C31*B23-C31*B24-C31*B25-B21*(1+B6)^C27-B20*(1+B6)^C27-B14)*12'
+        sheet['C33'] = f'=C28*(1-{self.closing_cost_seller_decimal})+B32-E6-C30'
+        sheet['C34'] = '=((C33+E6)/E6)^(1/C27)-1'
+        sheet['D1'] = self.beds
+        sheet['D3'] = 'Income (mo)'
+        sheet['D4'] = 'Operate Cost (mo)'
+        sheet['D5'] = 'Expenses (mo)'
+        sheet['D6'] = 'Cash Needed'
+        sheet['D8'] = 'Total CF (mo)'
+        sheet['D9'] = 'CoC'
+        sheet['D11'] = '1-2% Rule'
+        sheet['D12'] = '50% Rule'
+        sheet['D13'] = '50% Rule (CF)'
+        sheet['D16'] = 'NOI (P&I not included)'
+        sheet['D17'] = 'Pro Forma Cap'
+        sheet['D19'] = 'Yearly'
+        sheet['D20'] = '=C20*12'
+        sheet['D21'] = '=C21*12'
+        sheet['D22'] = '=C22*12'
+        sheet['D23'] = '=C23*12'
+        sheet['D24'] = '=C24*12'
+        sheet['D25'] = '=C25*12'
+        sheet['D27'] = 2
+        sheet['D28'] = '=B3*(1+B6)^D27'
+        sheet['D29'] = '=D28-D30'
+        sheet['D30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-D27*12))))'
+        sheet['D31'] = '=(B17*(1+B6)^D27)'
+        sheet['D32'] = '=(D31-D31*B22-D31*B23-D31*B24-D31*B25-B21*(1+B6)^D27-B20*(1+B6)^D27-B14)*12'
+        sheet['D33'] = '=D28*(1-B5)+sum(B32:C32)-E6-D30'
+        sheet['D34'] = '=((D33+E6)/E6)^(1/D27)-1'
+        sheet['E1'] = 'Baths'
+        sheet['E3'] = '=B17'
+        sheet['E4'] = '=B14+B20+B21'
+        sheet['E5'] = '=B14+B20+B21+C22+C23+C24+C25'
+        sheet['E6'] = '=B4+B10'
+        sheet['E8'] = '=E3-E5'
+        sheet['E9'] = '=B17/B10'
+        sheet['E11'] = '=B17/B3'
+        sheet['E12'] = '=B17/2'
+        sheet['E13'] = '=E12-B14'
+        sheet['E16'] = '=B17*12-D22-D23-D24-D25-B20*12-B21*12'
+        sheet['E17'] = '=E16/B3'
+        sheet['E27'] = 3
+        sheet['E28'] = '=B3*(1+B6)^E27'
+        sheet['E29'] = '=E28-E30'
+        sheet['E30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-E27*12))))'
+        sheet['E31'] = '=(B17*(1+B6)^E27)'
+        sheet['E32'] = '=(E31-E31*B22-E31*B23-E31*B24-E31*B25-B21*(1+B6)^E27-B20*(1+B6)^E27-B14)*12'
+        sheet['E33'] = '=E28*(1-B5)+sum(B32:D32)-E6-E30'
+        sheet['E34'] = '=((E33+E6)/E6)^(1/E27)-1'
+        sheet['F1'] = self.baths
+        sheet['F27'] = 4
+        sheet['F28'] = '=B3*(1+B6)^F27'
+        sheet['F29'] = '=F28-F30'
+        sheet['F30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-F27*12))))'
+        sheet['F31'] = '=(B17*(1+B6)^F27)'
+        sheet['F32'] = '=(F31-F31*B22-F31*B23-F31*B24-F31*B25-B21*(1+B6)^F27-B20*(1+B6)^F27-B14)*12'
+        sheet['F33'] = '=F28*(1-B5)+sum(B32:E32)-E6-F30'
+        sheet['F34'] = '=((F33+E6)/E6)^(1/F27)-1'
+        sheet['G1'] = 'SQFT'
+        sheet['G27'] = 5
+        sheet['G28'] = '=B3*(1+B6)^G27'
+        sheet['G29'] = '=G28-G30'
+        sheet['G30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-G27*12))))'
+        sheet['G31'] = '=(B17*(1+B6)^G27)'
+        sheet['G32'] = '=(G31-G31*B22-G31*B23-G31*B24-G31*B25-B21*(1+B6)^G27-B20*(1+B6)^G27-B14)*12'
+        sheet['G33'] = '=G28*(1-B5)+sum(B32:F32)-E6-G30'
+        sheet['G34'] = '=((G33+E6)/E6)^(1/G27)-1'
+        sheet['H1'] = self.sqft
+        sheet['H27'] = 10
+        sheet['H28'] = '=B3*(1+B6)^H27'
+        sheet['H29'] = '=H28-H30'
+        sheet['H30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-H27*12))))'
+        sheet['H31'] = '=(B17*(1+B6)^H27)'
+        sheet['H32'] = '=(H31-H31*B22-H31*B23-H31*B24-H31*B25-B21*(1+B6)^H27-B20*(1+B6)^H27-B14)*12'
+        sheet['I27'] = self.loan_term_yrs
+        sheet['I28'] = '=B3*(1+B6)^I27'
+        sheet['I29'] = '=I28-I30'
+        sheet['I30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-I27*12))))'
+        sheet['I31'] = '=(B17*(1+B6)^I27)'
+        sheet['I32'] = '=(I31-I31*B22-I31*B23-I31*B24-I31*B25-B21*(1+B6)^I27-B20*(1+B6)^I27-B14)*12'
 
-        return df
+        return sheet
 
 # Get all of the house data from homedata.json
 with open('homedata.json') as file:
@@ -404,13 +399,14 @@ else:
     # Create a name for the excel file
     excel_file_name = str(date.today()) + "-house-analysis.xlsx"
     
-    # Create a list to store all the dataframes
-    house_dataframes = []
+    # Create a new workbook
+    wb = Workbook()
+    # Remove the default sheet created by openpyxl
+    wb.remove(wb.active)
     
-    # Loop through each of the houses in the dataset and add them to a list of analyzed houses
+    # Loop through each of the houses in the dataset and create an excel sheet for that house
     for house_data in data:
         house = House(house_data)
-        house_dataframes.append(house.house_pd_df())
-
-    with pd.ExcelWriter(excel_file_name, engine="openpyxl") as writer:
-        house.house_pd_df().to_excel(writer, sheet_name="Sheet1")
+        house.house_excel_sheet_creator(wb)
+        
+    wb.save(filename=excel_file_name)
