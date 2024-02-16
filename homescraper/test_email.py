@@ -233,7 +233,8 @@ if not data:
     print("No houses found")
     
 else:
-    # Create the beggining of the email body for all of the analyzed houses in plain text and HTML
+    # TODO: Create a function for the emails to be sent
+    # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
     email_content_plain = ""
     email_content_html = "<html>\n\t<body>"
     
