@@ -221,11 +221,8 @@ class House:
         
         return house_email_plain
     # TODO: Create a method to determine if a home should be a feature home
-    # TODO: Create a method to export the house data to an excel sheet
+    # TODO: Create a method to create pandas data frames for the data
         
-
-# Create a list to store all the analyzed homes
-analyzed_homes = []
 
 # Get all of the house data from homedata.json
 with open('homedata.json') as file:
@@ -243,8 +240,6 @@ else:
     # Loop through each of the houses in the dataset and add them to a list of analyzed houses
     for house_data in data:
         house = House(house_data)
-        # TODO: Potentially eliminate this
-        analyzed_homes.append(house)
         
         # Add the individual house HTMl content to the total HTML content
         email_content_html += house.email_format_html()
@@ -254,6 +249,7 @@ else:
         
     email_content_html += "\t</body>\n</html>"
     
+
 # TODO: Send a plain text email
 port = 465  # For SSL
 smtp_server = "smtp.gmail.com"
