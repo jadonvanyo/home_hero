@@ -4,21 +4,9 @@ from openpyxl import Workbook
 from tabulate import tabulate
 
 class House:
-    # TODO: Move the hard coded values into a separate config document
     def __init__(
             self, 
-            data, 
-            # down_payment_decimal=0.12, 
-            # closing_cost_buyer_decimal=0.03, # Usually between 0.02 and 0.05
-            # closing_cost_seller_decimal=0.08, # Usually between 0.06 and 0.10
-            # expected_annual_growth=0.02,
-            # interest_rate=0.06,
-            # loan_term_yrs=30,
-            # expected_repairs_monthly=0.05, # Usually between 0.04 and 0.08
-            # expected_vacancy_monthly=0.09, # Usually between 0.06 and 0.12 (3-6 weeks per year)
-            # expected_capx_monthly=0.1, # Usually between 0.08 and 0.12
-            # expected_management_monthly=0.1, # Usually between 0.9 and 0.12
-            # insurance_rate_yearly=0.006, # Usually between 0.005 and 0.01
+            data
         ):
         # Load config to pull important information for house calculations
         config = load_config()
@@ -390,6 +378,7 @@ class House:
         sheet['I32'] = '=(I31-I31*B22-I31*B23-I31*B24-I31*B25-B21*(1+B6)^I27-B20*(1+B6)^I27-B14)*12'
 
         return sheet
+
 
 def create_house_analysis_excel_book(data):
     """Create an excel book given JSON data containing houses from search"""

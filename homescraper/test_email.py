@@ -1,23 +1,20 @@
-from tabulate import tabulate
+from datetime import date
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 import json
-import smtplib, ssl
+from openpyxl import Workbook
+import smtplib
+from tabulate import tabulate
+
 
 class House:
     def __init__(
             self, 
-            data, 
-            down_payment_decimal=0.12, 
-            closing_cost_buyer_decimal=0.03, # Usually between 0.02 and 0.05
-            closing_cost_seller_decimal=0.08, # Usually between 0.06 and 0.10
-            expected_annual_growth=0.02,
-            interest_rate=0.06,
-            loan_term_yrs=30,
-            expected_repairs_monthly=0.05, # Usually between 0.04 and 0.08
-            expected_vacancy_monthly=0.09, # Usually between 0.06 and 0.12 (3-6 weeks per year)
-            expected_capx_monthly=0.1, # Usually between 0.08 and 0.12
-            expected_management_monthly=0.1, # Usually between 0.9 and 0.12
-            insurance_rate_yearly=0.006, # Usually between 0.005 and 0.01
+            data
         ):
+        # Load config to pull important information for house calculations
+        config = load_config()
+        
         self.price = float(data.get('price'))
         self.sqft = float(data.get('sqft'))
         self.tax = float(data.get('tax'))
@@ -35,17 +32,17 @@ class House:
         self.url = data.get('url')
         self.min_rent = data.get('min_rent')
         self.max_rent = data.get('max_rent')
-        self.down_payment_decimal = down_payment_decimal
-        self.closing_cost_buyer_decimal = closing_cost_buyer_decimal
-        self.closing_cost_seller_decimal = closing_cost_seller_decimal
-        self.expected_annual_growth = expected_annual_growth
-        self.interest_rate = interest_rate
-        self.loan_term_yrs = loan_term_yrs
-        self.expected_repairs_monthly = expected_repairs_monthly
-        self.expected_vacancy_monthly = expected_vacancy_monthly
-        self.expected_capx_monthly = expected_capx_monthly
-        self.expected_management_monthly = expected_management_monthly
-        self.insurance_rate_yearly = insurance_rate_yearly
+        self.down_payment_decimal = config['down_payment_decimal']
+        self.closing_cost_buyer_decimal = config['closing_cost_buyer_decimal']
+        self.closing_cost_seller_decimal = config['closing_cost_seller_decimal']
+        self.expected_annual_growth = config['expected_annual_growth']
+        self.interest_rate = config['interest_rate']
+        self.loan_term_yrs = config['loan_term_yrs']
+        self.expected_repairs_monthly = config['expected_repairs_monthly']
+        self.expected_vacancy_monthly = config['expected_vacancy_monthly']
+        self.expected_capx_monthly = config['expected_capx_monthly']
+        self.expected_management_monthly = config['expected_management_monthly']
+        self.insurance_rate_yearly = config['insurance_rate_yearly']
         self.calculate_metrics()
 
     def calculate_metrics(self):
@@ -221,7 +218,294 @@ class House:
         
         return house_email_plain
     # TODO: Create a method to determine if a home should be a feature home
+    
+    def house_excel_sheet_creator(self, wb):
+        """Create a new sheet populated with all the required data from a house"""
+        # Create a new name for each sheet
+        sheet_name = self.address.replace(',', '').replace(' ', '-')
         
+        # Create a new sheet with the specified name
+        sheet = wb.create_sheet(title=sheet_name)
+        
+        # Format the cells for percentages and currencies
+        sheet = format_excel_sheet(sheet)
+        
+        # Populate the sheet with the required values and formulas
+        sheet['A1'] = 'Address'
+        sheet['A3'] = 'Purchase Price'
+        sheet['A4'] = 'Closing Costs'
+        sheet['A5'] = 'Closing Costs (%)'
+        sheet['A6'] = 'Annual Growth'
+        sheet['A8'] = 'Loan'
+        sheet['A9'] = 'Downpayment (%)'
+        sheet['A10'] = 'Downpayment ($)'
+        sheet['A11'] = 'Loan'
+        sheet['A12'] = 'Interest Rate (%)'
+        sheet['A13'] = 'Loan Term (Yrs)'
+        sheet['A14'] = 'Monthly Payment'
+        sheet['A16'] = 'Rental Income'
+        sheet['A17'] = 'Rent'
+        sheet['A19'] = 'Expenses'
+        sheet['A20'] = 'Property Taxes (mo)'
+        sheet['A21'] = 'Insurance (mo)'
+        sheet['A22'] = 'Repairs (%-mo)'
+        sheet['A23'] = 'Vacancy (%-mo)'
+        sheet['A24'] = 'Capital Expenses (%-mo)'
+        sheet['A25'] = 'Management Fees (%-mo)'
+        sheet['A27'] = 'Year'
+        sheet['A28'] = 'Property Value'
+        sheet['A29'] = 'Equity'
+        sheet['A30'] = 'Loan Balance'
+        sheet['A31'] = 'Rent'
+        sheet['A32'] = 'Cash Flow'
+        sheet['A33'] = 'Profit If Sold'
+        sheet['A34'] = 'Annualized Return'
+        sheet['B1'] = self.address
+        sheet['B3'] = self.price
+        sheet['B4'] = '=B5*B3'
+        sheet['B5'] = self.closing_cost_buyer_decimal
+        sheet['B6'] = self.expected_annual_growth
+        sheet['B9'] = self.down_payment_decimal
+        sheet['B10'] = '=B3*B9'
+        sheet['B11'] = '=B3-B10'
+        sheet['B12'] = self.interest_rate
+        sheet['B13'] = self.loan_term_yrs
+        sheet['B14'] = '=(B11*(B12/12)*(1+B12/12)^(B13*12))/((1+B12/12)^(B13*12)-1)'
+        sheet['B17'] = self.suggested_total_rent_monthly
+        sheet['B20'] = self.taxes_monthly
+        sheet['B21'] = self.insurance_monthly
+        sheet['B22'] = self.expected_repairs_monthly
+        sheet['B23'] = self.expected_vacancy_monthly
+        sheet['B24'] = self.expected_capx_monthly
+        sheet['B25'] = self.expected_management_monthly
+        sheet['B27'] = 0
+        sheet['B28'] = '=B3*(1+B6)^B27'
+        sheet['B29'] = '=B28-B30'
+        sheet['B30'] = '=B3-B10'
+        sheet['B31'] = '=(B17*(1+B6)^B27)'
+        sheet['B32'] = '=(B31-B31*B22-B31*B23-B31*B24-B31*B25-B21*(1+B6)^B27-B20*(1+B6)^B27-B14)*12'
+        sheet['B33'] = f'=B28*(1-{self.closing_cost_seller_decimal})-E6-B30'
+        sheet['B34'] = '=((B33+E6)/E6)^(1/(B27+1))-1'
+        sheet['C1'] = 'Beds'
+        sheet['C19'] = 'Monthly'
+        sheet['C20'] = '=B20'
+        sheet['C21'] = '=B21'
+        sheet['C22'] = '=B22*B17'
+        sheet['C23'] = '=B23*B17'
+        sheet['C24'] = '=B24*B17'
+        sheet['C25'] = '=B25*B17'
+        sheet['C27'] = 1
+        sheet['C28'] = '=B3*(1+B6)^C27'
+        sheet['C29'] = '=C28-C30'
+        sheet['C30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-C27*12))))'
+        sheet['C31'] = '=(B17*(1+B6)^C27)'
+        sheet['C32'] = '=(C31-C31*B22-C31*B23-C31*B24-C31*B25-B21*(1+B6)^C27-B20*(1+B6)^C27-B14)*12'
+        sheet['C33'] = f'=C28*(1-{self.closing_cost_seller_decimal})+B32-E6-C30'
+        sheet['C34'] = '=((C33+E6)/E6)^(1/(C27+1))-1'
+        sheet['D1'] = self.beds
+        sheet['D3'] = 'Income (mo)'
+        sheet['D4'] = 'Operate Cost (mo)'
+        sheet['D5'] = 'Expenses (mo)'
+        sheet['D6'] = 'Cash Needed'
+        sheet['D8'] = 'Total CF (mo)'
+        sheet['D9'] = 'CoC'
+        sheet['D11'] = '1-2% Rule'
+        sheet['D12'] = '50% Rule'
+        sheet['D13'] = '50% Rule (CF)'
+        sheet['D16'] = 'NOI (P&I not included)'
+        sheet['D17'] = 'Pro Forma Cap'
+        sheet['D19'] = 'Yearly'
+        sheet['D20'] = '=C20*12'
+        sheet['D21'] = '=C21*12'
+        sheet['D22'] = '=C22*12'
+        sheet['D23'] = '=C23*12'
+        sheet['D24'] = '=C24*12'
+        sheet['D25'] = '=C25*12'
+        sheet['D27'] = 2
+        sheet['D28'] = '=B3*(1+B6)^D27'
+        sheet['D29'] = '=D28-D30'
+        sheet['D30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-D27*12))))'
+        sheet['D31'] = '=(B17*(1+B6)^D27)'
+        sheet['D32'] = '=(D31-D31*B22-D31*B23-D31*B24-D31*B25-B21*(1+B6)^D27-B20*(1+B6)^D27-B14)*12'
+        sheet['D33'] = '=D28*(1-B5)+sum(B32:C32)-E6-D30'
+        sheet['D34'] = '=((D33+E6)/E6)^(1/(D27+1))-1'
+        sheet['E1'] = 'Baths'
+        sheet['E3'] = '=B17'
+        sheet['E4'] = '=B14+B20+B21'
+        sheet['E5'] = '=B14+B20+B21+C22+C23+C24+C25'
+        sheet['E6'] = '=B4+B10'
+        sheet['E8'] = '=E3-E5'
+        sheet['E9'] = '=B17/B10'
+        sheet['E11'] = '=B17/B3'
+        sheet['E12'] = '=B17/2'
+        sheet['E13'] = '=E12-B14'
+        sheet['E16'] = '=B17*12-D22-D23-D24-D25-B20*12-B21*12'
+        sheet['E17'] = '=E16/B3'
+        sheet['E27'] = 3
+        sheet['E28'] = '=B3*(1+B6)^E27'
+        sheet['E29'] = '=E28-E30'
+        sheet['E30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-E27*12))))'
+        sheet['E31'] = '=(B17*(1+B6)^E27)'
+        sheet['E32'] = '=(E31-E31*B22-E31*B23-E31*B24-E31*B25-B21*(1+B6)^E27-B20*(1+B6)^E27-B14)*12'
+        sheet['E33'] = '=E28*(1-B5)+sum(B32:D32)-E6-E30'
+        sheet['E34'] = '=((E33+E6)/E6)^(1/(E27+1))-1'
+        sheet['F1'] = self.baths
+        sheet['F27'] = 4
+        sheet['F28'] = '=B3*(1+B6)^F27'
+        sheet['F29'] = '=F28-F30'
+        sheet['F30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-F27*12))))'
+        sheet['F31'] = '=(B17*(1+B6)^F27)'
+        sheet['F32'] = '=(F31-F31*B22-F31*B23-F31*B24-F31*B25-B21*(1+B6)^F27-B20*(1+B6)^F27-B14)*12'
+        sheet['F33'] = '=F28*(1-B5)+sum(B32:E32)-E6-F30'
+        sheet['F34'] = '=((F33+E6)/E6)^(1/(F27+1))-1'
+        sheet['G1'] = 'SQFT'
+        sheet['G27'] = 5
+        sheet['G28'] = '=B3*(1+B6)^G27'
+        sheet['G29'] = '=G28-G30'
+        sheet['G30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-G27*12))))'
+        sheet['G31'] = '=(B17*(1+B6)^G27)'
+        sheet['G32'] = '=(G31-G31*B22-G31*B23-G31*B24-G31*B25-B21*(1+B6)^G27-B20*(1+B6)^G27-B14)*12'
+        sheet['G33'] = '=G28*(1-B5)+sum(B32:F32)-E6-G30'
+        sheet['G34'] = '=((G33+E6)/E6)^(1/(G27+1))-1'
+        sheet['H1'] = self.sqft
+        sheet['H27'] = 10
+        sheet['H28'] = '=B3*(1+B6)^H27'
+        sheet['H29'] = '=H28-H30'
+        sheet['H30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-H27*12))))'
+        sheet['H31'] = '=(B17*(1+B6)^H27)'
+        sheet['H32'] = '=(H31-H31*B22-H31*B23-H31*B24-H31*B25-B21*(1+B6)^H27-B20*(1+B6)^H27-B14)*12'
+        sheet['I27'] = self.loan_term_yrs
+        sheet['I28'] = '=B3*(1+B6)^I27'
+        sheet['I29'] = '=I28-I30'
+        sheet['I30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-I27*12))))'
+        sheet['I31'] = '=(B17*(1+B6)^I27)'
+        sheet['I32'] = '=(I31-I31*B22-I31*B23-I31*B24-I31*B25-B21*(1+B6)^I27-B20*(1+B6)^I27-B14)*12'
+
+        return sheet
+
+def create_house_analysis_excel_book(data):
+    """Create an excel book given JSON data containing houses from search"""
+    
+    # Create a name for the excel file
+    excel_file_name = str(date.today()) + "-house-analysis.xlsx"
+    
+    # Create a new workbook
+    wb = Workbook()
+    # Remove the default sheet created by openpyxl
+    wb.remove(wb.active)
+    
+    # Loop through each of the houses in the dataset and create an excel sheet for that house
+    for house_data in data:
+        house = House(house_data)
+        house.house_excel_sheet_creator(wb)
+    
+    # Save the excel file that was created
+    wb.save(filename=excel_file_name)
+
+    return
+
+def format_excel_sheet(sheet):
+    """Format an excel sheet for the house data"""
+    
+    # Apply the percentage format to all percentage cells
+    percentage_format = "#0.00%"
+    sheet['B5'].number_format = percentage_format
+    sheet['B6'].number_format = percentage_format
+    sheet['B9'].number_format = percentage_format
+    sheet['B12'].number_format = percentage_format
+    sheet['B22'].number_format = percentage_format
+    sheet['B23'].number_format = percentage_format
+    sheet['B24'].number_format = percentage_format
+    sheet['B25'].number_format = percentage_format
+    sheet['B34'].number_format = percentage_format
+    sheet['C34'].number_format = percentage_format
+    sheet['D34'].number_format = percentage_format
+    sheet['E9'].number_format = percentage_format
+    sheet['E11'].number_format = percentage_format
+    sheet['E17'].number_format = percentage_format
+    sheet['E34'].number_format = percentage_format
+    sheet['F34'].number_format = percentage_format
+    sheet['G34'].number_format = percentage_format
+    
+    # Apply currency format to all currency cells
+    currency_format = '"$"#,###,##0.00'
+    sheet['B3'].number_format = currency_format
+    sheet['B4'].number_format = currency_format
+    sheet['B10'].number_format = currency_format
+    sheet['B11'].number_format = currency_format
+    sheet['B14'].number_format = currency_format
+    sheet['B17'].number_format = currency_format
+    sheet['B20'].number_format = currency_format
+    sheet['B21'].number_format = currency_format
+    sheet['B28'].number_format = currency_format
+    sheet['B29'].number_format = currency_format
+    sheet['B30'].number_format = currency_format
+    sheet['B31'].number_format = currency_format
+    sheet['B32'].number_format = currency_format
+    sheet['B33'].number_format = currency_format
+    sheet['C22'].number_format = currency_format
+    sheet['C23'].number_format = currency_format
+    sheet['C24'].number_format = currency_format
+    sheet['C25'].number_format = currency_format
+    sheet['C28'].number_format = currency_format
+    sheet['C29'].number_format = currency_format
+    sheet['C30'].number_format = currency_format
+    sheet['C31'].number_format = currency_format
+    sheet['C32'].number_format = currency_format
+    sheet['C33'].number_format = currency_format
+    sheet['D20'].number_format = currency_format
+    sheet['D21'].number_format = currency_format
+    sheet['D22'].number_format = currency_format
+    sheet['D23'].number_format = currency_format
+    sheet['D24'].number_format = currency_format
+    sheet['D25'].number_format = currency_format
+    sheet['D28'].number_format = currency_format
+    sheet['D29'].number_format = currency_format
+    sheet['D30'].number_format = currency_format
+    sheet['D31'].number_format = currency_format
+    sheet['D32'].number_format = currency_format
+    sheet['D33'].number_format = currency_format
+    sheet['E12'].number_format = currency_format
+    sheet['E16'].number_format = currency_format
+    sheet['E28'].number_format = currency_format
+    sheet['E29'].number_format = currency_format
+    sheet['E30'].number_format = currency_format
+    sheet['E31'].number_format = currency_format
+    sheet['E32'].number_format = currency_format
+    sheet['E33'].number_format = currency_format
+    sheet['F28'].number_format = currency_format
+    sheet['F29'].number_format = currency_format
+    sheet['F30'].number_format = currency_format
+    sheet['F31'].number_format = currency_format
+    sheet['F32'].number_format = currency_format
+    sheet['F33'].number_format = currency_format
+    sheet['G28'].number_format = currency_format
+    sheet['G29'].number_format = currency_format
+    sheet['G30'].number_format = currency_format
+    sheet['G31'].number_format = currency_format
+    sheet['G32'].number_format = currency_format
+    sheet['G33'].number_format = currency_format
+    sheet['H28'].number_format = currency_format
+    sheet['H29'].number_format = currency_format
+    sheet['H30'].number_format = currency_format
+    sheet['H31'].number_format = currency_format
+    sheet['H32'].number_format = currency_format
+    sheet['H33'].number_format = currency_format
+    sheet['I28'].number_format = currency_format
+    sheet['I29'].number_format = currency_format
+    sheet['I30'].number_format = currency_format
+    sheet['I31'].number_format = currency_format
+    sheet['I32'].number_format = currency_format
+    sheet['I33'].number_format = currency_format
+    
+    return sheet
+
+# Load the configuration file
+def load_config(config_path='config.json'):
+    """Load configuration file with all the """
+    with open(config_path, 'r') as config_file:
+        config = json.load(config_file)
+    return config
 
 # Get all of the house data from homedata.json
 with open('homedata.json') as file:
@@ -232,6 +516,8 @@ if not data:
     print("No houses found")
     
 else:
+    # Create an excel book containing all of the houses that were scraped for analysis
+    create_house_analysis_excel_book(data)
     # TODO: Create a function for the emails to be sent
     # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
     email_content_plain = ""
