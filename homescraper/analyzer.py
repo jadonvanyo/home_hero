@@ -152,5 +152,4 @@ else:
         print(f'Yearly Cash Flow: {cash_flow_yearly}')
         print(f'Annualized Return:{annualized_return_percent}')
         
-        # TODO: Create a list of dictionaries, each dictionary will have all the required information on a given house
         

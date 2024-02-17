@@ -221,7 +221,6 @@ class House:
         
         return house_email_plain
     # TODO: Create a method to determine if a home should be a feature home
-    # TODO: Create a method to create pandas data frames for the data
         
 
 # Get all of the house data from homedata.json

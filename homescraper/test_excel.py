@@ -1,8 +1,6 @@
 from datetime import date
 import json
-import pandas as pd
 from openpyxl import Workbook
-import smtplib, ssl
 from tabulate import tabulate
 
 class House:
@@ -288,7 +286,7 @@ class House:
         sheet['B30'] = '=B3-B10'
         sheet['B31'] = '=(B17*(1+B6)^B27)'
         sheet['B32'] = '=(B31-B31*B22-B31*B23-B31*B24-B31*B25-B21*(1+B6)^B27-B20*(1+B6)^B27-B14)*12'
-        sheet['B33'] = f'=B28*(1-{self.closing_cost_seller_decimal})-E6-B30' # This is the one that was changed
+        sheet['B33'] = f'=B28*(1-{self.closing_cost_seller_decimal})-E6-B30'
         sheet['B34'] = '=((B33+E6)/E6)^(1/(B27+1))-1'
         sheet['C1'] = 'Beds'
         sheet['C19'] = 'Monthly'
@@ -387,16 +385,9 @@ class House:
 
         return sheet
 
-# Get all of the house data from homedata.json
-with open('homedata.json') as file:
-    data = json.load(file)
-
-# Check if there are any houses in the list pulled
-if not data:
-    print("No houses found")
+def create_house_analysis_excel_book(data):
+    """Create an excel book given JSON data containing houses from search"""
     
-else:
-    # TODO: Create a function for the excel file to be generated
     # Create a name for the excel file
     excel_file_name = str(date.today()) + "-house-analysis.xlsx"
     
@@ -409,5 +400,20 @@ else:
     for house_data in data:
         house = House(house_data)
         house.house_excel_sheet_creator(wb)
-        
+    
+    # Save the excel file that was created
     wb.save(filename=excel_file_name)
+
+    return
+
+# Get all of the house data from homedata.json
+with open('homedata.json') as file:
+    data = json.load(file)
+
+# Check if there are any houses in the list pulled
+if not data:
+    print("No houses found")
+    
+else:
+    # Create an excel book containing all of the houses that were scraped for analysis
+    create_house_analysis_excel_book(data)
