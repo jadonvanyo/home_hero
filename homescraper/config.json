@@ -1,0 +1,13 @@
+{
+    "down_payment_decimal": 0.12, 
+    "closing_cost_buyer_decimal": 0.03,
+    "closing_cost_seller_decimal": 0.08,
+    "expected_annual_growth": 0.02,
+    "interest_rate": 0.06,
+    "loan_term_yrs": 30,
+    "expected_repairs_monthly": 0.05,
+    "expected_vacancy_monthly": 0.09,
+    "expected_capx_monthly": 0.1,
+    "expected_management_monthly": 0.1,
+    "insurance_rate_yearly": 0.006
+}

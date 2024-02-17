@@ -4,21 +4,25 @@ from openpyxl import Workbook
 from tabulate import tabulate
 
 class House:
+    # TODO: Move the hard coded values into a separate config document
     def __init__(
             self, 
             data, 
-            down_payment_decimal=0.12, 
-            closing_cost_buyer_decimal=0.03, # Usually between 0.02 and 0.05
-            closing_cost_seller_decimal=0.08, # Usually between 0.06 and 0.10
-            expected_annual_growth=0.02,
-            interest_rate=0.06,
-            loan_term_yrs=30,
-            expected_repairs_monthly=0.05, # Usually between 0.04 and 0.08
-            expected_vacancy_monthly=0.09, # Usually between 0.06 and 0.12 (3-6 weeks per year)
-            expected_capx_monthly=0.1, # Usually between 0.08 and 0.12
-            expected_management_monthly=0.1, # Usually between 0.9 and 0.12
-            insurance_rate_yearly=0.006, # Usually between 0.005 and 0.01
+            # down_payment_decimal=0.12, 
+            # closing_cost_buyer_decimal=0.03, # Usually between 0.02 and 0.05
+            # closing_cost_seller_decimal=0.08, # Usually between 0.06 and 0.10
+            # expected_annual_growth=0.02,
+            # interest_rate=0.06,
+            # loan_term_yrs=30,
+            # expected_repairs_monthly=0.05, # Usually between 0.04 and 0.08
+            # expected_vacancy_monthly=0.09, # Usually between 0.06 and 0.12 (3-6 weeks per year)
+            # expected_capx_monthly=0.1, # Usually between 0.08 and 0.12
+            # expected_management_monthly=0.1, # Usually between 0.9 and 0.12
+            # insurance_rate_yearly=0.006, # Usually between 0.005 and 0.01
         ):
+        # Load config to pull important information for house calculations
+        config = load_config()
+        
         self.price = float(data.get('price'))
         self.sqft = float(data.get('sqft'))
         self.tax = float(data.get('tax'))
@@ -36,17 +40,17 @@ class House:
         self.url = data.get('url')
         self.min_rent = data.get('min_rent')
         self.max_rent = data.get('max_rent')
-        self.down_payment_decimal = down_payment_decimal
-        self.closing_cost_buyer_decimal = closing_cost_buyer_decimal
-        self.closing_cost_seller_decimal = closing_cost_seller_decimal
-        self.expected_annual_growth = expected_annual_growth
-        self.interest_rate = interest_rate
-        self.loan_term_yrs = loan_term_yrs
-        self.expected_repairs_monthly = expected_repairs_monthly
-        self.expected_vacancy_monthly = expected_vacancy_monthly
-        self.expected_capx_monthly = expected_capx_monthly
-        self.expected_management_monthly = expected_management_monthly
-        self.insurance_rate_yearly = insurance_rate_yearly
+        self.down_payment_decimal = config['down_payment_decimal']
+        self.closing_cost_buyer_decimal = config['closing_cost_buyer_decimal']
+        self.closing_cost_seller_decimal = config['closing_cost_seller_decimal']
+        self.expected_annual_growth = config['expected_annual_growth']
+        self.interest_rate = config['interest_rate']
+        self.loan_term_yrs = config['loan_term_yrs']
+        self.expected_repairs_monthly = config['expected_repairs_monthly']
+        self.expected_vacancy_monthly = config['expected_vacancy_monthly']
+        self.expected_capx_monthly = config['expected_capx_monthly']
+        self.expected_management_monthly = config['expected_management_monthly']
+        self.insurance_rate_yearly = config['insurance_rate_yearly']
         self.calculate_metrics()
 
     def calculate_metrics(self):
@@ -231,7 +235,7 @@ class House:
         # Create a new sheet with the specified name
         sheet = wb.create_sheet(title=sheet_name)
         
-        # TODO: Format the cells for percentages, currencies, ect.
+        # Format the cells for percentages and currencies
         sheet = format_excel_sheet(sheet)
         
         # Populate the sheet with the required values and formulas
@@ -503,6 +507,13 @@ def format_excel_sheet(sheet):
     sheet['I33'].number_format = currency_format
     
     return sheet
+
+# Load the configuration file
+def load_config(config_path='config.json'):
+    """Load configuration file with all the """
+    with open(config_path, 'r') as config_file:
+        config = json.load(config_file)
+    return config
 
 # Get all of the house data from homedata.json
 with open('homedata.json') as file:
