@@ -225,12 +225,14 @@ class House:
     
     def house_excel_sheet_creator(self, wb):
         """Create a new sheet populated with all the required data from a house"""
-        # TODO: Format the cells for percentages, currencies, ect.
         # Create a new name for each sheet
         sheet_name = self.address.replace(',', '').replace(' ', '-')
         
         # Create a new sheet with the specified name
         sheet = wb.create_sheet(title=sheet_name)
+        
+        # TODO: Format the cells for percentages, currencies, ect.
+        sheet = format_excel_sheet(sheet)
         
         # Populate the sheet with the required values and formulas
         sheet['A1'] = 'Address'
@@ -405,6 +407,102 @@ def create_house_analysis_excel_book(data):
     wb.save(filename=excel_file_name)
 
     return
+
+def format_excel_sheet(sheet):
+    """Format an excel sheet for the house data"""
+    
+    # Apply the percentage format to all percentage cells
+    percentage_format = "#0.00%"
+    sheet['B5'].number_format = percentage_format
+    sheet['B6'].number_format = percentage_format
+    sheet['B9'].number_format = percentage_format
+    sheet['B12'].number_format = percentage_format
+    sheet['B22'].number_format = percentage_format
+    sheet['B23'].number_format = percentage_format
+    sheet['B24'].number_format = percentage_format
+    sheet['B25'].number_format = percentage_format
+    sheet['B34'].number_format = percentage_format
+    sheet['C34'].number_format = percentage_format
+    sheet['D34'].number_format = percentage_format
+    sheet['E9'].number_format = percentage_format
+    sheet['E11'].number_format = percentage_format
+    sheet['E17'].number_format = percentage_format
+    sheet['E34'].number_format = percentage_format
+    sheet['F34'].number_format = percentage_format
+    sheet['G34'].number_format = percentage_format
+    
+    # Apply currency format to all currency cells
+    currency_format = '"$"#,###,##0.00'
+    sheet['B3'].number_format = currency_format
+    sheet['B4'].number_format = currency_format
+    sheet['B10'].number_format = currency_format
+    sheet['B11'].number_format = currency_format
+    sheet['B14'].number_format = currency_format
+    sheet['B17'].number_format = currency_format
+    sheet['B20'].number_format = currency_format
+    sheet['B21'].number_format = currency_format
+    sheet['B28'].number_format = currency_format
+    sheet['B29'].number_format = currency_format
+    sheet['B30'].number_format = currency_format
+    sheet['B31'].number_format = currency_format
+    sheet['B32'].number_format = currency_format
+    sheet['B33'].number_format = currency_format
+    sheet['C22'].number_format = currency_format
+    sheet['C23'].number_format = currency_format
+    sheet['C24'].number_format = currency_format
+    sheet['C25'].number_format = currency_format
+    sheet['C28'].number_format = currency_format
+    sheet['C29'].number_format = currency_format
+    sheet['C30'].number_format = currency_format
+    sheet['C31'].number_format = currency_format
+    sheet['C32'].number_format = currency_format
+    sheet['C33'].number_format = currency_format
+    sheet['D20'].number_format = currency_format
+    sheet['D21'].number_format = currency_format
+    sheet['D22'].number_format = currency_format
+    sheet['D23'].number_format = currency_format
+    sheet['D24'].number_format = currency_format
+    sheet['D25'].number_format = currency_format
+    sheet['D28'].number_format = currency_format
+    sheet['D29'].number_format = currency_format
+    sheet['D30'].number_format = currency_format
+    sheet['D31'].number_format = currency_format
+    sheet['D32'].number_format = currency_format
+    sheet['D33'].number_format = currency_format
+    sheet['E12'].number_format = currency_format
+    sheet['E16'].number_format = currency_format
+    sheet['E28'].number_format = currency_format
+    sheet['E29'].number_format = currency_format
+    sheet['E30'].number_format = currency_format
+    sheet['E31'].number_format = currency_format
+    sheet['E32'].number_format = currency_format
+    sheet['E33'].number_format = currency_format
+    sheet['F28'].number_format = currency_format
+    sheet['F29'].number_format = currency_format
+    sheet['F30'].number_format = currency_format
+    sheet['F31'].number_format = currency_format
+    sheet['F32'].number_format = currency_format
+    sheet['F33'].number_format = currency_format
+    sheet['G28'].number_format = currency_format
+    sheet['G29'].number_format = currency_format
+    sheet['G30'].number_format = currency_format
+    sheet['G31'].number_format = currency_format
+    sheet['G32'].number_format = currency_format
+    sheet['G33'].number_format = currency_format
+    sheet['H28'].number_format = currency_format
+    sheet['H29'].number_format = currency_format
+    sheet['H30'].number_format = currency_format
+    sheet['H31'].number_format = currency_format
+    sheet['H32'].number_format = currency_format
+    sheet['H33'].number_format = currency_format
+    sheet['I28'].number_format = currency_format
+    sheet['I29'].number_format = currency_format
+    sheet['I30'].number_format = currency_format
+    sheet['I31'].number_format = currency_format
+    sheet['I32'].number_format = currency_format
+    sheet['I33'].number_format = currency_format
+    
+    return sheet
 
 # Get all of the house data from homedata.json
 with open('homedata.json') as file:
