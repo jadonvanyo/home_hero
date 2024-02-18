@@ -47,6 +47,7 @@ class House:
         self.insurance_rate_yearly = config['insurance_rate_yearly']
         self.calculate_metrics()
 
+
     def calculate_metrics(self):
         """Calculate all the necessary information to analyze a house"""
         # Calculate the price per sqft
@@ -219,7 +220,28 @@ class House:
         """
         
         return house_email_plain
+    
     # TODO: Create a method to determine if a home should be a feature home
+    def featured_home_determiner(self):
+        """Method to determine if a home has hit an investors given requirements"""
+        # Load config to pull target information for featured houses
+        config = load_config()
+        
+        # Use try to test for errors from the config.json file
+        try:
+            # Set the user's preferred target condition(s) for investment properties
+            if self.cash_flow_monthly >= int(config['target_cash_flow_monthly']):
+                # Return true if the condition(s) is(are) met
+                return True
+            
+            # If the condition(s) is(are) not met, return false
+            else:
+                return False
+        
+        # Error message for if there are errors reading from the config file
+        except:
+            print('Error occurred while trying to determine if house should be featured.')
+            return False
     
     def house_excel_sheet_creator(self, wb):
         """Create a new sheet populated with all the required data from a house"""
@@ -385,6 +407,7 @@ class House:
 
         return sheet
 
+
 def create_house_analysis_excel_book(data):
     """Create an excel book given JSON data containing houses from search"""
     
@@ -405,6 +428,7 @@ def create_house_analysis_excel_book(data):
     wb.save(filename=excel_file_name)
 
     return
+
 
 def format_excel_sheet(sheet):
     """Format an excel sheet for the house data"""
@@ -502,6 +526,7 @@ def format_excel_sheet(sheet):
     
     return sheet
 
+
 # Load the configuration file
 def load_config(config_path='config.json'):
     """Load a configuration file with sensitive or variable information"""
@@ -518,9 +543,10 @@ if not data:
     print("No houses found")
     
 else:
+    # TODO: Create a function for the emails to be sent
     # Create an excel book containing all of the houses that were scraped for analysis
     create_house_analysis_excel_book(data)
-    # TODO: Create a function for the emails to be sent
+    
     # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
     email_content_plain = ""
     email_content_html = "<html>\n\t<body>"
@@ -529,11 +555,13 @@ else:
     for house_data in data:
         house = House(house_data)
         
-        # Add the individual house HTMl content to the total HTML content
-        email_content_html += house.email_format_html()
-        
-        # Add the individual house plain text content to the total plain text content
-        email_content_plain += house.email_format_plain()
+        # Check to see if the analyzed house meets the investor's criteria
+        if house.featured_home_determiner():
+            # Add the individual house HTMl content to the total HTML content
+            email_content_html += house.email_format_html()
+            
+            # Add the individual house plain text content to the total plain text content
+            email_content_plain += house.email_format_plain()
         
     email_content_html += "\t</body>\n</html>"
     
@@ -552,14 +580,8 @@ message['From'] = sender_address
 message['To'] = receiver_address
 message['Subject'] = f'Houses analyzed - {str(date.today())}'   # The subject line
 
-# The body and the attachments for the mail
-mail_content = '''Hello,
-This is a test mail.
-In this mail we are sending some attachments.
-The mail is sent using Python SMTP library.
-Thank You
-'''
-message.attach(MIMEText(mail_content, 'plain'))
+# TODO: Attach the HTML to also be sent with the email
+message.attach(MIMEText(email_content_plain, 'plain'))
 
 excel_filename = str(date.today()) + "-house-analysis.xlsx"
 
