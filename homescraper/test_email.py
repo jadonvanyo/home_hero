@@ -1,8 +1,10 @@
 from datetime import date
+from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import json
 from openpyxl import Workbook
+from os.path import basename
 import smtplib
 from tabulate import tabulate
 
@@ -502,7 +504,7 @@ def format_excel_sheet(sheet):
 
 # Load the configuration file
 def load_config(config_path='config.json'):
-    """Load configuration file with all the """
+    """Load a configuration file with sensitive or variable information"""
     with open(config_path, 'r') as config_file:
         config = json.load(config_file)
     return config
@@ -536,15 +538,42 @@ else:
     email_content_html += "\t</body>\n</html>"
     
 
-# TODO: Send a plain text email
-port = 465  # For SSL
-smtp_server = "smtp.gmail.com"
-sender_email = "jv.developer72@gmail.com"  # Enter your address
-receiver_email = "jv.developer72@gmail.com"  # Enter receiver address
-password = input("Type your password and press enter: ")
-message = email_content_plain
+# TODO: Send an email with the excel file attached
+email_config = load_config(config_path='/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
+# Sender and recipient email addresses
+sender_address = email_config['sender_address']
+receiver_address = email_config['receiver_address']
+# Google App Password for 2FA
+password = email_config['password']
 
-context = ssl.create_default_context()
-with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-    server.login(sender_email, password)
-    server.sendmail(sender_email, receiver_email, message)
+# Setup the MIME
+message = MIMEMultipart()
+message['From'] = sender_address
+message['To'] = receiver_address
+message['Subject'] = f'Houses analyzed - {str(date.today())}'   # The subject line
+
+# The body and the attachments for the mail
+mail_content = '''Hello,
+This is a test mail.
+In this mail we are sending some attachments.
+The mail is sent using Python SMTP library.
+Thank You
+'''
+message.attach(MIMEText(mail_content, 'plain'))
+
+excel_filename = str(date.today()) + "-house-analysis.xlsx"
+
+# Open the excel file and include it as an attachment for the email
+with open(excel_filename, 'rb') as file:
+     part = MIMEApplication(file.read(), Name=basename(excel_filename))
+     part["Content-Disposition"] = f'attachment; filename="{basename(excel_filename)}"'
+     message.attach(part)
+    
+
+# Create SMTP session for sending the mail
+session = smtplib.SMTP('smtp.gmail.com', 587) 
+session.starttls() # enable security
+session.login(sender_address, password) # login with mail_id and password
+session.sendmail(sender_address, receiver_address, message.as_string())
+session.quit()
+print('Mail Sent')
