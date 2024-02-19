@@ -222,7 +222,7 @@ class House:
         
         return house_email_plain
     
-    # TODO: Create a method to determine if a home should be a feature home
+
     def featured_home_determiner(self):
         """Method to determine if a home has hit an investors given requirements"""
         # Load config to pull target information for featured houses
@@ -243,6 +243,7 @@ class House:
         except:
             print('Error occurred while trying to determine if house should be featured.')
             return False
+    
     
     def house_excel_sheet_creator(self, wb):
         """Create a new sheet populated with all the required data from a house"""
@@ -431,6 +432,31 @@ def create_house_analysis_excel_book(data):
     return
 
 
+def create_featured_house_email(data):
+    """Function to create an email containing all of the scraped houses and some featured houses based on user request"""
+    
+    # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
+    email_content_plain = ""
+    email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
+    
+    # Loop through each of the houses in the dataset and add them to a list of analyzed houses
+    for house_data in data:
+        house = House(house_data)
+        
+        # Check to see if the analyzed house meets the investor's criteria
+        if house.featured_home_determiner():
+            # Add the individual house HTMl content to the total HTML content
+            email_content_html += house.email_format_html()
+            
+            # Add the individual house plain text content to the total plain text content
+            email_content_plain += house.email_format_plain()
+    
+    # Close the html for the email content
+    email_content_html += "\t</body>\n</html>"
+    
+    return email_content_html
+
+
 def format_excel_sheet(sheet):
     """Format an excel sheet for the house data"""
     
@@ -528,12 +554,48 @@ def format_excel_sheet(sheet):
     return sheet
 
 
-# Load the configuration file
 def load_config(config_path='config.json'):
     """Load a configuration file with sensitive or variable information"""
     with open(config_path, 'r') as config_file:
         config = json.load(config_file)
     return config
+
+
+def send_featured_house_email(email_content_html):
+    # Pull all the email data from a separate config file
+    email_config = load_config(config_path='/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
+    # Sender and recipient email addresses
+    sender_address = email_config['sender_address']
+    receiver_address = email_config['receiver_address']
+    # Google App Password for 2FA
+    password = email_config['password']
+
+    # Setup the MIME
+    message = MIMEMultipart()
+    message['From'] = sender_address
+    message['To'] = receiver_address
+    message['Subject'] = f'Houses analyzed - {str(date.today())}'   # The subject line
+
+    # Attach the HTML to also be sent with the email
+    message.attach(MIMEText(email_content_html, 'html'))
+
+    excel_filename = str(date.today()) + "-house-analysis.xlsx"
+
+    # Open the excel file and include it as an attachment for the email
+    with open(excel_filename, 'rb') as file:
+        part = MIMEApplication(file.read(), Name=basename(excel_filename))
+        part["Content-Disposition"] = f'attachment; filename="{basename(excel_filename)}"'
+        message.attach(part)
+        
+
+    # Create SMTP session for sending the mail
+    session = smtplib.SMTP('smtp.gmail.com', 587) 
+    session.starttls() # enable security
+    session.login(sender_address, password) # login with mail_id and password
+    session.sendmail(sender_address, receiver_address, message.as_string()) # Send an email with the excel file attached
+    session.quit()
+    print('Mail Sent')
+
 
 # Get all of the house data from homedata.json
 with open('homedata.json') as file:
@@ -545,59 +607,11 @@ if not data:
     
 else:
     # TODO: Pull the excel filename out of all of the functions and make it a variable
-    # TODO: Create a function for the emails to be sent
     # Create an excel book containing all of the houses that were scraped for analysis
     create_house_analysis_excel_book(data)
     
-    # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
-    email_content_plain = ""
-    email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
+    email_content_html = create_featured_house_email(data)
     
-    # Loop through each of the houses in the dataset and add them to a list of analyzed houses
-    for house_data in data:
-        house = House(house_data)
-        
-        # Check to see if the analyzed house meets the investor's criteria
-        if house.featured_home_determiner():
-            # Add the individual house HTMl content to the total HTML content
-            email_content_html += house.email_format_html()
-            
-            # Add the individual house plain text content to the total plain text content
-            email_content_plain += house.email_format_plain()
-        
-    email_content_html += "\t</body>\n</html>"
+    send_featured_house_email(email_content_html)
     
-
-# Pull all the email data from a separate config file
-email_config = load_config(config_path='/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
-# Sender and recipient email addresses
-sender_address = email_config['sender_address']
-receiver_address = email_config['receiver_address']
-# Google App Password for 2FA
-password = email_config['password']
-
-# Setup the MIME
-message = MIMEMultipart()
-message['From'] = sender_address
-message['To'] = receiver_address
-message['Subject'] = f'Houses analyzed - {str(date.today())}'   # The subject line
-
-# TODO: Attach the HTML to also be sent with the email
-message.attach(MIMEText(email_content_html, 'html'))
-
-excel_filename = str(date.today()) + "-house-analysis.xlsx"
-
-# Open the excel file and include it as an attachment for the email
-with open(excel_filename, 'rb') as file:
-     part = MIMEApplication(file.read(), Name=basename(excel_filename))
-     part["Content-Disposition"] = f'attachment; filename="{basename(excel_filename)}"'
-     message.attach(part)
-    
-
-# Create SMTP session for sending the mail
-session = smtplib.SMTP('smtp.gmail.com', 587) 
-session.starttls() # enable security
-session.login(sender_address, password) # login with mail_id and password
-session.sendmail(sender_address, receiver_address, message.as_string()) # Send an email with the excel file attached
-session.quit()
-print('Mail Sent')
+    # TODO: Create a function for the emails to be sent
