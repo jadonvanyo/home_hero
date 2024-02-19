@@ -14,17 +14,17 @@ class House:
             self, 
             data
         ):
-        # TODO: Verify data being entered into the House class is valid, return null if not
         # Load config to pull important information for house calculations
         config = load_config()
         
         # The House class will return empty if one of the required values are not present
         if not self.all_required_values_present(data):
             print(f"Key values missing in the JSON file for {data.get('address')}")
-            self = None
+            self.valid = False
         
         # If all the required values are present, populate the class wil all the required information
         else:
+            self.valid = True
             self.price = float(data.get('price'))
             self.sqft = float(data.get('sqft'))
             self.tax = float(data.get('tax'))
@@ -57,6 +57,7 @@ class House:
 
 
     def all_required_values_present(self, data):
+        """Method to determine if there is any information missing in the JSON file"""
         # Establish the variables required for all the calculations
         required_values = [
             'price',
@@ -447,7 +448,14 @@ def create_house_analysis_excel_book(data, excel_filename):
     # Loop through each of the houses in the dataset and create an excel sheet for that house
     for house_data in data:
         house = House(house_data)
-        house.house_excel_sheet_creator(wb)
+        
+        # Verify that there is hose data to be processed
+        if not house.valid:
+            print('House data incomplete for spreadsheet creation.')
+        
+        else:
+            # Create the house excel sheet for the house being analyzed
+            house.house_excel_sheet_creator(wb)
     
     # Save the excel file that was created
     wb.save(filename=excel_filename)
@@ -466,13 +474,18 @@ def create_featured_house_email(data):
     for house_data in data:
         house = House(house_data)
         
-        # Check to see if the analyzed house meets the investor's criteria
-        if house.featured_home_determiner():
-            # Add the individual house HTMl content to the total HTML content
-            email_content_html += house.email_format_html()
-            
-            # Add the individual house plain text content to the total plain text content
-            email_content_plain += house.email_format_plain()
+        # Verify that there is hose data to be processed
+        if not house.valid:
+            print('House data incomplete for email creation.')
+        
+        else:
+            # Check to see if the analyzed house meets the investor's criteria
+            if house.featured_home_determiner():
+                # Add the individual house HTMl content to the total HTML content
+                email_content_html += house.email_format_html()
+                
+                # Add the individual house plain text content to the total plain text content
+                email_content_plain += house.email_format_plain()
     
     # Close the html for the email content
     email_content_html += "\t</body>\n</html>"
@@ -617,27 +630,6 @@ def send_featured_house_email(email_content_html, excel_filename):
     session.quit()
     print('Mail Sent')
 
-
-# # Get all of the house data from homedata.json
-# with open('homedata.json') as file:
-#     data = json.load(file)
-
-# # Check if there are any houses in the list pulled
-# if not data:
-#     print("No houses found")
     
-# else:
-#     # Create a name for the excel file
-#     excel_filename = str(date.today()) + "-house-analysis.xlsx"
-    
-#     # Create an excel book containing all of the houses that were scraped for analysis
-#     create_house_analysis_excel_book(data, excel_filename)
-    
-#     # Create the email html content for the analyzed houses
-#     email_content_html = create_featured_house_email(data)
-    
-#     # Send the html email content and excel file to the target user
-#     send_featured_house_email(email_content_html, excel_filename)
-    
-#     # TODO: Create a function to delete the excel file after it has been sent
+# TODO: Create a function to delete the excel file after it has been sent
     
