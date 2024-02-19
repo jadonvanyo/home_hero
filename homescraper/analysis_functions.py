@@ -20,7 +20,7 @@ class House:
         
         # The House class will return empty if one of the required values are not present
         if not self.all_required_values_present(data):
-            print("Key values missing in the JSON file")
+            print(f"Key values missing in the JSON file for {data.get('address')}")
             self = None
         
         # If all the required values are present, populate the class wil all the required information
@@ -56,7 +56,7 @@ class House:
             self.calculate_metrics()
 
 
-    def all_required_values_present(data):
+    def all_required_values_present(self, data):
         # Establish the variables required for all the calculations
         required_values = [
             'price',
@@ -618,26 +618,26 @@ def send_featured_house_email(email_content_html, excel_filename):
     print('Mail Sent')
 
 
-# Get all of the house data from homedata.json
-with open('homedata.json') as file:
-    data = json.load(file)
+# # Get all of the house data from homedata.json
+# with open('homedata.json') as file:
+#     data = json.load(file)
 
-# Check if there are any houses in the list pulled
-if not data:
-    print("No houses found")
+# # Check if there are any houses in the list pulled
+# if not data:
+#     print("No houses found")
     
-else:
-    # Create a name for the excel file
-    excel_filename = str(date.today()) + "-house-analysis.xlsx"
+# else:
+#     # Create a name for the excel file
+#     excel_filename = str(date.today()) + "-house-analysis.xlsx"
     
-    # Create an excel book containing all of the houses that were scraped for analysis
-    create_house_analysis_excel_book(data, excel_filename)
+#     # Create an excel book containing all of the houses that were scraped for analysis
+#     create_house_analysis_excel_book(data, excel_filename)
     
-    # Create the email html content for the analyzed houses
-    email_content_html = create_featured_house_email(data)
+#     # Create the email html content for the analyzed houses
+#     email_content_html = create_featured_house_email(data)
     
-    # Send the html email content and excel file to the target user
-    send_featured_house_email(email_content_html, excel_filename)
+#     # Send the html email content and excel file to the target user
+#     send_featured_house_email(email_content_html, excel_filename)
     
-    # TODO: Create a function to delete the excel file after it has been sent
+#     # TODO: Create a function to delete the excel file after it has been sent
     
