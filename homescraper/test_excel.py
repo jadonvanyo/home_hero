@@ -213,7 +213,7 @@ class House:
         """
         
         return house_email_plain
-    # TODO: Create a method to determine if a home should be a feature home
+
     
     def house_excel_sheet_creator(self, wb):
         """Create a new sheet populated with all the required data from a house"""

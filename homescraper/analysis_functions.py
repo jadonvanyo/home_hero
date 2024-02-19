@@ -18,35 +18,60 @@ class House:
         # Load config to pull important information for house calculations
         config = load_config()
         
-        self.price = float(data.get('price'))
-        self.sqft = float(data.get('sqft'))
-        self.tax = float(data.get('tax'))
-        self.rent = float(data.get('rent'))
-        self.property_subtype = data.get('property_subtype')
-        self.address = data.get('address')
-        self.beds = data.get('beds')
-        self.baths = data.get('baths')
-        self.description = data.get('description')
-        self.year_built = data.get('year_built')
-        self.region = data.get('region')
-        self.subdivision = data.get('subdivision')
-        self.tax_url = data.get('tax_url')
-        self.rent_url = data.get('rent_url')
-        self.url = data.get('url')
-        self.min_rent = data.get('min_rent')
-        self.max_rent = data.get('max_rent')
-        self.down_payment_decimal = config['down_payment_decimal']
-        self.closing_cost_buyer_decimal = config['closing_cost_buyer_decimal']
-        self.closing_cost_seller_decimal = config['closing_cost_seller_decimal']
-        self.expected_annual_growth = config['expected_annual_growth']
-        self.interest_rate = config['interest_rate']
-        self.loan_term_yrs = config['loan_term_yrs']
-        self.expected_repairs_monthly = config['expected_repairs_monthly']
-        self.expected_vacancy_monthly = config['expected_vacancy_monthly']
-        self.expected_capx_monthly = config['expected_capx_monthly']
-        self.expected_management_monthly = config['expected_management_monthly']
-        self.insurance_rate_yearly = config['insurance_rate_yearly']
-        self.calculate_metrics()
+        # The House class will return empty if one of the required values are not present
+        if not self.all_required_values_present(data):
+            print("Key values missing in the JSON file")
+            self = None
+        
+        # If all the required values are present, populate the class wil all the required information
+        else:
+            self.price = float(data.get('price'))
+            self.sqft = float(data.get('sqft'))
+            self.tax = float(data.get('tax'))
+            self.rent = float(data.get('rent'))
+            self.property_subtype = data.get('property_subtype')
+            self.address = data.get('address')
+            self.beds = data.get('beds')
+            self.baths = data.get('baths')
+            self.description = data.get('description')
+            self.year_built = data.get('year_built')
+            self.region = data.get('region')
+            self.subdivision = data.get('subdivision')
+            self.tax_url = data.get('tax_url')
+            self.rent_url = data.get('rent_url')
+            self.url = data.get('url')
+            self.min_rent = data.get('min_rent')
+            self.max_rent = data.get('max_rent')
+            self.down_payment_decimal = config['down_payment_decimal']
+            self.closing_cost_buyer_decimal = config['closing_cost_buyer_decimal']
+            self.closing_cost_seller_decimal = config['closing_cost_seller_decimal']
+            self.expected_annual_growth = config['expected_annual_growth']
+            self.interest_rate = config['interest_rate']
+            self.loan_term_yrs = config['loan_term_yrs']
+            self.expected_repairs_monthly = config['expected_repairs_monthly']
+            self.expected_vacancy_monthly = config['expected_vacancy_monthly']
+            self.expected_capx_monthly = config['expected_capx_monthly']
+            self.expected_management_monthly = config['expected_management_monthly']
+            self.insurance_rate_yearly = config['insurance_rate_yearly']
+            self.calculate_metrics()
+
+
+    def all_required_values_present(data):
+        # Establish the variables required for all the calculations
+        required_values = [
+            'price',
+            'rent',
+            'sqft',
+            'tax'
+        ]
+        
+        # Return false if any of the required values are not present in the JSON file
+        for value in required_values:
+            if not data.get(value):
+                return False
+        
+        # Return true if none of the values are null in the JSON file
+        return True
 
 
     def calculate_metrics(self):
