@@ -14,6 +14,7 @@ class House:
             self, 
             data
         ):
+        # TODO: Verify data being entered into the House class is valid, return null if not
         # Load config to pull important information for house calculations
         config = load_config()
         
@@ -150,13 +151,13 @@ class House:
         # Add all the appropriate labels and rows for the table
         formatted_table_data = [
             ['Year'] + self.year[:6],
-            ['Property Value'] + self.property_value[:6],
-            ['Loan Balance'] + self.loan_balance[:6],
-            ['Equity'] + self.equity[:6],
-            ['Expected Rents'] + self.rent_growth[:6],
-            ['Profit if Sold'] + self.profit_if_sold[:6],
-            ['Yearly Cash Flow'] + self.cash_flow_yearly[:6],
-            ['Annualized Return'] + self.annualized_return_percent[:6]
+            ['Property Value ($)'] + self.property_value[:6],
+            ['Loan Balance ($)'] + self.loan_balance[:6],
+            ['Equity ($)'] + self.equity[:6],
+            ['Expected Rents ($)'] + self.rent_growth[:6],
+            ['Profit if Sold ($)'] + self.profit_if_sold[:6],
+            ['Yearly Cash Flow ($)'] + self.cash_flow_yearly[:6],
+            ['Annualized Return (%)'] + self.annualized_return_percent[:6]
         ]
         
         # Turn all the table data into HTML format
@@ -171,7 +172,7 @@ class House:
                     <li>Price: ${self.price}</li>
                     <li>Type: {self.property_subtype}</li>
                     <li>Layout: Beds: {self.beds} Baths: {self.baths} SQFT: {self.sqft} sqft</li>
-                    <li>Price per SQFT: {self.price_per_sqft}</li>
+                    <li>Price per SQFT: ${self.price_per_sqft}</li>
                     <li>Estimated Monthly Rent: <a href="{self.rent_url}">${self.suggested_total_rent_monthly}</a></li>
                     <li>Monthly Operating Expenses: ${self.total_operating_costs_monthly}</li>
                     <li>Total Monthly Expenses: ${self.total_expenses_monthly}</li>
@@ -180,7 +181,7 @@ class House:
                     <li>50% Rule Cash Flow: ${self.cash_flow_50}</li>
                     <li>Estimated Total Cash Needed: ${self.cash_needed_total}</li>
                 </ul>
-                <h6>First 5 years yearly breakdown</h6>
+                <h4>First 5 years yearly breakdown</h4>
                 {yearly_statistics_table_html}
                 <p>Description: {self.description}</p>
             </div>
@@ -543,13 +544,14 @@ if not data:
     print("No houses found")
     
 else:
+    # TODO: Pull the excel filename out of all of the functions and make it a variable
     # TODO: Create a function for the emails to be sent
     # Create an excel book containing all of the houses that were scraped for analysis
     create_house_analysis_excel_book(data)
     
     # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
     email_content_plain = ""
-    email_content_html = "<html>\n\t<body>"
+    email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
     
     # Loop through each of the houses in the dataset and add them to a list of analyzed houses
     for house_data in data:
@@ -566,7 +568,7 @@ else:
     email_content_html += "\t</body>\n</html>"
     
 
-# TODO: Send an email with the excel file attached
+# Pull all the email data from a separate config file
 email_config = load_config(config_path='/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
 # Sender and recipient email addresses
 sender_address = email_config['sender_address']
@@ -581,7 +583,7 @@ message['To'] = receiver_address
 message['Subject'] = f'Houses analyzed - {str(date.today())}'   # The subject line
 
 # TODO: Attach the HTML to also be sent with the email
-message.attach(MIMEText(email_content_plain, 'plain'))
+message.attach(MIMEText(email_content_html, 'html'))
 
 excel_filename = str(date.today()) + "-house-analysis.xlsx"
 
@@ -596,6 +598,6 @@ with open(excel_filename, 'rb') as file:
 session = smtplib.SMTP('smtp.gmail.com', 587) 
 session.starttls() # enable security
 session.login(sender_address, password) # login with mail_id and password
-session.sendmail(sender_address, receiver_address, message.as_string())
+session.sendmail(sender_address, receiver_address, message.as_string()) # Send an email with the excel file attached
 session.quit()
 print('Mail Sent')
