@@ -134,6 +134,7 @@ class House:
         self.cash_flow_yearly = []
         self.annualized_return_percent = []
         
+        # TODO: Move this to a function
         # Loop though all the years of the loan term to determine yearly statistics of the property
         for x in range(self.loan_term_yrs + 1):
             self.year.append(x)
