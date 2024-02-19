@@ -410,11 +410,8 @@ class House:
         return sheet
 
 
-def create_house_analysis_excel_book(data):
+def create_house_analysis_excel_book(data, excel_filename):
     """Create an excel book given JSON data containing houses from search"""
-    
-    # Create a name for the excel file
-    excel_file_name = str(date.today()) + "-house-analysis.xlsx"
     
     # Create a new workbook
     wb = Workbook()
@@ -427,13 +424,13 @@ def create_house_analysis_excel_book(data):
         house.house_excel_sheet_creator(wb)
     
     # Save the excel file that was created
-    wb.save(filename=excel_file_name)
+    wb.save(filename=excel_filename)
 
     return
 
 
 def create_featured_house_email(data):
-    """Function to create an email containing all of the scraped houses and some featured houses based on user request"""
+    """Function to create an email containing all of the scraped houses and some featured houses based on user request from JSON file"""
     
     # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
     email_content_plain = ""
@@ -561,7 +558,7 @@ def load_config(config_path='config.json'):
     return config
 
 
-def send_featured_house_email(email_content_html):
+def send_featured_house_email(email_content_html, excel_filename):
     # Pull all the email data from a separate config file
     email_config = load_config(config_path='/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
     # Sender and recipient email addresses
@@ -578,8 +575,6 @@ def send_featured_house_email(email_content_html):
 
     # Attach the HTML to also be sent with the email
     message.attach(MIMEText(email_content_html, 'html'))
-
-    excel_filename = str(date.today()) + "-house-analysis.xlsx"
 
     # Open the excel file and include it as an attachment for the email
     with open(excel_filename, 'rb') as file:
@@ -607,11 +602,15 @@ if not data:
     
 else:
     # TODO: Pull the excel filename out of all of the functions and make it a variable
+    # Create a name for the excel file
+    excel_filename = str(date.today()) + "-house-analysis.xlsx"
+    
     # Create an excel book containing all of the houses that were scraped for analysis
-    create_house_analysis_excel_book(data)
+    create_house_analysis_excel_book(data, excel_filename)
     
     email_content_html = create_featured_house_email(data)
     
-    send_featured_house_email(email_content_html)
+    send_featured_house_email(email_content_html, excel_filename)
     
-    # TODO: Create a function for the emails to be sent
+    # TODO: Create a function to delete the excel file after it has been sent
+    
