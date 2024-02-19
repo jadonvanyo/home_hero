@@ -353,7 +353,7 @@ class House:
         sheet['D30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-D27*12))))'
         sheet['D31'] = '=(B17*(1+B6)^D27)'
         sheet['D32'] = '=(D31-D31*B22-D31*B23-D31*B24-D31*B25-B21*(1+B6)^D27-B20*(1+B6)^D27-B14)*12'
-        sheet['D33'] = '=D28*(1-B5)+sum(B32:C32)-E6-D30'
+        sheet['D33'] = f'=D28*(1-{self.closing_cost_seller_decimal})+sum(B32:C32)-E6-D30'
         sheet['D34'] = '=((D33+E6)/E6)^(1/(D27+1))-1'
         sheet['E1'] = 'Baths'
         sheet['E3'] = '=B17'
@@ -373,7 +373,7 @@ class House:
         sheet['E30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-E27*12))))'
         sheet['E31'] = '=(B17*(1+B6)^E27)'
         sheet['E32'] = '=(E31-E31*B22-E31*B23-E31*B24-E31*B25-B21*(1+B6)^E27-B20*(1+B6)^E27-B14)*12'
-        sheet['E33'] = '=E28*(1-B5)+sum(B32:D32)-E6-E30'
+        sheet['E33'] = f'=E28*(1-{self.closing_cost_seller_decimal})+sum(B32:D32)-E6-E30'
         sheet['E34'] = '=((E33+E6)/E6)^(1/(E27+1))-1'
         sheet['F1'] = self.baths
         sheet['F27'] = 4
@@ -382,7 +382,7 @@ class House:
         sheet['F30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-F27*12))))'
         sheet['F31'] = '=(B17*(1+B6)^F27)'
         sheet['F32'] = '=(F31-F31*B22-F31*B23-F31*B24-F31*B25-B21*(1+B6)^F27-B20*(1+B6)^F27-B14)*12'
-        sheet['F33'] = '=F28*(1-B5)+sum(B32:E32)-E6-F30'
+        sheet['F33'] = f'=F28*(1-{self.closing_cost_seller_decimal})+sum(B32:E32)-E6-F30'
         sheet['F34'] = '=((F33+E6)/E6)^(1/(F27+1))-1'
         sheet['G1'] = 'SQFT'
         sheet['G27'] = 5
@@ -391,7 +391,7 @@ class House:
         sheet['G30'] = '=(B14/(B12/12))*(1-(1/((1+B12/12)^(B13*12-G27*12))))'
         sheet['G31'] = '=(B17*(1+B6)^G27)'
         sheet['G32'] = '=(G31-G31*B22-G31*B23-G31*B24-G31*B25-B21*(1+B6)^G27-B20*(1+B6)^G27-B14)*12'
-        sheet['G33'] = '=G28*(1-B5)+sum(B32:F32)-E6-G30'
+        sheet['G33'] = f'=G28*(1-{self.closing_cost_seller_decimal})+sum(B32:F32)-E6-G30'
         sheet['G34'] = '=((G33+E6)/E6)^(1/(G27+1))-1'
         sheet['H1'] = self.sqft
         sheet['H27'] = 10
@@ -601,15 +601,16 @@ if not data:
     print("No houses found")
     
 else:
-    # TODO: Pull the excel filename out of all of the functions and make it a variable
     # Create a name for the excel file
     excel_filename = str(date.today()) + "-house-analysis.xlsx"
     
     # Create an excel book containing all of the houses that were scraped for analysis
     create_house_analysis_excel_book(data, excel_filename)
     
+    # Create the email html content for the analyzed houses
     email_content_html = create_featured_house_email(data)
     
+    # Send the html email content and excel file to the target user
     send_featured_house_email(email_content_html, excel_filename)
     
     # TODO: Create a function to delete the excel file after it has been sent

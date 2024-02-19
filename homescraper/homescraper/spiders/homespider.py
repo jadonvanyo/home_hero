@@ -4,6 +4,7 @@ from homescraper.items import HomeItem
 class HomespiderSpider(scrapy.Spider):
     name = "homespider"
     allowed_domains = ["www.zillow.com"]
+    # TODO: Add starturls to config.json
     start_urls = ["https://www.zillow.com/detroit-shoreway-cleveland-oh/duplex/"]
 
     # Overwrite any of the settings.py settings for this particular spider \
