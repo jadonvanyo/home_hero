@@ -1,8 +1,16 @@
 {
     "cSpell.words": [
+        "apng",
+        "CLOSESPIDER",
         "getall",
+        "homedata",
+        "homescraper",
+        "homespider",
+        "ITEMCOUNT",
         "scrapy",
         "sqft",
-        "startproject"
+        "startproject",
+        "starturls",
+        "testid"
     ]
 }

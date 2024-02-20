@@ -22,9 +22,14 @@ class HomescraperPipeline:
         value = adapter.get('price').replace('$', '').replace(',', '')
         adapter['price'] = value
         
-        # Remove all the ' sqft' and ',' from sqft
-        value = adapter.get('sqft').replace(' sqft', '').replace(',', '')
-        adapter['sqft'] = value
+        # Test that there is a sqft value
+        if not adapter.get('sqft'):
+            adapter['sqft'] = "1"
+        
+        else:
+            # Remove all the ' sqft' and ',' from sqft
+            value = adapter.get('sqft').replace(' sqft', '').replace(',', '')
+            adapter['sqft'] = value
         
         # Remove the multifamily tag, strip, and lowercase for the property subtype
         if ', Multi Family' in adapter.get('property_subtype'):

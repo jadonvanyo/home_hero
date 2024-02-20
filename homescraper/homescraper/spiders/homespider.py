@@ -5,11 +5,9 @@ from analysis_functions import load_config
 class HomespiderSpider(scrapy.Spider):
     name = "homespider"
     allowed_domains = ["www.zillow.com"]
-    # Load config file to pull starturls from
-    starturls = load_config()['starturls']
     
-    # TODO: Test that this can take multiple start urls
-    start_urls = [starturls]
+    # Load config file with all the start urls
+    start_urls = load_config()['starturls']
 
     # Overwrite any of the settings.py settings for this particular spider \
     custom_settings = {
