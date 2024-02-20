@@ -415,7 +415,7 @@ def all_required_values_present(required_values, json_data):
 
 
 def config_file_required_values_present(config):
-    """Function to return true if  all the values required for analysis are in the config file are present and accurate"""
+    """Function to return true if all the values required for analysis are in the config file are present and accurate"""
     
     # Establish all the potential target variables required in the config file
     required_config_values = [
@@ -437,6 +437,27 @@ def config_file_required_values_present(config):
         return True
     
     # Return false if any values are missing
+    else:
+        return False
+    
+    
+def config_file_target_values_present(config):
+    """Function to return true if one of the target values required for analysis are in the config file are present and accurate"""
+    
+    # Establish all the potential target variables required
+    required_target_values = [
+        "target_cash_flow_monthly_min",
+        "target_percent_rule_min",
+        "target_net_operating_income_min",
+        "target_pro_forma_cap_min",
+        "target_five_year_annualized_return_min",
+        "target_cash_on_cash_return_min"
+    ]
+    # Verify that the user has entered at least one target for the featured houses
+    if one_required_value_present(required_target_values, config):
+        return True
+    
+    # Return false if no values are found
     else:
         return False
     
@@ -477,7 +498,7 @@ def create_house_analysis_excel_book(config, data, excel_filename):
     return
 
 
-def create_featured_house_email(data, required_target_values, config):
+def create_featured_house_email(data, config):
     """Function to create an email containing all of the scraped houses and some featured houses based on user request from JSON file"""
     
     # Establish the required values to analyze a house
@@ -491,7 +512,7 @@ def create_featured_house_email(data, required_target_values, config):
     # Verify that the user is looking for featured houses in their emails
     if config['featured_house_required']:
         # Verify that the user has entered a target for the featured houses
-        if one_required_value_present(required_target_values, config):
+        if config_file_target_values_present(config):
             # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
             # email_content_plain = ""
             email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
