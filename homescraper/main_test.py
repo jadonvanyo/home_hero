@@ -14,11 +14,11 @@ else:
     # Create a name for the excel file
     excel_filename = str(date.today()) + "-house-analysis.xlsx"
     
-    # Create an excel book containing all of the houses that were scraped for analysis
-    create_house_analysis_excel_book(data, excel_filename)
+    # # Create an excel book containing all of the houses that were scraped for analysis
+    # create_house_analysis_excel_book(data, excel_filename)
     
     # Create the email html content for the analyzed houses
     email_content_html = create_featured_house_email(data)
     
-    # Send the html email content and excel file to the target user
-    send_featured_house_email(email_content_html, excel_filename)
+    # # Send the html email content and excel file to the target user
+    # send_featured_house_email(email_content_html, excel_filename)

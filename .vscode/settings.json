@@ -1,16 +1,28 @@
 {
     "cSpell.words": [
         "apng",
+        "bookdata",
+        "bookscraper",
+        "bookspider",
+        "capx",
+        "catchas",
         "CLOSESPIDER",
+        "Downpayment",
+        "genspider",
         "getall",
         "homedata",
         "homescraper",
         "homespider",
         "ITEMCOUNT",
+        "openpyxl",
+        "quadplex",
+        "quinplex",
         "scrapy",
         "sqft",
         "startproject",
         "starturls",
-        "testid"
+        "tablefmt",
+        "testid",
+        "toscrape"
     ]
 }

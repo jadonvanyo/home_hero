@@ -14,6 +14,7 @@ class House:
             self, 
             data
         ):
+        # TODO: Move the check up stream to before the House class is called
         # Load config to pull important information for house calculations
         config = load_config()
         
@@ -58,7 +59,6 @@ class House:
 
     def all_required_values_present(self, data):
         """Method to determine if there is any information missing in the JSON file"""
-        # TODO: Add hardcoded values from config.json to list of items that are required
         # Establish the variables required for all the calculations
         required_values = [
             "price",
@@ -263,13 +263,15 @@ class House:
 
     def featured_home_determiner(self):
         """Method to determine if a home has hit an investors given requirements"""
+        # TODO: Make this entirely controlled from the config file
+        
         # Load config to pull target information for featured houses
         config = load_config()
         
         # Use try to test for errors from the config.json file
         try:
             # Set the user's preferred target condition(s) for investment properties
-            if self.cash_flow_monthly >= int(config['target_cash_flow_monthly']):
+            if self.cash_flow_monthly >= int(config['target_cash_flow_monthly_min']):
                 # Return true if the condition(s) is(are) met
                 return True
             
@@ -477,31 +479,49 @@ def create_house_analysis_excel_book(data, excel_filename):
 def create_featured_house_email(data):
     """Function to create an email containing all of the scraped houses and some featured houses based on user request from JSON file"""
     
-    # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
-    email_content_plain = ""
-    email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
+    # Load config file to access featured house information
+    config = load_config()
     
-    # Loop through each of the houses in the dataset and add them to a list of analyzed houses
-    for house_data in data:
-        house = House(house_data)
+    # Load all the potential target variables
+    required_target_values = [
+        "target_cash_flow_monthly_min",
+        "target_percent_rule_min",
+        "target_net_operating_income_min",
+        "target_pro_forma_cap_min",
+        "target_five_year_annualized_return_min",
+        "target_cash_on_cash_return_min"
+    ]
+    
+    # Verify that the user is looking for featured houses in their emails
+    if config['featured_house_required']:
         
-        # Verify that there is hose data to be processed
-        if not house.valid:
-            print('House data incomplete for email creation.')
+        # TODO: Verify that the user has entered a target for the featured houses
+        # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
+        email_content_plain = ""
+        email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
         
-        else:
-            # Check to see if the analyzed house meets the investor's criteria
-            if house.featured_home_determiner():
-                # Add the individual house HTMl content to the total HTML content
-                email_content_html += house.email_format_html()
-                
-                # Add the individual house plain text content to the total plain text content
-                email_content_plain += house.email_format_plain()
+        # Loop through each of the houses in the dataset and add them to a list of analyzed houses
+        for house_data in data:
+            house = House(house_data)
+            
+            # Verify that there is hose data to be processed
+            if house.valid:
+                # Check to see if the analyzed house meets the investor's criteria
+                if house.featured_home_determiner():
+                    # Add the individual house HTMl content to the total HTML content
+                    email_content_html += house.email_format_html()
+                    
+                    # Add the individual house plain text content to the total plain text content
+                    email_content_plain += house.email_format_plain()
+        
+        # Close the html for the email content
+        email_content_html += "\t</body>\n</html>"
+        
+        return email_content_html
     
-    # Close the html for the email content
-    email_content_html += "\t</body>\n</html>"
-    
-    return email_content_html
+    # Handle a case where the user has not asked for a featured house
+    else:
+        return None
 
 
 def format_excel_sheet(sheet):
@@ -608,7 +628,9 @@ def load_config(config_path='config.json'):
     return config
 
 
-def send_featured_house_email(email_content_html, excel_filename):
+def send_featured_house_email(excel_filename, email_content_html=None):
+    """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
+    
     # Pull all the email data from a separate config file
     email_config = load_config(config_path='/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
     # Sender and recipient email addresses
