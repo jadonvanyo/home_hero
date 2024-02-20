@@ -466,7 +466,6 @@ def create_featured_house_email(data, required_target_values, required_house_val
                     house = House(config, house_data)
                     
                     # Check to see if the analyzed house meets the investor's criteria
-                    # TODO: featured_home_determiner(config)
                     if house.featured_home_determiner(config):
                         # Add the individual house HTMl content to the total HTML content
                         email_content_html += house.email_format_html()
@@ -649,6 +648,34 @@ def send_featured_house_email(excel_filename, email_content_html):
     session.sendmail(sender_address, receiver_address, message.as_string()) # Send an email with the excel file attached
     session.quit()
     print('Mail Sent')
+
+
+def config_file_required_values_present(config):
+    """Function to return true if  all the values required for analysis are in the config file are present and accurate"""
+    
+    # Establish all the potential target variables required in the config file
+    required_config_values = [
+        "down_payment_decimal", 
+        "closing_cost_buyer_decimal",
+        "closing_cost_seller_decimal",
+        "expected_annual_growth",
+        "interest_rate",
+        "loan_term_yrs",
+        "expected_repairs_monthly",
+        "expected_vacancy_monthly",
+        "expected_capx_monthly",
+        "expected_management_monthly",
+        "insurance_rate_yearly"
+    ]
+
+    # Return true if all the required values are present in the config file
+    if all_required_values_present(required_config_values, config):
+        return True
+    
+    # Return false if any values are missing
+    else:
+        return False
+        
 
 # TODO: Create a function to delete the excel file after it has been sent
     
