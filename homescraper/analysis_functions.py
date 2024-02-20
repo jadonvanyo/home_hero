@@ -61,10 +61,21 @@ class House:
         # TODO: Add hardcoded values from config.json to list of items that are required
         # Establish the variables required for all the calculations
         required_values = [
-            'price',
-            'rent',
-            'sqft',
-            'tax'
+            "price",
+            "rent",
+            "sqft",
+            "tax",
+            "down_payment_decimal", 
+            "closing_cost_buyer_decimal",
+            "closing_cost_seller_decimal",
+            "expected_annual_growth",
+            "interest_rate",
+            "loan_term_yrs",
+            "expected_repairs_monthly",
+            "expected_vacancy_monthly",
+            "expected_capx_monthly",
+            "expected_management_monthly",
+            "insurance_rate_yearly"
         ]
         
         # Return false if any of the required values are not present in the JSON file
