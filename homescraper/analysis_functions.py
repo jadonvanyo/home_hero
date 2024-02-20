@@ -16,7 +16,7 @@ class House:
         ):
         # TODO: Move the check up stream to before the House class is called
         # Load config to pull important information for house calculations
-        config = load_config()
+        config = load_json()
         
         # The House class will return empty if one of the required values are not present
         if not self.all_required_values_present(data):
@@ -266,7 +266,7 @@ class House:
         # TODO: Make this entirely controlled from the config file
         
         # Load config to pull target information for featured houses
-        config = load_config()
+        config = load_json()
         
         # Use try to test for errors from the config.json file
         try:
@@ -480,7 +480,7 @@ def create_featured_house_email(data):
     """Function to create an email containing all of the scraped houses and some featured houses based on user request from JSON file"""
     
     # Load config file to access featured house information
-    config = load_config()
+    config = load_json()
     
     # Load all the potential target variables
     required_target_values = [
@@ -621,9 +621,9 @@ def format_excel_sheet(sheet):
     return sheet
 
 
-def load_config(config_path='config.json'):
+def load_json(json_path='config.json'):
     """Load a configuration file with sensitive or variable information"""
-    with open(config_path, 'r') as config_file:
+    with open(json_path, 'r') as config_file:
         config = json.load(config_file)
     return config
 
@@ -632,7 +632,7 @@ def send_featured_house_email(excel_filename, email_content_html=None):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
     
     # Pull all the email data from a separate config file
-    email_config = load_config(config_path='/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
+    email_config = load_json(json_path='/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
     # Sender and recipient email addresses
     sender_address = email_config['sender_address']
     receiver_address = email_config['receiver_address']
@@ -663,6 +663,16 @@ def send_featured_house_email(excel_filename, email_content_html=None):
     session.quit()
     print('Mail Sent')
 
+
+def all_required_values_present(required_values, json):
+    """Function to return true if all the required values are present in a json file and false otherwise based on a list of required values"""
     
+    
+    # Return false if any of the required values are not present in the JSON file
+    for value in required_values:
+        if not json.get(value):
+            return False
+
+
 # TODO: Create a function to delete the excel file after it has been sent
     
