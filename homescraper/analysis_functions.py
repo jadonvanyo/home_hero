@@ -10,12 +10,7 @@ from tabulate import tabulate
 
 
 class House:
-    def __init__(
-            self, 
-            data
-        ):
-        # Load config to pull important information for house calculations
-        config = load_json('config.json')
+    def __init__(self, config, data):
         
         self.price = float(data.get('price'))
         self.sqft = float(data.get('sqft'))
@@ -222,12 +217,9 @@ class House:
         return house_email_plain
     
 
-    def featured_home_determiner(self):
+    def featured_home_determiner(self, config):
         """Method to determine if a home has hit an investors given requirements"""
         # TODO: Make this entirely controlled from the config file
-        
-        # Load config to pull target information for featured houses
-        config = load_json('config.json')
         
         # Use try to test for errors from the config.json file
         try:
@@ -422,7 +414,7 @@ def all_required_values_present(required_values, json_data):
     return True
 
 
-def create_house_analysis_excel_book(data, excel_filename):
+def create_house_analysis_excel_book(config, data, excel_filename):
     """Create an excel book given JSON data containing houses from search"""
     
     # Create a new workbook
@@ -442,23 +434,23 @@ def create_house_analysis_excel_book(data, excel_filename):
     for house_data in data:
         # Verify that all the data required for analyzing the house is present
         if all_required_values_present(required_house_values, house_data):
-            house = House(house_data)
+            house = House(config, house_data)
             
             # Create the house excel sheet for the house being analyzed
             house.house_excel_sheet_creator(wb)
 
-        # TODO: Add else statement to handle all required values not being present
+        # Handle all required values not being present
+        else:
+            print(f"Key information missing for {house_data["address"]}")
+            
     # Save the excel file that was created
     wb.save(filename=excel_filename)
 
     return
 
 
-def create_featured_house_email(data, required_target_values, required_house_values):
+def create_featured_house_email(data, required_target_values, required_house_values, config):
     """Function to create an email containing all of the scraped houses and some featured houses based on user request from JSON file"""
-    
-    # Load config file to access featured house information
-    config = load_json('config.json')
     
     # Verify that the user is looking for featured houses in their emails
     if config['featured_house_required']:
@@ -471,17 +463,21 @@ def create_featured_house_email(data, required_target_values, required_house_val
             # Loop through each of the houses in the dataset and add them to a list of analyzed houses
             for house_data in data:
                 if all_required_values_present(required_house_values, house_data):
-                    house = House(house_data)
+                    house = House(config, house_data)
                     
                     # Check to see if the analyzed house meets the investor's criteria
-                    if house.featured_home_determiner():
+                    # TODO: featured_home_determiner(config)
+                    if house.featured_home_determiner(config):
                         # Add the individual house HTMl content to the total HTML content
                         email_content_html += house.email_format_html()
                         
                         # Add the individual house plain text content to the total plain text content
                         # email_content_plain += house.email_format_plain()
-                # TODO: Add else to handle cases if all the required information is not included
-            
+                        
+                # Handle cases if all the required information is not included
+                else:
+                    print(f"Key information missing for {house_data["address"]}")
+                    
             # Close the html for the email content
             email_content_html += "\t</body>\n</html>"
             

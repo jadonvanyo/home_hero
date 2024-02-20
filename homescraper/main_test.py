@@ -45,6 +45,7 @@ else:
         "tax"
     ]
     
+    # Load the config file
     config = load_json("config.json")
     
     if all_required_values_present(required_config_values, config):
@@ -52,11 +53,11 @@ else:
         # Create a name for the excel file
         excel_filename = str(date.today()) + "-house-analysis.xlsx"
         
-        # # Create an excel book containing all of the houses that were scraped for analysis
-        create_house_analysis_excel_book(data, excel_filename)
+        # Create an excel book containing all of the houses that were scraped for analysis
+        create_house_analysis_excel_book(config, data, excel_filename)
         
         # Create the email html content for the analyzed houses
-        email_content_html = create_featured_house_email(data, required_target_values, required_house_values)
+        email_content_html = create_featured_house_email(data, required_target_values, required_house_values, config)
         print(email_content_html)
         
         # # Send the html email content and excel file to the target user
