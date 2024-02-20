@@ -16,75 +16,75 @@ class House:
         ):
         # TODO: Move the check up stream to before the House class is called
         # Load config to pull important information for house calculations
-        config = load_json()
+        config = load_json('config.json')
         
-        # The House class will return empty if one of the required values are not present
-        if not self.all_required_values_present(data):
-            print(f"Key values missing in the JSON file for {data.get('address')}")
-            self.valid = False
+        # # The House class will return empty if one of the required values are not present
+        # if not self.all_required_values_present(data):
+        #     print(f"Key values missing in the JSON file for {data.get('address')}")
+        #     self.valid = False
         
-        # If all the required values are present, populate the class wil all the required information
-        else:
-            self.valid = True
-            self.price = float(data.get('price'))
-            self.sqft = float(data.get('sqft'))
-            self.tax = float(data.get('tax'))
-            self.rent = float(data.get('rent'))
-            self.property_subtype = data.get('property_subtype')
-            self.address = data.get('address')
-            self.beds = data.get('beds')
-            self.baths = data.get('baths')
-            self.description = data.get('description')
-            self.year_built = data.get('year_built')
-            self.region = data.get('region')
-            self.subdivision = data.get('subdivision')
-            self.tax_url = data.get('tax_url')
-            self.rent_url = data.get('rent_url')
-            self.url = data.get('url')
-            self.min_rent = data.get('min_rent')
-            self.max_rent = data.get('max_rent')
-            self.down_payment_decimal = config['down_payment_decimal']
-            self.closing_cost_buyer_decimal = config['closing_cost_buyer_decimal']
-            self.closing_cost_seller_decimal = config['closing_cost_seller_decimal']
-            self.expected_annual_growth = config['expected_annual_growth']
-            self.interest_rate = config['interest_rate']
-            self.loan_term_yrs = config['loan_term_yrs']
-            self.expected_repairs_monthly = config['expected_repairs_monthly']
-            self.expected_vacancy_monthly = config['expected_vacancy_monthly']
-            self.expected_capx_monthly = config['expected_capx_monthly']
-            self.expected_management_monthly = config['expected_management_monthly']
-            self.insurance_rate_yearly = config['insurance_rate_yearly']
-            self.calculate_metrics()
+        # # If all the required values are present, populate the class wil all the required information
+        # else:
+        #     self.valid = True
+        self.price = float(data.get('price'))
+        self.sqft = float(data.get('sqft'))
+        self.tax = float(data.get('tax'))
+        self.rent = float(data.get('rent'))
+        self.property_subtype = data.get('property_subtype')
+        self.address = data.get('address')
+        self.beds = data.get('beds')
+        self.baths = data.get('baths')
+        self.description = data.get('description')
+        self.year_built = data.get('year_built')
+        self.region = data.get('region')
+        self.subdivision = data.get('subdivision')
+        self.tax_url = data.get('tax_url')
+        self.rent_url = data.get('rent_url')
+        self.url = data.get('url')
+        self.min_rent = data.get('min_rent')
+        self.max_rent = data.get('max_rent')
+        self.down_payment_decimal = config['down_payment_decimal']
+        self.closing_cost_buyer_decimal = config['closing_cost_buyer_decimal']
+        self.closing_cost_seller_decimal = config['closing_cost_seller_decimal']
+        self.expected_annual_growth = config['expected_annual_growth']
+        self.interest_rate = config['interest_rate']
+        self.loan_term_yrs = config['loan_term_yrs']
+        self.expected_repairs_monthly = config['expected_repairs_monthly']
+        self.expected_vacancy_monthly = config['expected_vacancy_monthly']
+        self.expected_capx_monthly = config['expected_capx_monthly']
+        self.expected_management_monthly = config['expected_management_monthly']
+        self.insurance_rate_yearly = config['insurance_rate_yearly']
+        self.calculate_metrics()
 
 
-    def all_required_values_present(self, data):
-        """Method to determine if there is any information missing in the JSON file"""
-        # Establish the variables required for all the calculations
-        required_values = [
-            "price",
-            "rent",
-            "sqft",
-            "tax",
-            "down_payment_decimal", 
-            "closing_cost_buyer_decimal",
-            "closing_cost_seller_decimal",
-            "expected_annual_growth",
-            "interest_rate",
-            "loan_term_yrs",
-            "expected_repairs_monthly",
-            "expected_vacancy_monthly",
-            "expected_capx_monthly",
-            "expected_management_monthly",
-            "insurance_rate_yearly"
-        ]
+    # def all_required_values_present(self, data):
+    #     """Method to determine if there is any information missing in the JSON file"""
+    #     # Establish the variables required for all the calculations
+    #     required_values = [
+    #         "price",
+    #         "rent",
+    #         "sqft",
+    #         "tax",
+    #         "down_payment_decimal", 
+    #         "closing_cost_buyer_decimal",
+    #         "closing_cost_seller_decimal",
+    #         "expected_annual_growth",
+    #         "interest_rate",
+    #         "loan_term_yrs",
+    #         "expected_repairs_monthly",
+    #         "expected_vacancy_monthly",
+    #         "expected_capx_monthly",
+    #         "expected_management_monthly",
+    #         "insurance_rate_yearly"
+    #     ]
         
-        # Return false if any of the required values are not present in the JSON file
-        for value in required_values:
-            if not data.get(value):
-                return False
+    #     # Return false if any of the required values are not present in the JSON file
+    #     for value in required_values:
+    #         if not data.get(value):
+    #             return False
         
-        # Return true if none of the values are null in the JSON file
-        return True
+    #     # Return true if none of the values are null in the JSON file
+    #     return True
 
 
     def calculate_metrics(self):
@@ -266,7 +266,7 @@ class House:
         # TODO: Make this entirely controlled from the config file
         
         # Load config to pull target information for featured houses
-        config = load_json()
+        config = load_json('config.json')
         
         # Use try to test for errors from the config.json file
         try:
@@ -450,6 +450,17 @@ class House:
         return sheet
 
 
+def all_required_values_present(required_values, json_data):
+    """Function to return true if all the required values are present in a json file and false otherwise based on a list of required values"""
+    # Return false if any of the required values are not present in the JSON file
+    for value in required_values:
+        if not json_data.get(value):
+            return False
+
+    # Return true if none of the values are null in the JSON file
+    return True
+
+
 def create_house_analysis_excel_book(data, excel_filename):
     """Create an excel book given JSON data containing houses from search"""
     
@@ -458,70 +469,78 @@ def create_house_analysis_excel_book(data, excel_filename):
     # Remove the default sheet created by openpyxl
     wb.remove(wb.active)
     
+    # Establish the required values to analyze a house
+    required_house_values = [
+        "price",
+        "rent",
+        "sqft",
+        "tax"
+    ]
+    
     # Loop through each of the houses in the dataset and create an excel sheet for that house
     for house_data in data:
-        house = House(house_data)
-        
-        # Verify that there is hose data to be processed
-        if not house.valid:
-            print('House data incomplete for spreadsheet creation.')
-        
-        else:
+        # Verify that all the data required for analyzing the house is present
+        if all_required_values_present(required_house_values, house_data):
+            house = House(house_data)
+            
             # Create the house excel sheet for the house being analyzed
             house.house_excel_sheet_creator(wb)
-    
+
+        # TODO: Add else statement to handle all required values not being present
     # Save the excel file that was created
     wb.save(filename=excel_filename)
 
     return
 
 
-def create_featured_house_email(data):
+def create_featured_house_email(data, required_target_values, required_house_values):
     """Function to create an email containing all of the scraped houses and some featured houses based on user request from JSON file"""
     
     # Load config file to access featured house information
-    config = load_json()
-    
-    # Load all the potential target variables
-    required_target_values = [
-        "target_cash_flow_monthly_min",
-        "target_percent_rule_min",
-        "target_net_operating_income_min",
-        "target_pro_forma_cap_min",
-        "target_five_year_annualized_return_min",
-        "target_cash_on_cash_return_min"
-    ]
+    config = load_json('config.json')
     
     # Verify that the user is looking for featured houses in their emails
     if config['featured_house_required']:
-        
-        # TODO: Verify that the user has entered a target for the featured houses
-        # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
-        email_content_plain = ""
-        email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
-        
-        # Loop through each of the houses in the dataset and add them to a list of analyzed houses
-        for house_data in data:
-            house = House(house_data)
+        # Verify that the user has entered a target for the featured houses
+        if one_required_value_present(required_target_values, config):
+            # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
+            # email_content_plain = ""
+            email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
             
-            # Verify that there is hose data to be processed
-            if house.valid:
-                # Check to see if the analyzed house meets the investor's criteria
-                if house.featured_home_determiner():
-                    # Add the individual house HTMl content to the total HTML content
-                    email_content_html += house.email_format_html()
+            # Loop through each of the houses in the dataset and add them to a list of analyzed houses
+            for house_data in data:
+                if all_required_values_present(required_house_values, house_data):
+                    house = House(house_data)
                     
-                    # Add the individual house plain text content to the total plain text content
-                    email_content_plain += house.email_format_plain()
+                    # Check to see if the analyzed house meets the investor's criteria
+                    if house.featured_home_determiner():
+                        # Add the individual house HTMl content to the total HTML content
+                        email_content_html += house.email_format_html()
+                        
+                        # Add the individual house plain text content to the total plain text content
+                        # email_content_plain += house.email_format_plain()
+                # TODO: Add else to handle cases if all the required information is not included
+            
+            # Close the html for the email content
+            email_content_html += "\t</body>\n</html>"
+            
+            return email_content_html
         
-        # Close the html for the email content
-        email_content_html += "\t</body>\n</html>"
-        
-        return email_content_html
+        # Handle errors when the user does not 
+        else:
+            print("Error generating featured house email, no target values entered.")
+            
+            email_content_html = "<html>\n\t<body>\n\t\t<h3>No Target Values Entered</h3>\n\t</body>\n</html>"
+            
+            return email_content_html
     
     # Handle a case where the user has not asked for a featured house
     else:
-        return None
+        print("User did not request featured houses to be included in the email.")
+        
+        email_content_html = "<html>\n\t<body>\n\t\t<h3>No Featured Homes Requested</h3>\n\t</body>\n</html>"
+        
+        return email_content_html
 
 
 def format_excel_sheet(sheet):
@@ -621,18 +640,29 @@ def format_excel_sheet(sheet):
     return sheet
 
 
-def load_json(json_path='config.json'):
+def load_json(json_path):
     """Load a configuration file with sensitive or variable information"""
-    with open(json_path, 'r') as config_file:
-        config = json.load(config_file)
-    return config
+    with open(json_path, 'r') as json_file:
+        json_data = json.load(json_file)
+    return json_data
 
 
-def send_featured_house_email(excel_filename, email_content_html=None):
+def one_required_value_present(required_values, json_data):
+    """Function to return true if at least one of the required values are present in a json file and false otherwise based on a list of required values"""    
+    # Return true if any of the required values are present in the JSON file
+    for value in required_values:
+        if json_data.get(value):
+            return True
+        
+    # Return false if none of the values are null in the JSON file
+    return False
+
+
+def send_featured_house_email(excel_filename, email_content_html):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
     
     # Pull all the email data from a separate config file
-    email_config = load_json(json_path='/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
+    email_config = load_json('/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
     # Sender and recipient email addresses
     sender_address = email_config['sender_address']
     receiver_address = email_config['receiver_address']
@@ -662,17 +692,6 @@ def send_featured_house_email(excel_filename, email_content_html=None):
     session.sendmail(sender_address, receiver_address, message.as_string()) # Send an email with the excel file attached
     session.quit()
     print('Mail Sent')
-
-
-def all_required_values_present(required_values, json):
-    """Function to return true if all the required values are present in a json file and false otherwise based on a list of required values"""
-    
-    
-    # Return false if any of the required values are not present in the JSON file
-    for value in required_values:
-        if not json.get(value):
-            return False
-
 
 # TODO: Create a function to delete the excel file after it has been sent
     
