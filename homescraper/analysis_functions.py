@@ -14,18 +14,9 @@ class House:
             self, 
             data
         ):
-        # TODO: Move the check up stream to before the House class is called
         # Load config to pull important information for house calculations
         config = load_json('config.json')
         
-        # # The House class will return empty if one of the required values are not present
-        # if not self.all_required_values_present(data):
-        #     print(f"Key values missing in the JSON file for {data.get('address')}")
-        #     self.valid = False
-        
-        # # If all the required values are present, populate the class wil all the required information
-        # else:
-        #     self.valid = True
         self.price = float(data.get('price'))
         self.sqft = float(data.get('sqft'))
         self.tax = float(data.get('tax'))
@@ -55,36 +46,6 @@ class House:
         self.expected_management_monthly = config['expected_management_monthly']
         self.insurance_rate_yearly = config['insurance_rate_yearly']
         self.calculate_metrics()
-
-
-    # def all_required_values_present(self, data):
-    #     """Method to determine if there is any information missing in the JSON file"""
-    #     # Establish the variables required for all the calculations
-    #     required_values = [
-    #         "price",
-    #         "rent",
-    #         "sqft",
-    #         "tax",
-    #         "down_payment_decimal", 
-    #         "closing_cost_buyer_decimal",
-    #         "closing_cost_seller_decimal",
-    #         "expected_annual_growth",
-    #         "interest_rate",
-    #         "loan_term_yrs",
-    #         "expected_repairs_monthly",
-    #         "expected_vacancy_monthly",
-    #         "expected_capx_monthly",
-    #         "expected_management_monthly",
-    #         "insurance_rate_yearly"
-    #     ]
-        
-    #     # Return false if any of the required values are not present in the JSON file
-    #     for value in required_values:
-    #         if not data.get(value):
-    #             return False
-        
-    #     # Return true if none of the values are null in the JSON file
-    #     return True
 
 
     def calculate_metrics(self):
