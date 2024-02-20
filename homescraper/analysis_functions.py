@@ -414,6 +414,33 @@ def all_required_values_present(required_values, json_data):
     return True
 
 
+def config_file_required_values_present(config):
+    """Function to return true if  all the values required for analysis are in the config file are present and accurate"""
+    
+    # Establish all the potential target variables required in the config file
+    required_config_values = [
+        "down_payment_decimal", 
+        "closing_cost_buyer_decimal",
+        "closing_cost_seller_decimal",
+        "expected_annual_growth",
+        "interest_rate",
+        "loan_term_yrs",
+        "expected_repairs_monthly",
+        "expected_vacancy_monthly",
+        "expected_capx_monthly",
+        "expected_management_monthly",
+        "insurance_rate_yearly"
+    ]
+
+    # Return true if all the required values are present in the config file
+    if all_required_values_present(required_config_values, config):
+        return True
+    
+    # Return false if any values are missing
+    else:
+        return False
+    
+
 def create_house_analysis_excel_book(config, data, excel_filename):
     """Create an excel book given JSON data containing houses from search"""
     
@@ -430,6 +457,7 @@ def create_house_analysis_excel_book(config, data, excel_filename):
         "tax"
     ]
     
+    # TODO: Move all for loops to check for all house data to a single function outside of the original functions
     # Loop through each of the houses in the dataset and create an excel sheet for that house
     for house_data in data:
         # Verify that all the data required for analyzing the house is present
@@ -449,8 +477,16 @@ def create_house_analysis_excel_book(config, data, excel_filename):
     return
 
 
-def create_featured_house_email(data, required_target_values, required_house_values, config):
+def create_featured_house_email(data, required_target_values, config):
     """Function to create an email containing all of the scraped houses and some featured houses based on user request from JSON file"""
+    
+    # Establish the required values to analyze a house
+    required_house_values = [
+        "price",
+        "rent",
+        "sqft",
+        "tax"
+    ]
     
     # Verify that the user is looking for featured houses in their emails
     if config['featured_house_required']:
@@ -460,6 +496,7 @@ def create_featured_house_email(data, required_target_values, required_house_val
             # email_content_plain = ""
             email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
             
+            # TODO: Move all for loops to check for all house data to a single function outside of the original functions
             # Loop through each of the houses in the dataset and add them to a list of analyzed houses
             for house_data in data:
                 if all_required_values_present(required_house_values, house_data):
@@ -648,34 +685,7 @@ def send_featured_house_email(excel_filename, email_content_html):
     session.sendmail(sender_address, receiver_address, message.as_string()) # Send an email with the excel file attached
     session.quit()
     print('Mail Sent')
-
-
-def config_file_required_values_present(config):
-    """Function to return true if  all the values required for analysis are in the config file are present and accurate"""
     
-    # Establish all the potential target variables required in the config file
-    required_config_values = [
-        "down_payment_decimal", 
-        "closing_cost_buyer_decimal",
-        "closing_cost_seller_decimal",
-        "expected_annual_growth",
-        "interest_rate",
-        "loan_term_yrs",
-        "expected_repairs_monthly",
-        "expected_vacancy_monthly",
-        "expected_capx_monthly",
-        "expected_management_monthly",
-        "insurance_rate_yearly"
-    ]
-
-    # Return true if all the required values are present in the config file
-    if all_required_values_present(required_config_values, config):
-        return True
-    
-    # Return false if any values are missing
-    else:
-        return False
-        
 
 # TODO: Create a function to delete the excel file after it has been sent
     

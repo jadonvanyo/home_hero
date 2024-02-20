@@ -11,8 +11,6 @@ if not data:
     print("No houses found")
     
 else:
-    # TODO: Move all for loops to check for all house data to a single function
-    
     # Establish all the potential target variables required
     required_target_values = [
         "target_cash_flow_monthly_min",
@@ -21,14 +19,6 @@ else:
         "target_pro_forma_cap_min",
         "target_five_year_annualized_return_min",
         "target_cash_on_cash_return_min"
-    ]
-    
-    # Establish the required values to analyze a house
-    required_house_values = [
-        "price",
-        "rent",
-        "sqft",
-        "tax"
     ]
     
     # Load the config file
@@ -43,7 +33,7 @@ else:
         create_house_analysis_excel_book(config, data, excel_filename)
         
         # Create the email html content for the analyzed houses
-        email_content_html = create_featured_house_email(data, required_target_values, required_house_values, config)
+        email_content_html = create_featured_house_email(data, required_target_values, config)
         print(email_content_html)
         
         # # Send the html email content and excel file to the target user
