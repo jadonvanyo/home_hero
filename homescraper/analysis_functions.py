@@ -414,6 +414,36 @@ def all_required_values_present(required_values, json_data):
     return True
 
 
+def analyze_all_houses(config, data):
+    """Function to analyze all the given JSON data using the House class and return a list of analyzed and error houses"""
+    # Create a list with all the analyzed houses
+    analyzed_houses = []
+    
+    # Create a list with all the houses lacking key values
+    error_houses = []
+
+    # Establish the required values to analyze a house
+    required_house_values = [
+        "price",
+        "rent",
+        "sqft",
+        "tax"
+    ]
+
+    # Loop through each of the houses in the dataset and create an excel sheet for that house
+    for house_data in data:
+        # Verify that all the data required for analyzing the house is present
+        if all_required_values_present(required_house_values, house_data):
+            house = House(config, house_data)
+            analyzed_houses.append(house)
+            
+        else:
+            print(f"Key values missing for {house_data['address']}")
+            error_houses.append(house_data['address'])
+        
+    return analyzed_houses, error_houses
+
+
 def config_file_required_values_present(config):
     """Function to return true if all the values required for analysis are in the config file are present and accurate"""
     
@@ -462,35 +492,19 @@ def config_file_target_values_present(config):
         return False
     
 
-def create_house_analysis_excel_book(config, data, excel_filename):
-    """Create an excel book given JSON data containing houses from search"""
+def create_house_analysis_excel_book(analyzed_houses, excel_filename):
+    """Create an excel book given a list of analyzed House objects"""
     
     # Create a new workbook
     wb = Workbook()
     # Remove the default sheet created by openpyxl
     wb.remove(wb.active)
     
-    # Establish the required values to analyze a house
-    required_house_values = [
-        "price",
-        "rent",
-        "sqft",
-        "tax"
-    ]
-    
-    # TODO: Move all for loops to check for all house data to a single function outside of the original functions
     # Loop through each of the houses in the dataset and create an excel sheet for that house
-    for house_data in data:
-        # Verify that all the data required for analyzing the house is present
-        if all_required_values_present(required_house_values, house_data):
-            house = House(config, house_data)
+    for house in analyzed_houses:
             
-            # Create the house excel sheet for the house being analyzed
-            house.house_excel_sheet_creator(wb)
-
-        # Handle all required values not being present
-        else:
-            print(f"Key information missing for {house_data["address"]}")
+        # Create the house excel sheet for the house being analyzed
+        house.house_excel_sheet_creator(wb)
             
     # Save the excel file that was created
     wb.save(filename=excel_filename)
@@ -498,16 +512,8 @@ def create_house_analysis_excel_book(config, data, excel_filename):
     return
 
 
-def create_featured_house_email(data, config):
+def create_featured_house_email(analyzed_houses, config):
     """Function to create an email containing all of the scraped houses and some featured houses based on user request from JSON file"""
-    
-    # Establish the required values to analyze a house
-    required_house_values = [
-        "price",
-        "rent",
-        "sqft",
-        "tax"
-    ]
     
     # Verify that the user is looking for featured houses in their emails
     if config['featured_house_required']:
@@ -517,23 +523,15 @@ def create_featured_house_email(data, config):
             # email_content_plain = ""
             email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
             
-            # TODO: Move all for loops to check for all house data to a single function outside of the original functions
             # Loop through each of the houses in the dataset and add them to a list of analyzed houses
-            for house_data in data:
-                if all_required_values_present(required_house_values, house_data):
-                    house = House(config, house_data)
+            for house in analyzed_houses:
+                # Check to see if the analyzed house meets the investor's criteria
+                if house.featured_home_determiner(config):
+                    # Add the individual house HTMl content to the total HTML content
+                    email_content_html += house.email_format_html()
                     
-                    # Check to see if the analyzed house meets the investor's criteria
-                    if house.featured_home_determiner(config):
-                        # Add the individual house HTMl content to the total HTML content
-                        email_content_html += house.email_format_html()
-                        
-                        # Add the individual house plain text content to the total plain text content
-                        # email_content_plain += house.email_format_plain()
-                        
-                # Handle cases if all the required information is not included
-                else:
-                    print(f"Key information missing for {house_data["address"]}")
+                    # Add the individual house plain text content to the total plain text content
+                    # email_content_plain += house.email_format_plain()
                     
             # Close the html for the email content
             email_content_html += "\t</body>\n</html>"
@@ -709,4 +707,3 @@ def send_featured_house_email(excel_filename, email_content_html):
     
 
 # TODO: Create a function to delete the excel file after it has been sent
-    
