@@ -675,18 +675,26 @@ def send_featured_house_email(excel_filename, email_content_html):
     
     # Try to pull data from an email config file
     try:
-        # TODO: Verify all required information is in the email_config file
         # Pull all the email data from a separate config file
         email_config = load_json('/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
-        
+    
+    # Handle errors if the email config file is not found
     except:
         print("An error occurred while trying to load the email config file. Verify email config file name matches, that the file exists, and is complete.")
         return
-    # Sender and recipient email addresses
-    sender_address = email_config['sender_address']
-    receiver_address = email_config['receiver_address']
-    # Google App Password for 2FA
-    password = email_config['password']
+    
+    # Try to pull all the required information from the email config file
+    try:
+        # Sender and recipient email addresses
+        sender_address = email_config['sender_address']
+        receiver_address = email_config['receiver_address']
+        # Google App Password for 2FA
+        password = email_config['password']
+        
+    # Handle errors if any of the required information in the email config file is missing
+    except:
+        print("An error occurred while trying to retrieve data from the email config file. Verify email config file contains all the required information.")
+        return
 
     # Setup the MIME
     message = MIMEMultipart()

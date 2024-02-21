@@ -1,8 +1,6 @@
 from analysis_functions import analyze_all_houses, create_featured_house_email, create_house_analysis_excel_book, config_file_required_values_present, load_json, send_featured_house_email
 from datetime import date
-import json
 
-# TODO: use try on all the open json files
 # Try to pull the scraped home data
 try:
     # Get all of the house data from homedata.json
