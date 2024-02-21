@@ -216,7 +216,7 @@ class House:
         
         return house_email_plain
     
-
+    # TODO: Change this to take target_values instead of the rent
     def featured_home_determiner(self, config):
         """Method to determine if a home has hit an investors given requirements"""
         # TODO: Make this entirely controlled from the config file
@@ -487,26 +487,37 @@ def config_file_required_values_present(config):
         return False
     
     
-def config_file_target_values_present(config):
-    """Function to return true if one of the target values required for analysis are in the config file are present and accurate"""
+def config_file_target_values(config):
+    """Function to test and return a list of all the valid target values from the config file"""
     
     # Establish all the potential target variables required
-    required_target_values = [
-        "target_cash_flow_monthly_min",
-        "target_percent_rule_min",
-        "target_net_operating_income_min",
-        "target_pro_forma_cap_min",
-        "target_five_year_annualized_return_min",
-        "target_cash_on_cash_return_min"
-    ]
-    # TODO: Create new one_required_value_present following the new all_required_values_present
-    # Verify that the user has entered at least one target for the featured houses
-    if one_required_value_present(required_target_values, config):
-        return True
+    required_target_values = {
+        "target_cash_flow_monthly_min": lambda x: isinstance(x, (int, float)),
+        "target_percent_rule_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
+        "target_net_operating_income_min": lambda x: isinstance(x, (int, float)),
+        "target_pro_forma_cap_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
+        "target_five_year_annualized_return_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
+        "target_cash_on_cash_return_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1
+    }
     
-    # Return false if no values are found
-    else:
-        return False
+    # Dictionary to store all the target requested values
+    target_values = {}
+    
+    # Loop through each of the target required keys and values 
+    for key, value in required_target_values.items():
+        # Determine if a value exits in config for a target key
+        if config[key]:
+            # If a target value does exist, determine if it fits the required target criteria
+            if value(config[key]):
+                # Add the user's desired metric as a target key value pair
+                target_values[f'{key}'] = config[key]
+            
+            # If a value does not contain the target criteria, return an error message to the user
+            else:
+                print(f'"{key}" was entered incorrectly in the config file. Refer to the documentation on how to enter "{key}".')
+            
+    return target_values    
+
     
 
 def create_house_analysis_excel_book(analyzed_houses, excel_filename):
@@ -534,8 +545,11 @@ def create_featured_house_email(analyzed_houses, config):
     
     # Verify that the user is looking for featured houses in their emails
     if config['featured_house_required']:
-        # Verify that the user has entered a target for the featured houses
-        if config_file_target_values_present(config):
+        # Generate a dictionary of target keys and values from the config file
+        target_values = config_file_target_values(config)
+        
+        # Generate the email to the user if the dictionary contains any items
+        if target_values:
             # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
             # email_content_plain = ""
             email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
@@ -683,7 +697,7 @@ def load_json(json_path):
         json_data = json.load(json_file)
     return json_data
 
-
+# TODO: DELETE
 def one_required_value_present(required_values, json_data):
     """Function to return true if at least one of the required values are present in a json file and false otherwise based on a list of required values"""    
     # Return true if any of the required values are present in the JSON file
@@ -776,5 +790,27 @@ def verify_all_required_values(required_values, json_data, error_messages=None):
     # Return file_correct for verification if all values were present
     return file_correct
 
+# TODO: DELETE
+def target_values_generator(required_values, json_data):
+    """Function to verify and return a dictionary of all the target values that the user requested in the config file"""
+    
+    # Dictionary to store all the target requested values
+    target_values = {}
+    
+    # Loop through each of the target required keys and values 
+    for key, value in required_values.items():
+        # Determine if a value exits in config for a target key
+        if json_data[key]:
+            # If a target value does exist, determine if it fits the required target criteria
+            if value(json_data[key]):
+                # Add the user's desired metric as a target key value pair
+                target_values[f'{key}'] = json_data[key]
+            
+            # If a value does not contain the target criteria, return an error message to the user
+            else:
+                print(f'"{key}" was entered incorrectly in the config file. Refer to the documentation on how to enter "{key}".')
+            
+    return target_values
+        
 
 # TODO: Create a function to delete the excel file after it has been sent
