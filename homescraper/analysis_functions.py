@@ -451,7 +451,8 @@ def analyze_all_houses(config, data):
         if verify_all_required_values(required_house_values, house_data, print_house_json_error_message):
             house = House(config, house_data)
             analyzed_houses.append(house)
-            
+        
+        # If the calculation values for a house cannot be verified, add it to a list of error_houses
         else:
             error_houses.append(house_data['address'])
         
