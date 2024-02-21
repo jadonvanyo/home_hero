@@ -432,6 +432,7 @@ def analyze_all_houses(config, data):
 
     # Loop through each of the houses in the dataset and create an excel sheet for that house
     for house_data in data:
+        # TODO: Replace this with def all_values_convert_to_float(required_values, json_data):
         # Verify that all the data required for analyzing the house is present
         if all_required_values_present(required_house_values, house_data):
             house = House(config, house_data)
@@ -448,25 +449,44 @@ def config_file_required_values_present(config):
     """Function to return true if all the values required for analysis are in the config file are present and accurate"""
     
     # Establish all the potential target variables required in the config file
-    required_config_values = [
-        "down_payment_decimal", 
-        "closing_cost_buyer_decimal",
-        "closing_cost_seller_decimal",
-        "expected_annual_growth",
-        "interest_rate",
-        "loan_term_yrs",
-        "expected_repairs_monthly",
-        "expected_vacancy_monthly",
-        "expected_capx_monthly",
-        "expected_management_monthly",
-        "insurance_rate_yearly"
-    ]
-
-    # Return true if all the required values are present in the config file
-    if all_required_values_present(required_config_values, config):
+    required_config_values = {
+        "down_payment_decimal": lambda x: isinstance(x, (float)) and 0 <= x <= 1, 
+        "closing_cost_buyer_decimal": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
+        "closing_cost_seller_decimal": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
+        "expected_annual_growth": lambda x: isinstance(x, (float)) and 0 <= x <= 2,
+        "interest_rate": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
+        "loan_term_yrs": lambda x: isinstance(x, (int)) and 0 <= x <= 50,
+        "expected_repairs_monthly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
+        "expected_vacancy_monthly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
+        "expected_capx_monthly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
+        "expected_management_monthly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
+        "insurance_rate_yearly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25
+    }
+    
+    # TODO: Put this in a function after testing
+    
+    # Variable to track if the config file has been entered incorrectly
+    config_file_correct = True
+    
+    # Loop through each of the keys and values required for the config file
+    for key, value in required_config_values.items():
+        # Verify that each of the keys exists in the config file
+        if key in config:
+            # Handles if the value in the config file does not fall in the limits of the required values
+            if not value(config[key]):
+                print(f"{key} is incorrectly entered in config file. Review documentation for how to enter {key}.")
+                config_file_correct = False
+        
+        # Handles if a key is missing in the config file
+        else:
+            print(f'{key} is not in the config file. Please enter "{key}" in the config file.')
+            config_file_correct = False
+    
+    # Return True if no errors were found in the config file
+    if config_file_correct:
         return True
     
-    # Return false if any values are missing
+    # Return false if errors were found in the config file
     else:
         return False
     
@@ -483,6 +503,7 @@ def config_file_target_values_present(config):
         "target_five_year_annualized_return_min",
         "target_cash_on_cash_return_min"
     ]
+    # TODO: Create new one_required_value_present following the new all_required_values_present
     # Verify that the user has entered at least one target for the featured houses
     if one_required_value_present(required_target_values, config):
         return True

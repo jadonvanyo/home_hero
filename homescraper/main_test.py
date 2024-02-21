@@ -26,7 +26,7 @@ else:
         print("An error occurred while trying to load the config file. Verify config file name matches, that the file exists, and is complete.")
         exit(1)
     
-    # TODO: Verify all numbers in config.json are accurate (non zero, positive, within a specific range)
+    # Verify all required values in the config file are present and accurate
     if config_file_required_values_present(config):
         
         # Retrieve a list containing all the analyzed houses and one with any houses missing data
@@ -45,6 +45,3 @@ else:
         
         # Send the html email content and excel file to the target user
         send_featured_house_email(email_content_html, excel_filename)
-    
-    else:
-        print("Missing information in config.json")
