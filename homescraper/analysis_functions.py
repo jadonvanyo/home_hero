@@ -403,17 +403,6 @@ class House:
         return sheet
 
 
-def all_required_values_present(required_values, json_data):
-    """Function to return true if all the required values are present in a json file and false otherwise based on a list of required values"""
-    # Return false if any of the required values are not present in the JSON file
-    for value in required_values:
-        if not json_data.get(value):
-            return False
-
-    # Return true if none of the values are null in the JSON file
-    return True
-
-
 def analyze_all_houses(config, data):
     """Function to analyze all the given JSON data using the House class and return a list of analyzed and error houses"""
     # Create a list with all the analyzed houses
