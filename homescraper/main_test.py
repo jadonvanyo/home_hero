@@ -41,7 +41,7 @@ else:
         
         # Create the email html content for the analyzed houses
         email_content_html = create_featured_house_email(analyzed_houses, config)
-        print(email_content_html)
+        # print(email_content_html)
         
         # Send the html email content and excel file to the target user
         # send_featured_house_email(email_content_html, excel_filename)

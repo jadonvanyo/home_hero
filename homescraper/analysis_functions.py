@@ -423,23 +423,36 @@ def analyze_all_houses(config, data):
     error_houses = []
 
     # Establish the required values to analyze a house
-    required_house_values = [
-        "price",
-        "rent",
-        "sqft",
-        "tax"
-    ]
+    required_house_values = {
+        "price": lambda x: is_convertible_to_float(x) and float(x) > 0,
+        "rent": lambda x: is_convertible_to_float(x) and float(x) > 0,
+        "sqft": lambda x: is_convertible_to_float(x) and float(x) > 0,
+        "tax": lambda x: is_convertible_to_float(x) and float(x) > 0
+    }
+    
+    def print_house_json_error_message(key, error, json_data):
+        """Function to define error messages for the homedata.json file"""
+        # Error message for if a value is missing
+        if error == "missing":
+            print(f'"{key}" is missing for {json_data['address']} in the housedata.json file.')
+        # Error message for if a value is incorrect
+        elif error == "incorrect":
+            print(f'"{key}" for {json_data['address']} is incorrectly entered in the housedata.json file.')
+        # Error message to handle if it was not a number that was entered
+        elif error == "number":
+            print(f'"{key}" for {json_data['address']} is not a valid number in the housedata.json file.')
+        # General error message to handle all other issues
+        else:
+            print("An error has occurred while verifying data from the housedata.json file.")
 
     # Loop through each of the houses in the dataset and create an excel sheet for that house
     for house_data in data:
-        # TODO: Replace this with def all_values_convert_to_float(required_values, json_data):
         # Verify that all the data required for analyzing the house is present
-        if all_required_values_present(required_house_values, house_data):
+        if verify_all_required_values(required_house_values, house_data, print_house_json_error_message):
             house = House(config, house_data)
             analyzed_houses.append(house)
             
         else:
-            print(f"Key values missing for {house_data['address']}")
             error_houses.append(house_data['address'])
         
     return analyzed_houses, error_houses
@@ -463,7 +476,7 @@ def config_file_required_values_present(config):
         "insurance_rate_yearly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25
     }
     
-    def print_config_error_message(key, error):
+    def print_config_error_message(key, error, json_data=None):
         """Function to define error messages for the config file"""
         # Error message for if a value is missing
         if error == "missing":
@@ -482,7 +495,6 @@ def config_file_required_values_present(config):
     # Return false for all other cases
     else:
         return False
- 
     
     
 def config_file_target_values_present(config):
@@ -667,6 +679,14 @@ def format_excel_sheet(sheet):
     return sheet
 
 
+def is_convertible_to_float(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
 def load_json(json_path):
     """Load a configuration file with sensitive or variable information"""
     with open(json_path, 'r') as json_file:
@@ -737,6 +757,7 @@ def send_featured_house_email(excel_filename, email_content_html):
     
     return
 
+
 def verify_all_required_values(required_values, json_data, error_messages=None):
     """Function to return True if all the required values are included and within specified ranges for any JSON data"""
     # Variable to track if the data in the json_data file has been entered incorrectly
@@ -746,17 +767,24 @@ def verify_all_required_values(required_values, json_data, error_messages=None):
     for key, value in required_values.items():
         # Verify that each of the keys exists in the json_data file
         if key in json_data:
+            
+            # Handles if the value at a key in the json_data file is null
+            if not json_data[key]:
+                error_messages(key, 'missing', json_data)
+                file_correct = False
+                
             # Handles if the value in the json_data file does not fall in the limits of the required values
-            if not value(json_data[key]):
-                error_messages(key, 'incorrect')
+            elif not value(json_data[key]):
+                error_messages(key, 'incorrect', json_data)
                 file_correct = False
         
         # Handles if a key is missing in the json_data file
         else:
-            error_messages(key, 'missing')
+            error_messages(key, 'missing', json_data)
             file_correct = False
     
     # Return file_correct for verification if all values were present
     return file_correct
+
 
 # TODO: Create a function to delete the excel file after it has been sent
