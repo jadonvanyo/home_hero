@@ -3,16 +3,30 @@ from datetime import date
 import json
 
 # TODO: use try on all the open json files
-# Get all of the house data from homedata.json
-data = load_json("homedata2.json")
+# Try to pull the scraped home data
+try:
+    # Get all of the house data from homedata.json
+    data = load_json("homedata2.json")
+    
+# Return an error if the scraped data cannot be recovered
+except:
+    print("An error occurred while trying to load the scraped data. Verify scrapy feed matches, that the file exists, and is complete.")
+    exit(1)
 
 # Check if there are any houses in the list pulled
 if not data:
     print("No houses found")
     
 else:
-    # Load the config file
-    config = load_json("config.json")
+    # Try to pull data from the config file
+    try:
+        # Load the config file
+        config = load_json("config.json")
+        
+    # Return an error if the config file cannot be recovered
+    except:
+        print("An error occurred while trying to load the config file. Verify config file name matches, that the file exists, and is complete.")
+        exit(1)
     
     # TODO: Verify all numbers in config.json are accurate (non zero, positive, within a specific range)
     if config_file_required_values_present(config):
@@ -20,8 +34,9 @@ else:
         # Retrieve a list containing all the analyzed houses and one with any houses missing data
         analyzed_houses, error_houses = analyze_all_houses(config, data)
         
+        # TODO: Verify there are analyzed houses to send to the user (if analyzed_houses = 0 return an error)
         # Create a name for the excel file
-        # excel_filename = str(date.today()) + "-house-analysis.xlsx"
+        excel_filename = str(date.today()) + "-house-analysis.xlsx"
         
         # Create an excel book containing all of the houses that were scraped for analysis
         # create_house_analysis_excel_book(analyzed_houses, excel_filename)
@@ -30,8 +45,8 @@ else:
         email_content_html = create_featured_house_email(analyzed_houses, config)
         print(email_content_html)
         
-        # # Send the html email content and excel file to the target user
-        # send_featured_house_email(email_content_html, excel_filename)
+        # Send the html email content and excel file to the target user
+        send_featured_house_email(email_content_html, excel_filename)
     
     else:
         print("Missing information in config.json")

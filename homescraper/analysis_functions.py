@@ -673,8 +673,15 @@ def one_required_value_present(required_values, json_data):
 def send_featured_house_email(excel_filename, email_content_html):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
     
-    # Pull all the email data from a separate config file
-    email_config = load_json('/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
+    # Try to pull data from an email config file
+    try:
+        # TODO: Verify all required information is in the email_config file
+        # Pull all the email data from a separate config file
+        email_config = load_json('/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
+        
+    except:
+        print("An error occurred while trying to load the email config file. Verify email config file name matches, that the file exists, and is complete.")
+        return
     # Sender and recipient email addresses
     sender_address = email_config['sender_address']
     receiver_address = email_config['receiver_address']
@@ -704,6 +711,8 @@ def send_featured_house_email(excel_filename, email_content_html):
     session.sendmail(sender_address, receiver_address, message.as_string()) # Send an email with the excel file attached
     session.quit()
     print('Mail Sent')
+    
+    return
     
 
 # TODO: Create a function to delete the excel file after it has been sent
