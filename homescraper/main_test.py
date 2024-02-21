@@ -34,7 +34,7 @@ else:
         
         # TODO: Verify there are analyzed houses to send to the user (if analyzed_houses = 0 return an error)
         # Create a name for the excel file
-        excel_filename = str(date.today()) + "-house-analysis.xlsx"
+        # excel_filename = str(date.today()) + "-house-analysis.xlsx"
         
         # Create an excel book containing all of the houses that were scraped for analysis
         # create_house_analysis_excel_book(analyzed_houses, excel_filename)
@@ -44,4 +44,4 @@ else:
         print(email_content_html)
         
         # Send the html email content and excel file to the target user
-        send_featured_house_email(email_content_html, excel_filename)
+        # send_featured_house_email(email_content_html, excel_filename)

@@ -463,32 +463,26 @@ def config_file_required_values_present(config):
         "insurance_rate_yearly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25
     }
     
-    # TODO: Put this in a function after testing
-    
-    # Variable to track if the config file has been entered incorrectly
-    config_file_correct = True
-    
-    # Loop through each of the keys and values required for the config file
-    for key, value in required_config_values.items():
-        # Verify that each of the keys exists in the config file
-        if key in config:
-            # Handles if the value in the config file does not fall in the limits of the required values
-            if not value(config[key]):
-                print(f"{key} is incorrectly entered in config file. Review documentation for how to enter {key}.")
-                config_file_correct = False
-        
-        # Handles if a key is missing in the config file
+    def print_config_error_message(key, error):
+        """Function to define error messages for the config file"""
+        # Error message for if a value is missing
+        if error == "missing":
+            print(f'"{key}" is not in the config file. Please enter "{key}" in the config file.')
+        # Error message for if a value is incorrect
+        elif error == "incorrect":
+            print(f'"{key}" is incorrectly entered in the config file. Review documentation for how to enter "{key}".')
+        # General error message to handle all other issues
         else:
-            print(f'{key} is not in the config file. Please enter "{key}" in the config file.')
-            config_file_correct = False
+            print("An error has occurred while verifying data from the config file.")
     
-    # Return True if no errors were found in the config file
-    if config_file_correct:
+    # Return true if all the data in the config file was entered correctly
+    if verify_all_required_values(required_config_values, config, print_config_error_message):
         return True
     
-    # Return false if errors were found in the config file
+    # Return false for all other cases
     else:
         return False
+ 
     
     
 def config_file_target_values_present(config):
@@ -742,6 +736,27 @@ def send_featured_house_email(excel_filename, email_content_html):
     print('Mail Sent')
     
     return
+
+def verify_all_required_values(required_values, json_data, error_messages=None):
+    """Function to return True if all the required values are included and within specified ranges for any JSON data"""
+    # Variable to track if the data in the json_data file has been entered incorrectly
+    file_correct = True
     
+    # Loop through each of the keys and values required for the json_data file
+    for key, value in required_values.items():
+        # Verify that each of the keys exists in the json_data file
+        if key in json_data:
+            # Handles if the value in the json_data file does not fall in the limits of the required values
+            if not value(json_data[key]):
+                error_messages(key, 'incorrect')
+                file_correct = False
+        
+        # Handles if a key is missing in the json_data file
+        else:
+            error_messages(key, 'missing')
+            file_correct = False
+    
+    # Return file_correct for verification if all values were present
+    return file_correct
 
 # TODO: Create a function to delete the excel file after it has been sent
