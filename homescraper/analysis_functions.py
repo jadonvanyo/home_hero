@@ -4,6 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import json
 from openpyxl import Workbook
+import os
 from os.path import basename
 import smtplib
 from tabulate import tabulate
@@ -574,6 +575,27 @@ def create_featured_house_email(analyzed_houses, config):
         return email_content_html
 
 
+# TODO: Create a function to delete the excel file after it has been sent
+def delete_file(file_path):
+    """Function to delete a given file"""
+    # Try to delete the file
+    try:
+        os.remove(file_path)
+        print(f"File {file_path} has been successfully deleted.")
+        
+    # Handle issues if the file is not found
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+        
+    # Handle issues if permission is needed to delete the file
+    except PermissionError as pe:
+        print(f"Permission error deleting file {file_path}: {pe}")
+        
+    # Handle any additional exceptions
+    except Exception as e:
+        print(f"Error deleting file {file_path}: {e}")
+
+
 def format_excel_sheet(sheet):
     """Format an excel sheet for the house data"""
     
@@ -846,4 +868,3 @@ def verify_email_config_file(config_json_path):
     return required_email_values
         
         
-# TODO: Create a function to delete the excel file after it has been sent

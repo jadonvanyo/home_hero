@@ -1,8 +1,7 @@
-from analysis_functions import analyze_all_houses, create_featured_house_email, create_house_analysis_excel_book, config_file_required_values_present, load_json, send_featured_house_email, send_error_email
+from analysis_functions import analyze_all_houses, create_featured_house_email, create_house_analysis_excel_book, config_file_required_values_present, delete_file, load_json, send_featured_house_email, send_error_email
 from datetime import date
 
 # Try to pull the scraped home data
-# TODO: Move the try and except into the load_json function
 data = load_json("homedata2.json")
 
 # Check if there are any houses in the list pulled
@@ -10,7 +9,7 @@ if not data:
     print("No houses found")
     
 else:
-    # Load the config file
+    # Try to load the config file
     config = load_json("config.json")
     
     # Exit the program if no config file can be found
@@ -42,3 +41,6 @@ else:
         
         # Send the html email content and excel file to the target user
         # send_featured_house_email(excel_filename, email_content_html)
+        
+        # Delete the excel file that was created
+        # delete_file(excel_filename)
