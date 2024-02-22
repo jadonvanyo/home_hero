@@ -216,26 +216,35 @@ class House:
         
         return house_email_plain
     
-    # TODO: Change this to take target_values instead of the rent
-    def featured_home_determiner(self, config):
-        """Method to determine if a home has hit an investors given requirements"""
-        # TODO: Make this entirely controlled from the config file
+
+    def featured_home_determiner(self, target_values):
+        """Method to determine true if a home has hits all an investors given requirements and false otherwise"""
+
+        # Establish all matches between the metrics in the config file and House class   
+        house_analytics_match = {
+            "target_cash_flow_monthly_min": self.cash_flow_monthly,
+            "target_percent_rule_min": self.percent_rule_decimal,
+            "target_net_operating_income_min": self.net_operating_income,
+            "target_pro_forma_cap_min": self.pro_forma_cap_decimal,
+            "target_five_year_annualized_return_min": self.annualized_return_percent[5],
+            "target_cash_on_cash_return_min": self.cash_on_cash_decimal
+        }
         
-        # Use try to test for errors from the config.json file
-        try:
-            # Set the user's preferred target condition(s) for investment properties
-            if self.cash_flow_monthly >= int(config['target_cash_flow_monthly_min']):
-                # Return true if the condition(s) is(are) met
-                return True
-            
-            # If the condition(s) is(are) not met, return false
-            else:
-                return False
+        # Loop through all of the potential target keys and target values available
+        for key, value in house_analytics_match.items():
+            # Determine if one of the keys in the potential target keys is also in the target keys
+            if key in target_values:
+                # Determine if the house value is equal to or greater than the target value
+                if target_values[key] <= value:
+                    print(f"Target: {target_values[key]}")
+                    print(f"Actual: {value}")
+                    
+                # If one key does not pass, return false
+                else:
+                    return False
         
-        # Error message for if there are errors reading from the config file
-        except:
-            print('Error occurred while trying to determine if house should be featured.')
-            return False
+        # If all keys pass, return true
+        return True
     
     
     def house_excel_sheet_creator(self, wb):
@@ -496,7 +505,7 @@ def config_file_target_values(config):
         "target_percent_rule_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
         "target_net_operating_income_min": lambda x: isinstance(x, (int, float)),
         "target_pro_forma_cap_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
-        "target_five_year_annualized_return_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
+        "target_five_year_annualized_return_min": lambda x: isinstance(x, (int, float)) and 0 <= x <= 100,
         "target_cash_on_cash_return_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1
     }
     
@@ -517,7 +526,6 @@ def config_file_target_values(config):
                 print(f'"{key}" was entered incorrectly in the config file. Refer to the documentation on how to enter "{key}".')
             
     return target_values    
-
     
 
 def create_house_analysis_excel_book(analyzed_houses, excel_filename):
@@ -557,7 +565,7 @@ def create_featured_house_email(analyzed_houses, config):
             # Loop through each of the houses in the dataset and add them to a list of analyzed houses
             for house in analyzed_houses:
                 # Check to see if the analyzed house meets the investor's criteria
-                if house.featured_home_determiner(config):
+                if house.featured_home_determiner(target_values):
                     # Add the individual house HTMl content to the total HTML content
                     email_content_html += house.email_format_html()
                     
