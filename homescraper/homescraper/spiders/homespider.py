@@ -1,13 +1,13 @@
 import scrapy
 from homescraper.items import HomeItem
-from analysis_functions import load_config
+from analysis_functions import load_json
 
 class HomespiderSpider(scrapy.Spider):
     name = "homespider"
     allowed_domains = ["www.zillow.com"]
     
     # Load config file with all the start urls
-    start_urls = load_config()['starturls']
+    start_urls = load_json("config.json")['starturls']
 
     # Overwrite any of the settings.py settings for this particular spider \
     custom_settings = {
