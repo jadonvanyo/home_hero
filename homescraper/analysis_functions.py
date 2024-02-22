@@ -212,7 +212,27 @@ class House:
             
             
     def email_format_html(self):
-        """Method to load all the required information into HTMl format for an email"""
+        """
+        Formats the house's attributes and calculated financial metrics into an HTML string, making it suitable for inclusion in an email. This method generates a visually appealing representation of the property's details and its investment analysis, including links to external resources and a table for the first five years of financial projections.
+
+        The HTML content includes:
+        - A link to the house's listing page, using the house address as the anchor text.
+        - Key property details such as price, type (property subtype), layout (bedrooms, bathrooms, square footage), price per square foot, and estimated monthly rent with a link to the rent information.
+        - Financial metrics including monthly operating expenses, total monthly expenses, monthly cash flow, adherence to the 1% rule, cash flow based on the 50% rule, and the estimated total cash needed for the purchase.
+        - A table showing a yearly breakdown for the first five years, covering property value, loan balance, equity, expected rents, profit if sold, yearly cash flow, and annualized return percentages.
+        - A brief description of the property.
+
+        Returns:
+            str: An HTML formatted string containing the house's details and financial metrics, ready to be sent as part of an email body.
+
+        Example Usage:
+            house = House(config, data)  # Assuming `config` and `data` are predefined dictionaries with property and financial info.
+            email_body_html = house.email_format_html()
+            # `email_body_html` can now be used as the body of an email, providing a detailed overview of the property in a rich HTML format.
+
+        Note:
+            This method is designed for generating email content that is both informative and visually engaging. The HTML string it returns should be compatible with most email clients that support HTML content.
+        """
         # Establish a new list to display the annualized return as a percentage
         display_annualized_return_percent = []
         
@@ -263,14 +283,36 @@ class House:
     
     
     def email_format_plain(self):
-        """Method to load all the required information into a plain text format for email"""
+        """
+        Formats the house's attributes and calculated financial metrics into a plain text string for email communication. This method provides a straightforward representation of the property's details and its investment analysis, suitable for environments where HTML content is not preferred or supported.
+
+        The plain text content includes:
+        - A direct URL link to the house's listing.
+        - Key property details such as address, price, type (property subtype), layout (number of bedrooms and bathrooms, square footage), and the price per square foot.
+        - Financial metrics including the estimated monthly rent, monthly operating expenses, total monthly expenses, monthly cash flow, the 1% rule, cash flow based on the 50% rule, and the estimated total cash needed for the purchase.
+        - A summary of financial projections for the first five years, covering property value, loan balance, equity, expected rents, profit if sold, yearly cash flow, and annualized return percentages, formatted as lists.
+        - A brief description of the property.
+
+        Returns:
+            str: A plain text formatted string containing the house's details and financial metrics, ready to be sent as part of an email body.
+
+        Example Usage:
+            house = House(config, data)  # Assuming `config` and `data` are predefined dictionaries with property and financial info.
+            email_body_plain = house.email_format_plain()
+            # `email_body_plain` can now be used as the body of an email, providing a detailed overview of the property in a simple text format.
+
+        Note:
+            This method caters to scenarios where HTML emails are not suitable or desired, offering a clear, no-frills presentation of the property's financial and physical characteristics. It's particularly useful for text-based email clients or for users who prefer or require plain text emails.
+        """
         
+        # Establish a new list to display the annualized return as a percentage
         display_annualized_return_percent = []
         
         for year in self.annualized_return_decimal[:6]:
             year *= 100
             display_annualized_return_percent.append(year)
         
+        # Create the plain text for the house
         house_email_plain = f"""
             Link: {self.url}
             Address: {self.address}
@@ -302,7 +344,31 @@ class House:
     
 
     def featured_home_determiner(self, target_values):
-        """Method to determine true if a home has hits all an investors given requirements and false otherwise"""
+        """
+        Determines whether the house meets a set of predefined investment criteria. This method compares the house's financial metrics against target values specified by the investor or analysis criteria. The target values should be provided as a dictionary where the keys correspond to specific metrics of interest, and the values represent the minimum acceptable values for those metrics.
+
+        Parameters:
+            target_values (dict): A dictionary containing the target investment criteria, with keys representing the metric names (e.g., "target_cash_flow_monthly_min", "target_percent_rule_min") and values representing the minimum acceptable values for those metrics.
+
+        Returns:
+            bool: True if the house meets or exceeds all the target criteria; False otherwise.
+
+        Example Usage:
+            target_criteria = {
+                "target_cash_flow_monthly_min": 200,
+                "target_percent_rule_min": 0.01,
+                "target_net_operating_income_min": 2400,
+                "target_pro_forma_cap_min": 0.08,
+                "target_five_year_annualized_return_min": 0.1,
+                "target_cash_on_cash_return_min": 0.08
+            }
+            house = House(config, data)  # Assuming `config` and `data` are predefined dictionaries with property and financial info.
+            is_featured = house.featured_home_determiner(target_criteria)
+            # `is_featured` will be True if the house meets all the target criteria, False otherwise.
+
+        Note:
+            This method is crucial for quickly identifying properties that align with an investor's specific financial goals and investment strategy. It allows for the automated screening of properties based on financial performance metrics, facilitating the investment decision-making process.
+        """
 
         # Establish all matches between the metrics in the config file and House class   
         house_analytics_match = {
@@ -331,7 +397,31 @@ class House:
     
     
     def house_excel_sheet_creator(self, wb):
-        """Create a new sheet populated with all the required data from a house"""
+        """
+        Populates a new Excel sheet within a given workbook with the house's details and calculated financial metrics. This method systematically organizes key property information and investment analysis metrics into a structured Excel format, making it suitable for detailed review, comparison, and archival purposes.
+
+        Parameters:
+            wb (Workbook): An open Excel workbook object within which the new sheet will be created. This workbook should be part of a library that supports Excel file manipulation (e.g., openpyxl, xlwt).
+
+        Returns:
+            Worksheet: The newly created worksheet populated with the house's data and metrics. This includes general information about the property, financial figures, and projections that are essential for investment analysis.
+
+        Overview of Populated Data:
+            - The method creates a sheet named after the property's address, ensuring easy identification.
+            - It fills the sheet with a wide array of data points, including purchase price, loan details, monthly expenses, income projections, and more, formatted appropriately for clarity and ease of understanding.
+            - Financial formulas are also embedded within the sheet to dynamically calculate key investment metrics based on the populated data, enabling users to adjust certain inputs and immediately see the impact on the property's financial outlook.
+            - The method applies formatting rules for better readability and analysis, such as percentage and currency formatting, where applicable.
+
+        Example Usage:
+            from openpyxl import Workbook
+            wb = Workbook()
+            house = House(config, data)  # Assuming `config` and `data` contain the necessary property and financial information.
+            house.house_excel_sheet_creator(wb)
+            wb.save('House_Analysis.xlsx')
+
+        Note:
+            This method is intended for use within a larger application that handles real estate investment analysis. It requires the caller to manage the Excel workbook's creation, saving, and other manipulations outside this method.
+        """
         # Create a new name for each sheet
         sheet_name = self.address.replace(',', '').replace(' ', '-')
         
@@ -789,6 +879,7 @@ def send_error_email(error_message, config):
     # Verify that the user wants error messages
     if config['send_error_emails']:
 
+        # TODO: Pull the path for the email from the config file
         # Retrieve all the required values from the email config file
         required_email_values = verify_email_config_file('/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
         
@@ -815,6 +906,7 @@ def send_error_email(error_message, config):
 def send_featured_house_email(excel_filename, email_content_html):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
     
+    # TODO: Pull the path for the email from the config file
     # Retrieve all the required values from the email config file
     required_email_values = verify_email_config_file('/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
 

@@ -8,6 +8,7 @@ from scrapy.utils.project import get_project_settings
 
 
 # TODO: Verify that urls are given
+# TODO: Potentially move config_file_required_values_present upstream
 # TODO: Put the crawl process and process.start() into a function
 
 # Try to load the config file
