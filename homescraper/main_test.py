@@ -8,6 +8,7 @@ try:
     
 # Return an error if the scraped data cannot be recovered
 except:
+    # TODO: Error email here
     print("An error occurred while trying to load the scraped data. Verify scrapy feed matches, that the file exists, and is complete.")
     exit(1)
 
@@ -24,6 +25,7 @@ else:
     # Return an error if the config file cannot be recovered
     except:
         print("An error occurred while trying to load the config file. Verify config file name matches, that the file exists, and is complete.")
+        # TODO: Error email here
         exit(1)
     
     # Verify all required values in the config file are present and accurate
@@ -34,18 +36,19 @@ else:
         
         # Verify there are analyzed houses to send to the user
         if len(analyzed_houses) == 0:
+            # TODO: Error email here
             print(f"{len(error_houses)} were scraped, but none contained all the required information. Review scrapping process for more details.")
             exit(1)
         
         # Create a name for the excel file
-        # excel_filename = str(date.today()) + "-house-analysis.xlsx"
+        excel_filename = str(date.today()) + "-house-analysis.xlsx"
         
         # Create an excel book containing all of the houses that were scraped for analysis
-        # create_house_analysis_excel_book(analyzed_houses, excel_filename)
+        create_house_analysis_excel_book(analyzed_houses, excel_filename)
         
         # Create the email html content for the analyzed houses
         email_content_html = create_featured_house_email(analyzed_houses, config)
-        print(email_content_html)
+        # print(email_content_html)
         
         # Send the html email content and excel file to the target user
-        # send_featured_house_email(email_content_html, excel_filename)
+        send_featured_house_email(excel_filename, email_content_html)

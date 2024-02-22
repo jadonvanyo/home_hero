@@ -170,17 +170,17 @@ class House:
                     <a href="{self.url}">{self.address}</a>
                 </h4>
                 <ul>
-                    <li>Price: ${self.price}</li>
-                    <li>Type: {self.property_subtype}</li>
-                    <li>Layout: Beds: {self.beds} Baths: {self.baths} SQFT: {self.sqft} sqft</li>
-                    <li>Price per SQFT: ${self.price_per_sqft}</li>
-                    <li>Estimated Monthly Rent: <a href="{self.rent_url}">${self.suggested_total_rent_monthly}</a></li>
-                    <li>Monthly Operating Expenses: ${self.total_operating_costs_monthly}</li>
-                    <li>Total Monthly Expenses: ${self.total_expenses_monthly}</li>
-                    <li>Monthly Cash Flow: ${self.cash_flow_monthly}</li>
-                    <li>1% Rule: {self.percent_rule_decimal * 100}%</li>
-                    <li>50% Rule Cash Flow: ${self.cash_flow_50}</li>
-                    <li>Estimated Total Cash Needed: ${self.cash_needed_total}</li>
+                    <li><strong>Price:</strong> ${self.price}</li>
+                    <li><strong>Type:</strong> {self.property_subtype}</li>
+                    <li><strong>Layout:</strong> Beds: {self.beds} Baths: {self.baths} SQFT: {self.sqft} sqft</li>
+                    <li><strong>Price per SQFT:</strong> ${self.price_per_sqft}</li>
+                    <li><strong>Estimated Monthly Rent:</strong> <a href="{self.rent_url}">${self.suggested_total_rent_monthly}</a></li>
+                    <li><strong>Monthly Operating Expenses:</strong> ${self.total_operating_costs_monthly}</li>
+                    <li><strong>Total Monthly Expenses:</strong> ${self.total_expenses_monthly}</li>
+                    <li><strong>Monthly Cash Flow:</strong> ${self.cash_flow_monthly}</li>
+                    <li><strong>1% Rule:</strong> {self.percent_rule_decimal * 100}%</li>
+                    <li><strong>50% Rule Cash Flow:</strong> ${self.cash_flow_50}</li>
+                    <li><strong>Estimated Total Cash Needed:</strong> ${self.cash_needed_total}</li>
                 </ul>
                 <h4>First 5 years yearly breakdown</h4>
                 {yearly_statistics_table_html}
@@ -249,8 +249,7 @@ class House:
             if key in target_values:
                 # Determine if the house value is equal to or greater than the target value
                 if target_values[key] <= value:
-                    print(f"Target: {target_values[key]}")
-                    print(f"Actual: {value}")
+                    pass
                     
                 # If one key does not pass, return false
                 else:
@@ -690,52 +689,38 @@ def load_json(json_path):
 def send_featured_house_email(excel_filename, email_content_html):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
     
-    # Try to pull data from an email config file
-    try:
-        # Pull all the email data from a separate config file
-        email_config = load_json('/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
+    required_email_values = verify_email_config_file('/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
+
+    if required_email_values:
     
-    # Handle errors if the email config file is not found
-    except:
-        print("An error occurred while trying to load the email config file. Verify email config file name matches, that the file exists, and is complete.")
-        return
-    
-    # Try to pull all the required information from the email config file
-    try:
-        # Sender and recipient email addresses
-        sender_address = email_config['sender_address']
-        receiver_address = email_config['receiver_address']
-        # Google App Password for 2FA
-        password = email_config['password']
-        
-    # Handle errors if any of the required information in the email config file is missing
-    except:
-        print("An error occurred while trying to retrieve data from the email config file. Verify email config file contains all the required information.")
-        return
+        # Setup the MIME
+        message = MIMEMultipart()
+        message['From'] = required_email_values['sender_address']
+        message['To'] = required_email_values['receiver_address']
+        message['Subject'] = f'Houses analyzed - {str(date.today())}'   # The subject line
 
-    # Setup the MIME
-    message = MIMEMultipart()
-    message['From'] = sender_address
-    message['To'] = receiver_address
-    message['Subject'] = f'Houses analyzed - {str(date.today())}'   # The subject line
+        # Attach the HTML to also be sent with the email
+        message.attach(MIMEText(email_content_html, 'html'))
 
-    # Attach the HTML to also be sent with the email
-    message.attach(MIMEText(email_content_html, 'html'))
+        # Try to open the excel file to send in an email
+        try:
+            # Open the excel file and include it as an attachment for the email
+            with open(excel_filename, 'rb') as file:
+                part = MIMEApplication(file.read(), Name=basename(excel_filename))
+                part["Content-Disposition"] = f'attachment; filename="{basename(excel_filename)}"'
+                message.attach(part)
+        except FileNotFoundError:
+            print("It appears the excel file was not created. Verify the excel file is being created before sending the email.")
+            return
+            
 
-    # Open the excel file and include it as an attachment for the email
-    with open(excel_filename, 'rb') as file:
-        part = MIMEApplication(file.read(), Name=basename(excel_filename))
-        part["Content-Disposition"] = f'attachment; filename="{basename(excel_filename)}"'
-        message.attach(part)
-        
-
-    # Create SMTP session for sending the mail
-    session = smtplib.SMTP('smtp.gmail.com', 587) 
-    session.starttls() # enable security
-    session.login(sender_address, password) # login with mail_id and password
-    session.sendmail(sender_address, receiver_address, message.as_string()) # Send an email with the excel file attached
-    session.quit()
-    print('Mail Sent')
+        # Create SMTP session for sending the mail
+        session = smtplib.SMTP('smtp.gmail.com', 587) 
+        session.starttls() # enable security
+        session.login(required_email_values['sender_address'], required_email_values['password']) # login with mail_id and password
+        session.sendmail(required_email_values['sender_address'], required_email_values['receiver_address'], message.as_string()) # Send an email with the excel file attached
+        session.quit()
+        print('Mail Sent')
     
     return
 
@@ -802,5 +787,33 @@ def verify_config_file_target_values(config):
 
 
 # TODO: Create a function to verify the users email information
+def verify_email_config_file(config_json_path):
+    """Function to verify that the email config file works and return all the required information if it does"""
+        # Try to pull data from an email config file
+    try:
+        # Pull all the email data from a separate config file
+        email_config = load_json(config_json_path)
+    
+    # Handle errors if the email config file is not found
+    except:
+        print("An error occurred while trying to load the email config file. Verify email config file name matches, that the file exists, and is complete.")
+        return
+    
+    # Try to pull all the required information from the email config file
+    try:
+        required_email_values = {
+            "sender_address": email_config['sender_address'],
+            "receiver_address": email_config['receiver_address'],
+            "password": email_config['password']
+        }
+        
+    # Handle errors if any of the required information in the email config file is missing
+    except:
+        print("An error occurred while trying to retrieve data from the email config file. Verify email config file contains all the required information.")
+        return
+    
+    return required_email_values
+
+
 # TODO: Create a function to send an error email to the user
 # TODO: Create a function to delete the excel file after it has been sent
