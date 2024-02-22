@@ -506,39 +506,7 @@ def config_file_required_values_present(config):
     
     # Return false for all other cases
     else:
-        return False
-    
-# TODO: Change to verify_config_file_target_values
-def config_file_target_values(config):
-    """Function to test and return a list of all the valid target values from the config file"""
-    
-    # Establish all the potential target variables required
-    required_target_values = {
-        "target_cash_flow_monthly_min": lambda x: isinstance(x, (int, float)),
-        "target_percent_rule_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
-        "target_net_operating_income_min": lambda x: isinstance(x, (int, float)),
-        "target_pro_forma_cap_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
-        "target_five_year_annualized_return_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
-        "target_cash_on_cash_return_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1
-    }
-    
-    # Dictionary to store all the target requested values
-    target_values = {}
-    
-    # Loop through each of the target required keys and values 
-    for key, value in required_target_values.items():
-        # Determine if a value exits in config for a target key
-        if config[key]:
-            # If a target value does exist, determine if it fits the required target criteria
-            if value(config[key]):
-                # Add the user's desired metric as a target key value pair
-                target_values[f'{key}'] = config[key]
-            
-            # If a value does not contain the target criteria, return an error message to the user
-            else:
-                print(f'"{key}" was entered incorrectly in the config file. Refer to the documentation on how to enter "{key}".')
-            
-    return target_values    
+        return False  
     
 
 def create_house_analysis_excel_book(analyzed_houses, excel_filename):
@@ -567,7 +535,7 @@ def create_featured_house_email(analyzed_houses, config):
     # Verify that the user is looking for featured houses in their emails
     if config['featured_house_required']:
         # Generate a dictionary of target keys and values from the config file
-        target_values = config_file_target_values(config)
+        target_values = verify_config_file_target_values(config)
         
         # Generate the email to the user if the dictionary contains any items
         if target_values:
@@ -799,6 +767,38 @@ def verify_all_required_values(required_values, json_data, error_messages=None):
     
     # Return file_correct for verification if all values were present
     return file_correct
-        
+
+
+def verify_config_file_target_values(config):
+    """Function to test and return a list of all the valid target values from the config file"""
+    
+    # Establish all the potential target variables required
+    required_target_values = {
+        "target_cash_flow_monthly_min": lambda x: isinstance(x, (int, float)),
+        "target_percent_rule_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
+        "target_net_operating_income_min": lambda x: isinstance(x, (int, float)),
+        "target_pro_forma_cap_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
+        "target_five_year_annualized_return_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
+        "target_cash_on_cash_return_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1
+    }
+    
+    # Dictionary to store all the target requested values
+    target_values = {}
+    
+    # Loop through each of the target required keys and values 
+    for key, value in required_target_values.items():
+        # Determine if a value exits in config for a target key
+        if config[key]:
+            # If a target value does exist, determine if it fits the required target criteria
+            if value(config[key]):
+                # Add the user's desired metric as a target key value pair
+                target_values[f'{key}'] = config[key]
+            
+            # If a value does not contain the target criteria, return an error message to the user
+            else:
+                print(f'"{key}" was entered incorrectly in the config file. Refer to the documentation on how to enter "{key}".')
+            
+    return target_values  
+
 
 # TODO: Create a function to delete the excel file after it has been sent
