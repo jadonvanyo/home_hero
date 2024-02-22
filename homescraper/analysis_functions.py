@@ -126,7 +126,7 @@ class House:
         self.rent_growth = []
         self.profit_if_sold = []
         self.cash_flow_yearly = []
-        self.annualized_return_percent = []
+        self.annualized_return_decimal = []
         
         # Loop though all the years of the loan term to determine yearly statistics of the property
         for x in range(self.loan_term_yrs + 1):
@@ -137,11 +137,18 @@ class House:
             self.rent_growth.append(round(self.suggested_total_rent_monthly * (1 + self.expected_annual_growth) ** x, 2))
             self.profit_if_sold.append(round(self.property_value[x] * (1 - self.closing_cost_seller_decimal) + sum(self.cash_flow_yearly) - self.cash_needed_total - self.loan_balance[x], 2))
             self.cash_flow_yearly.append(round((self.rent_growth[x] * (1 - self.expected_repairs_monthly - self.expected_vacancy_monthly - self.expected_capx_monthly - self.expected_management_monthly) - (1 + self.expected_annual_growth) ** x * (self.insurance_monthly + self.taxes_monthly) - self.principle_interest_monthly)  * 12, 2))
-            self.annualized_return_percent.append(round((((self.profit_if_sold[x] + self.cash_needed_total) / self.cash_needed_total) ** (1 / (x + 1)) - 1) * 100, 2))
+            self.annualized_return_decimal.append(round((((self.profit_if_sold[x] + self.cash_needed_total) / self.cash_needed_total) ** (1 / (x + 1)) - 1), 4))
             
             
     def email_format_html(self):
         """Method to load all the required information into HTMl format for an email"""
+        # Establish a new list to display the annualized return as a percentage
+        display_annualized_return_percent = []
+        
+        for year in self.annualized_return_decimal[:6]:
+            year *= 100
+            display_annualized_return_percent.append(year)
+        
         # Add all the appropriate labels and rows for the table
         formatted_table_data = [
             ['Year'] + self.year[:6],
@@ -151,7 +158,7 @@ class House:
             ['Expected Rents ($)'] + self.rent_growth[:6],
             ['Profit if Sold ($)'] + self.profit_if_sold[:6],
             ['Yearly Cash Flow ($)'] + self.cash_flow_yearly[:6],
-            ['Annualized Return (%)'] + self.annualized_return_percent[:6]
+            ['Annualized Return (%)'] + display_annualized_return_percent
         ]
         
         # Turn all the table data into HTML format
@@ -187,6 +194,12 @@ class House:
     def email_format_plain(self):
         """Method to load all the required information into a plain text format for email"""
         
+        display_annualized_return_percent = []
+        
+        for year in self.annualized_return_decimal[:6]:
+            year *= 100
+            display_annualized_return_percent.append(year)
+        
         house_email_plain = f"""
             Link: {self.url}
             Address: {self.address}
@@ -210,7 +223,7 @@ class House:
             {['Expected Rents'] + self.rent_growth[:6]}
             {['Profit if Sold'] + self.profit_if_sold[:6]}
             {['Yearly Cash Flow'] + self.cash_flow_yearly[:6]}
-            {['Annualized Return'] + self.annualized_return_percent[:6]}
+            {['Annualized Return'] + display_annualized_return_percent}
             Description: {self.description}
         """
         
@@ -226,7 +239,7 @@ class House:
             "target_percent_rule_min": self.percent_rule_decimal,
             "target_net_operating_income_min": self.net_operating_income,
             "target_pro_forma_cap_min": self.pro_forma_cap_decimal,
-            "target_five_year_annualized_return_min": self.annualized_return_percent[5],
+            "target_five_year_annualized_return_min": self.annualized_return_decimal[5],
             "target_cash_on_cash_return_min": self.cash_on_cash_decimal
         }
         
@@ -495,7 +508,7 @@ def config_file_required_values_present(config):
     else:
         return False
     
-    
+# TODO: Change to verify_config_file_target_values
 def config_file_target_values(config):
     """Function to test and return a list of all the valid target values from the config file"""
     
@@ -505,7 +518,7 @@ def config_file_target_values(config):
         "target_percent_rule_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
         "target_net_operating_income_min": lambda x: isinstance(x, (int, float)),
         "target_pro_forma_cap_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
-        "target_five_year_annualized_return_min": lambda x: isinstance(x, (int, float)) and 0 <= x <= 100,
+        "target_five_year_annualized_return_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
         "target_cash_on_cash_return_min": lambda x: isinstance(x, (float)) and 0 <= x <= 1
     }
     

@@ -16,6 +16,6 @@
     "target_percent_rule_min": null,
     "target_net_operating_income_min": null,
     "target_pro_forma_cap_min": null,
-    "target_five_year_annualized_return_min": 15,
+    "target_five_year_annualized_return_min": 0.15,
     "target_cash_on_cash_return_min": null
 }
