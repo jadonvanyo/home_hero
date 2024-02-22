@@ -17,6 +17,10 @@ config = load_json("config.json")
 if not config:
     exit(1)
 
+# Verify all required values in the config file are present and accurate
+if not config_file_required_values_present(config):
+    exit(1)
+
 # Get the settings for all of the spiders
 settings = get_project_settings()
 
@@ -32,6 +36,7 @@ for spider in spiders:
     # Stop the script here until all crawling jobs are finished
     process.start()
 
+# TODO: Update this to feed for the spiders
 # Try to pull the scraped home data
 data = load_json("homedata2.json")
 
