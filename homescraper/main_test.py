@@ -1,5 +1,45 @@
 from analysis_functions import analyze_all_houses, create_featured_house_email, create_house_analysis_excel_book, config_file_required_values_present, delete_file, load_json, send_featured_house_email, send_error_email
 from datetime import date
+from homescraper.spiders.homespider import HomespiderSpider
+from homescraper.spiders.rentspider import RentspiderSpider
+from homescraper.spiders.taxspider import TaxspiderSpider
+from scrapy.crawler import CrawlerProcess
+from scrapy.utils.project import get_project_settings
+
+
+# TODO: Verify that urls are given
+# TODO: Put the crawl process and process.start() into a function
+
+# Try to load the config file
+config = load_json("config.json")
+
+# Exit the program if no config file can be found
+if not config:
+    exit(1)
+
+# Get the settings for all of the spiders
+settings = get_project_settings()
+
+# Define any custom settings for this project of spiders
+process = CrawlerProcess(settings)
+
+# Crawl zillow for all the available properties from the url in config
+process.crawl(HomespiderSpider)
+
+# Stop the script here until all crawling jobs are finished
+process.start()
+
+# Crawl zillow for all the available properties from the address in config
+process.crawl(RentspiderSpider)
+
+# Stop the script here until all crawling jobs are finished
+process.start()
+
+# Crawl zillow for all the available properties from the address in config
+process.crawl(TaxspiderSpider)
+
+# Stop the script here until all crawling jobs are finished
+process.start()
 
 # Try to pull the scraped home data
 data = load_json("homedata2.json")
@@ -9,13 +49,6 @@ if not data:
     print("No houses found")
     
 else:
-    # Try to load the config file
-    config = load_json("config.json")
-    
-    # Exit the program if no config file can be found
-    if not config:
-        exit(1)
-    
     # Verify all required values in the config file are present and accurate
     if config_file_required_values_present(config):
         
