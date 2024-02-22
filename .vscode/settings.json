@@ -24,6 +24,7 @@
         "starturls",
         "tablefmt",
         "testid",
-        "toscrape"
+        "toscrape",
+        "xlwt"
     ]
 }

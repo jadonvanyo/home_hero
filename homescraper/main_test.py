@@ -9,7 +9,6 @@ from scrapy.utils.project import get_project_settings
 
 # TODO: Verify that urls are given
 # TODO: Potentially move config_file_required_values_present upstream
-# TODO: Put the crawl process and process.start() into a function
 
 # Try to load the config file
 config = load_json("config.json")
@@ -24,23 +23,14 @@ settings = get_project_settings()
 # Define any custom settings for this project of spiders
 process = CrawlerProcess(settings)
 
-# Crawl zillow for all the available properties from the url in config
-process.crawl(HomespiderSpider)
+# Create a list of all the required spiders to gather the house info
+spiders = [HomespiderSpider, RentspiderSpider, TaxspiderSpider]
 
-# Stop the script here until all crawling jobs are finished
-process.start()
-
-# Crawl zillow for all the available properties from the address in config
-process.crawl(RentspiderSpider)
-
-# Stop the script here until all crawling jobs are finished
-process.start()
-
-# Crawl zillow for all the available properties from the address in config
-process.crawl(TaxspiderSpider)
-
-# Stop the script here until all crawling jobs are finished
-process.start()
+# Loop through each of the spiders until all the required information has been gathered
+for spider in spiders:
+    process.crawl(spider)
+    # Stop the script here until all crawling jobs are finished
+    process.start()
 
 # Try to pull the scraped home data
 data = load_json("homedata2.json")
