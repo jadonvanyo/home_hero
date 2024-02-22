@@ -697,17 +697,6 @@ def load_json(json_path):
         json_data = json.load(json_file)
     return json_data
 
-# TODO: DELETE
-def one_required_value_present(required_values, json_data):
-    """Function to return true if at least one of the required values are present in a json file and false otherwise based on a list of required values"""    
-    # Return true if any of the required values are present in the JSON file
-    for value in required_values:
-        if json_data.get(value):
-            return True
-        
-    # Return false if none of the values are null in the JSON file
-    return False
-
 
 def send_featured_house_email(excel_filename, email_content_html):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
@@ -789,28 +778,6 @@ def verify_all_required_values(required_values, json_data, error_messages=None):
     
     # Return file_correct for verification if all values were present
     return file_correct
-
-# TODO: DELETE
-def target_values_generator(required_values, json_data):
-    """Function to verify and return a dictionary of all the target values that the user requested in the config file"""
-    
-    # Dictionary to store all the target requested values
-    target_values = {}
-    
-    # Loop through each of the target required keys and values 
-    for key, value in required_values.items():
-        # Determine if a value exits in config for a target key
-        if json_data[key]:
-            # If a target value does exist, determine if it fits the required target criteria
-            if value(json_data[key]):
-                # Add the user's desired metric as a target key value pair
-                target_values[f'{key}'] = json_data[key]
-            
-            # If a value does not contain the target criteria, return an error message to the user
-            else:
-                print(f'"{key}" was entered incorrectly in the config file. Refer to the documentation on how to enter "{key}".')
-            
-    return target_values
         
 
 # TODO: Create a function to delete the excel file after it has been sent
