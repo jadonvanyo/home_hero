@@ -8,7 +8,6 @@ from scrapy.utils.project import get_project_settings
 
 
 # TODO: Verify that urls are given
-# TODO: Potentially move config_file_required_values_present upstream
 
 # Try to load the config file
 config = load_json("config.json")
@@ -44,32 +43,29 @@ data = load_json("homedata2.json")
 if not data:
     print("No houses found")
     
-else:
-    # Verify all required values in the config file are present and accurate
-    if config_file_required_values_present(config):
-        
-        # Retrieve a list containing all the analyzed houses and one with any houses missing data
-        analyzed_houses, error_houses = analyze_all_houses(config, data)
-        
-        # Verify there are analyzed houses to send to the user
-        if len(analyzed_houses) == 0:
-            error_message = f"{len(error_houses)} houses were scraped, but none contained all the required information. Review scrapping process for more details."
-            print(error_message)
-            send_error_email(error_message, config)
-            exit(1)
-        
-        # Create a name for the excel file
-        # excel_filename = str(date.today()) + "-house-analysis.xlsx"
-        
-        # Create an excel book containing all of the houses that were scraped for analysis
-        # create_house_analysis_excel_book(analyzed_houses, excel_filename)
-        
-        # Create the email html content for the analyzed houses
-        email_content_html = create_featured_house_email(analyzed_houses, config)
-        print(email_content_html)
-        
-        # Send the html email content and excel file to the target user
-        # send_featured_house_email(excel_filename, email_content_html)
-        
-        # Delete the excel file that was created
-        # delete_file(excel_filename)
+else:   
+    # Retrieve a list containing all the analyzed houses and one with any houses missing data
+    analyzed_houses, error_houses = analyze_all_houses(config, data)
+    
+    # Verify there are analyzed houses to send to the user
+    if len(analyzed_houses) == 0:
+        error_message = f"{len(error_houses)} houses were scraped, but none contained all the required information. Review scrapping process for more details."
+        print(error_message)
+        send_error_email(error_message, config)
+        exit(1)
+    
+    # Create a name for the excel file
+    # excel_filename = str(date.today()) + "-house-analysis.xlsx"
+    
+    # Create an excel book containing all of the houses that were scraped for analysis
+    # create_house_analysis_excel_book(analyzed_houses, excel_filename)
+    
+    # Create the email html content for the analyzed houses
+    email_content_html = create_featured_house_email(analyzed_houses, config)
+    print(email_content_html)
+    
+    # Send the html email content and excel file to the target user
+    # send_featured_house_email(excel_filename, email_content_html)
+    
+    # Delete the excel file that was created
+    # delete_file(excel_filename)
