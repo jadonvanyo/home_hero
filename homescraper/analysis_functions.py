@@ -686,11 +686,43 @@ def load_json(json_path):
     return json_data
 
 
+# TODO: Create a function to send an error email to the user
+def send_error_email(error_message, config):
+    """Function to send a custom error message to a user if any issues occur that they cannot see and exit the program"""
+    
+    # Verify that the user wants error messages
+    if config['send_error_emails']:
+
+        # Retrieve all the required values from the email config file
+        required_email_values = verify_email_config_file('/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
+        
+        # Setup the MIME
+        message = MIMEMultipart()
+        message['From'] = required_email_values['sender_address']
+        message['To'] = required_email_values['receiver_address']
+        message['Subject'] = 'An error has occurred'   # The subject line
+
+        # Attach the plain text to also be sent with the email
+        message.attach(MIMEText(error_message, 'plain'))
+        
+        # Create SMTP session for sending the mail
+        session = smtplib.SMTP('smtp.gmail.com', 587) 
+        session.starttls() # enable security
+        session.login(required_email_values['sender_address'], required_email_values['password']) # login with mail_id and password
+        session.sendmail(required_email_values['sender_address'], required_email_values['receiver_address'], message.as_string()) # Send an email with the excel file attached
+        session.quit()
+        print('Mail Sent')
+        
+    return
+
+
 def send_featured_house_email(excel_filename, email_content_html):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
     
+    # Retrieve all the required values from the email config file
     required_email_values = verify_email_config_file('/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
 
+    # Verify that the required values from the email config were retrieved
     if required_email_values:
     
         # Setup the MIME
@@ -712,7 +744,6 @@ def send_featured_house_email(excel_filename, email_content_html):
         except FileNotFoundError:
             print("It appears the excel file was not created. Verify the excel file is being created before sending the email.")
             return
-            
 
         # Create SMTP session for sending the mail
         session = smtplib.SMTP('smtp.gmail.com', 587) 
@@ -786,7 +817,6 @@ def verify_config_file_target_values(config):
     return target_values  
 
 
-# TODO: Create a function to verify the users email information
 def verify_email_config_file(config_json_path):
     """Function to verify that the email config file works and return all the required information if it does"""
         # Try to pull data from an email config file
@@ -813,7 +843,6 @@ def verify_email_config_file(config_json_path):
         return
     
     return required_email_values
-
-
-# TODO: Create a function to send an error email to the user
+        
+        
 # TODO: Create a function to delete the excel file after it has been sent

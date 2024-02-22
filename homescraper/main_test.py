@@ -1,14 +1,14 @@
-from analysis_functions import analyze_all_houses, create_featured_house_email, create_house_analysis_excel_book, config_file_required_values_present, load_json, send_featured_house_email
+from analysis_functions import analyze_all_houses, create_featured_house_email, create_house_analysis_excel_book, config_file_required_values_present, load_json, send_featured_house_email, send_error_email
 from datetime import date
 
 # Try to pull the scraped home data
+# TODO: Move the try and except into the load_json function
 try:
     # Get all of the house data from homedata.json
     data = load_json("homedata2.json")
     
 # Return an error if the scraped data cannot be recovered
 except:
-    # TODO: Error email here
     print("An error occurred while trying to load the scraped data. Verify scrapy feed matches, that the file exists, and is complete.")
     exit(1)
 
@@ -25,7 +25,6 @@ else:
     # Return an error if the config file cannot be recovered
     except:
         print("An error occurred while trying to load the config file. Verify config file name matches, that the file exists, and is complete.")
-        # TODO: Error email here
         exit(1)
     
     # Verify all required values in the config file are present and accurate
@@ -36,8 +35,9 @@ else:
         
         # Verify there are analyzed houses to send to the user
         if len(analyzed_houses) == 0:
-            # TODO: Error email here
-            print(f"{len(error_houses)} were scraped, but none contained all the required information. Review scrapping process for more details.")
+            error_message = f"{len(error_houses)} houses were scraped, but none contained all the required information. Review scrapping process for more details."
+            print(error_message)
+            send_error_email(error_message, config)
             exit(1)
         
         # Create a name for the excel file

@@ -11,7 +11,7 @@
     "expected_capx_monthly": 0.1,
     "expected_management_monthly": 0.1,
     "insurance_rate_yearly": 0.006,
-    "send_error_emails": false,
+    "send_error_emails": true,
     "featured_house_required": true,
     "target_cash_flow_monthly_min": -200,
     "target_percent_rule_min": null,
