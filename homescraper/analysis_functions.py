@@ -681,12 +681,17 @@ def is_convertible_to_float(s):
 
 def load_json(json_path):
     """Load a configuration file with sensitive or variable information"""
-    with open(json_path, 'r') as json_file:
-        json_data = json.load(json_file)
-    return json_data
+    # Try to open the json file
+    try:
+        with open(json_path, 'r') as json_file:
+            json_data = json.load(json_file)
+        return json_data
+    # Handle errors if the email config file is not found
+    except:
+        print(f"An error occurred while trying to load '{json_path}'. Verify that the target json file name matches, that the file exists, and is complete.")
+        return 
 
 
-# TODO: Create a function to send an error email to the user
 def send_error_email(error_message, config):
     """Function to send a custom error message to a user if any issues occur that they cannot see and exit the program"""
     
@@ -819,14 +824,10 @@ def verify_config_file_target_values(config):
 
 def verify_email_config_file(config_json_path):
     """Function to verify that the email config file works and return all the required information if it does"""
-        # Try to pull data from an email config file
-    try:
-        # Pull all the email data from a separate config file
-        email_config = load_json(config_json_path)
+    # Pull all the email data from a separate config file
+    email_config = load_json(config_json_path)
     
-    # Handle errors if the email config file is not found
-    except:
-        print("An error occurred while trying to load the email config file. Verify email config file name matches, that the file exists, and is complete.")
+    if not email_config:
         return
     
     # Try to pull all the required information from the email config file

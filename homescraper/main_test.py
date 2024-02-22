@@ -3,28 +3,18 @@ from datetime import date
 
 # Try to pull the scraped home data
 # TODO: Move the try and except into the load_json function
-try:
-    # Get all of the house data from homedata.json
-    data = load_json("homedata2.json")
-    
-# Return an error if the scraped data cannot be recovered
-except:
-    print("An error occurred while trying to load the scraped data. Verify scrapy feed matches, that the file exists, and is complete.")
-    exit(1)
+data = load_json("homedata2.json")
 
 # Check if there are any houses in the list pulled
 if not data:
     print("No houses found")
     
 else:
-    # Try to pull data from the config file
-    try:
-        # Load the config file
-        config = load_json("config.json")
-        
-    # Return an error if the config file cannot be recovered
-    except:
-        print("An error occurred while trying to load the config file. Verify config file name matches, that the file exists, and is complete.")
+    # Load the config file
+    config = load_json("config.json")
+    
+    # Exit the program if no config file can be found
+    if not config:
         exit(1)
     
     # Verify all required values in the config file are present and accurate
@@ -41,14 +31,14 @@ else:
             exit(1)
         
         # Create a name for the excel file
-        excel_filename = str(date.today()) + "-house-analysis.xlsx"
+        # excel_filename = str(date.today()) + "-house-analysis.xlsx"
         
         # Create an excel book containing all of the houses that were scraped for analysis
-        create_house_analysis_excel_book(analyzed_houses, excel_filename)
+        # create_house_analysis_excel_book(analyzed_houses, excel_filename)
         
         # Create the email html content for the analyzed houses
         email_content_html = create_featured_house_email(analyzed_houses, config)
-        # print(email_content_html)
+        print(email_content_html)
         
         # Send the html email content and excel file to the target user
-        send_featured_house_email(excel_filename, email_content_html)
+        # send_featured_house_email(excel_filename, email_content_html)
