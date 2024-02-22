@@ -801,4 +801,6 @@ def verify_config_file_target_values(config):
     return target_values  
 
 
+# TODO: Create a function to verify the users email information
+# TODO: Create a function to send an error email to the user
 # TODO: Create a function to delete the excel file after it has been sent

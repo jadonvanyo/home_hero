@@ -32,7 +32,11 @@ else:
         # Retrieve a list containing all the analyzed houses and one with any houses missing data
         analyzed_houses, error_houses = analyze_all_houses(config, data)
         
-        # TODO: Verify there are analyzed houses to send to the user (if analyzed_houses = 0 return an error)
+        # Verify there are analyzed houses to send to the user
+        if len(analyzed_houses) == 0:
+            print(f"{len(error_houses)} were scraped, but none contained all the required information. Review scrapping process for more details.")
+            exit(1)
+        
         # Create a name for the excel file
         # excel_filename = str(date.today()) + "-house-analysis.xlsx"
         
