@@ -11,6 +11,58 @@ from tabulate import tabulate
 
 
 class House:
+    """
+    Represents a house with various attributes and methods to analyze its financial viability as an investment.
+    
+    Attributes:
+        address (str): The street address of the house.
+        sqft (float): The square footage of the house.
+        price (float): The listing price of the house.
+        tax (float): The yearly taxes for the house.
+        rent (float): The estimated monthly rent for the house.
+        property_subtype (str): Describes the type of property (e.g., single-family, duplex, etc.) and the number of units if it is a multi-family property.
+        beds (str): The number of bedrooms in the house.
+        baths (str): The number of bathrooms in the house, where a half bath counts as 0.5.
+        description (str): A textual description of the house.
+        year_built (str): The year the house was built.
+        region (str): The region or area where the house is located.
+        subdivision (str): The subdivision the house belongs to, if applicable.
+        tax_url (str): URL to the property tax information.
+        rent_url (str): URL to the rental listing or rental estimate information.
+        url (str): URL to the house's listing page.
+        min_rent (str): The minimum estimated rent for the house.
+        max_rent (str): The maximum estimated rent for the house.
+        down_payment_decimal (float): The fraction of the purchase price that must be paid upfront as a down payment.
+        closing_cost_buyer_decimal (float): The fraction of the purchase price that covers the buyer's closing costs.
+        closing_cost_seller_decimal (float): The fraction of the purchase price that covers the seller's closing costs.
+        expected_annual_growth (float): The expected annual growth rate of the property's value.
+        interest_rate (float): The annual interest rate of the mortgage.
+        loan_term_yrs (int): The term of the mortgage loan in years.
+        expected_repairs_monthly (float): The monthly cost of repairs as a fraction of the rent.
+        expected_vacancy_monthly (float): The monthly cost associated with vacancy as a fraction of the rent.
+        expected_capx_monthly (float): The monthly cost of capital expenditures as a fraction of the rent.
+        expected_management_monthly (float): The monthly cost of property management as a fraction of the rent.
+        insurance_rate_yearly (float): The yearly insurance rate as a fraction of the property's value.
+
+    Methods:
+        calculate_metrics(self):
+            Calculates and updates various financial metrics for the house, including price per sqft, monthly insurance, down payment cost, loan amount, closing costs, monthly principle and interest payments, taxes, total operating costs, suggested total rent, and many more.
+        
+        email_format_html(self):
+            Formats the house's data and calculated metrics into an HTML string suitable for sending as an email. This includes links to tax and rent information, a breakdown of costs, and projected financial metrics.
+
+        email_format_plain(self):
+            Formats the house's data and calculated metrics into a plain text string suitable for sending as an email. Similar to `email_format_html` but without HTML tags.
+        
+        featured_home_determiner(self, target_values):
+            Determines whether the house meets all specified investment criteria based on the target values provided. Returns True if all criteria are met, False otherwise.
+
+        house_excel_sheet_creator(self, wb):
+            Creates a new Excel sheet in a given workbook (`wb`) and populates it with the house's data and calculated financial metrics. This method also applies formatting for better readability and analysis.
+
+    Note:
+        This class requires an external library `tabulate` for generating HTML tables and an Excel workbook object `wb` for creating Excel sheets, indicating that it should be used within a larger application context that handles Excel file manipulation and HTML content generation.
+    """
     def __init__(self, config, data):
         
         self.price = float(data.get('price'))
@@ -45,7 +97,25 @@ class House:
 
 
     def calculate_metrics(self):
-        """Calculate all the necessary information to analyze a house"""
+        """
+        Calculates financial and operational metrics for the house based on its attributes and configuration settings. This method updates the instance with calculated values that are crucial for assessing the property's investment viability. These calculations include but are not limited to:
+
+        - Price per square foot: The listing price divided by the square footage of the house.
+        - Monthly insurance cost: Calculated based on the yearly insurance rate and the listing price of the house.
+        - Down payment cost: The upfront payment required, calculated as a percentage of the listing price.
+        - Loan amount: The difference between the listing price and the down payment cost.
+        - Buyer's closing costs: Additional costs required to close the deal, calculated as a percentage of the listing price.
+        - Monthly principle and interest payment: The monthly payment towards the loan, calculated using the loan amount, interest rate, and loan term.
+        - Monthly taxes: The property tax divided by twelve to find the monthly tax payment.
+        - Total operating costs per month: Sum of principle and interest payment, monthly taxes, and monthly insurance.
+        - Suggested total rent per month: Estimated rent multiplied by the number of units for multi-family properties.
+        - Monthly repair expenses, capital expenditures, expected vacancy costs, and management fees: Calculated as percentages of the suggested total rent.
+        - Total monthly expenses and cash flow: Sum of operating and additional monthly expenses, and the net cash flow after expenses.
+        - Cash flow based on the 50% rule, total cash needed to complete the purchase, cash-on-cash return, and the 1% rule.
+        - Net Operating Income (NOI), pro forma cap rate, and various annualized returns and financial projections over the loan term.
+
+        This method leverages the property's and loan configuration attributes to perform its calculations, updating the house instance with these computed metrics for further analysis or reporting.
+        """
         # Calculate the price per sqft
         self.price_per_sqft = round(self.price / self.sqft, 2)
         
@@ -575,7 +645,6 @@ def create_featured_house_email(analyzed_houses, config):
         return email_content_html
 
 
-# TODO: Create a function to delete the excel file after it has been sent
 def delete_file(file_path):
     """Function to delete a given file"""
     # Try to delete the file
@@ -866,5 +935,4 @@ def verify_email_config_file(config_json_path):
         return
     
     return required_email_values
-        
         
