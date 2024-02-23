@@ -62,7 +62,7 @@ else:
     # if len(analyzed_houses) == 0:
     #     error_message = f"{len(error_houses)} houses were scraped, but none contained all the required information. Review scrapping process for more details."
     #     print(error_message)
-    #     send_error_email(error_message, config)
+    #     send_error_email(error_message, config, email_config)
     #     exit(1)
     
     # # Create a name for the excel file
@@ -76,7 +76,7 @@ else:
     # print(email_content_html)
     
     # # Send the html email content and excel file to the target user
-    # send_featured_house_email(excel_filename, email_content_html, config)
+    # send_featured_house_email(excel_filename, email_content_html, config, email_config)
     
     # TODO: Add the field to config file for deleting the excel file
     # # Delete the excel file that was created

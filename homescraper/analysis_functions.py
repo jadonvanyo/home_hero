@@ -924,14 +924,11 @@ def load_json(json_path):
         return
 
 
-def send_error_email(error_message, config):
+def send_error_email(error_message, config, required_email_values):
     """Function to send a custom error message to a user if any issues occur that they cannot see and exit the program"""
     
     # Verify that the user wants error messages
     if config['send_error_emails']:
-        # TODO: Load this once in the main file, move checks out of big verification
-        # Retrieve all the required values from the email config file
-        required_email_values = load_json(config['email_config_file_path'])
         
         # Setup the MIME
         message = MIMEMultipart()
@@ -953,12 +950,8 @@ def send_error_email(error_message, config):
     return
 
 
-def send_featured_house_email(excel_filename, email_content_html, config):
+def send_featured_house_email(excel_filename, email_content_html, config, required_email_values):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
-    
-    # TODO: Load this once in the main file, move checks out of big verification
-    # Retrieve all the required values from the email config file
-    required_email_values = load_json(config['email_config_file_path'])
     
     # Setup the MIME
     message = MIMEMultipart()

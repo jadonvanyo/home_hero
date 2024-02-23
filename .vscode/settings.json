@@ -18,11 +18,13 @@
         "openpyxl",
         "quadplex",
         "quinplex",
+        "Rentspider",
         "scrapy",
         "sqft",
         "startproject",
         "starturls",
         "tablefmt",
+        "Taxspider",
         "testid",
         "toscrape",
         "xlwt"
