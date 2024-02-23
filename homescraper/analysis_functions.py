@@ -636,12 +636,12 @@ def config_file_required_values_present(config):
     # Establish all the variables required in the config file
     required_config_values = {
         "starturls": lambda x: isinstance(x, list) and len(x) > 0,
-        "down_payment_decimal": lambda x: isinstance(x, (float)) and 0 <= x <= 1, 
-        "closing_cost_buyer_decimal": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
-        "closing_cost_seller_decimal": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
-        "expected_annual_growth": lambda x: isinstance(x, (float)) and 0 <= x <= 2,
-        "interest_rate": lambda x: isinstance(x, (float)) and 0 <= x <= 1,
-        "loan_term_yrs": lambda x: isinstance(x, (int)) and 0 <= x <= 50,
+        "down_payment_decimal": lambda x: isinstance(x, (float)) and 0 < x < 1, 
+        "closing_cost_buyer_decimal": lambda x: isinstance(x, (float)) and 0 < x <= 0.25,
+        "closing_cost_seller_decimal": lambda x: isinstance(x, (float)) and 0 < x <= 0.25,
+        "expected_annual_growth": lambda x: isinstance(x, (float)) and 0 < x <= 2,
+        "interest_rate": lambda x: isinstance(x, (float)) and 0 < x < 1,
+        "loan_term_yrs": lambda x: isinstance(x, (int)) and 0 < x <= 50,
         "expected_repairs_monthly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
         "expected_vacancy_monthly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
         "expected_capx_monthly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
@@ -680,8 +680,13 @@ def config_file_required_values_present(config):
             return False
 
         # Verify that all the required information in the email config file is present
-        if not verify_email_config_file_copy(config):
+        elif not verify_email_config_file(config):
             return False
+        
+        # Determine whether the user wants to include featured houses in their email
+        elif config['featured_house_required']:
+            if not verify_config_file_target_values_copy(config):
+                return False
          
     # Return true if all checks have passed without returning false
     return True
@@ -712,6 +717,7 @@ def create_featured_house_email(analyzed_houses, config):
     
     # Verify that the user is looking for featured houses in their emails
     if config['featured_house_required']:
+        # TODO: Change this file and eliminate if and else statement below
         # Generate a dictionary of target keys and values from the config file
         target_values = verify_config_file_target_values(config)
         
@@ -898,7 +904,7 @@ def send_error_email(error_message, config):
     if config['send_error_emails']:
 
         # Retrieve all the required values from the email config file
-        required_email_values = verify_email_config_file(config['email_config_file_path'])
+        required_email_values = load_json(config['email_config_file_path'])
         
         # Setup the MIME
         message = MIMEMultipart()
@@ -923,39 +929,37 @@ def send_error_email(error_message, config):
 def send_featured_house_email(excel_filename, email_content_html, config):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
     
+    # TODO: Load this once in the main file, move checks out of big verification
     # Retrieve all the required values from the email config file
-    required_email_values = verify_email_config_file(config['email_config_file_path'])
-
-    # Verify that the required values from the email config were retrieved
-    if required_email_values:
+    required_email_values = load_json(config['email_config_file_path'])
     
-        # Setup the MIME
-        message = MIMEMultipart()
-        message['From'] = required_email_values['sender_address']
-        message['To'] = required_email_values['receiver_address']
-        message['Subject'] = f'Houses analyzed - {str(date.today())}'   # The subject line
+    # Setup the MIME
+    message = MIMEMultipart()
+    message['From'] = required_email_values['sender_address']
+    message['To'] = required_email_values['receiver_address']
+    message['Subject'] = f'Houses analyzed - {str(date.today())}'   # The subject line
 
-        # Attach the HTML to also be sent with the email
-        message.attach(MIMEText(email_content_html, 'html'))
+    # Attach the HTML to also be sent with the email
+    message.attach(MIMEText(email_content_html, 'html'))
 
-        # Try to open the excel file to send in an email
-        try:
-            # Open the excel file and include it as an attachment for the email
-            with open(excel_filename, 'rb') as file:
-                part = MIMEApplication(file.read(), Name=basename(excel_filename))
-                part["Content-Disposition"] = f'attachment; filename="{basename(excel_filename)}"'
-                message.attach(part)
-        except FileNotFoundError:
-            print("It appears the excel file was not created. Verify the excel file is being created before sending the email.")
-            return
+    # Try to open the excel file to send in an email
+    try:
+        # Open the excel file and include it as an attachment for the email
+        with open(excel_filename, 'rb') as file:
+            part = MIMEApplication(file.read(), Name=basename(excel_filename))
+            part["Content-Disposition"] = f'attachment; filename="{basename(excel_filename)}"'
+            message.attach(part)
+    except FileNotFoundError:
+        print("It appears the excel file was not created. Verify the excel file is being created before sending the email.")
+        return
 
-        # Create SMTP session for sending the mail
-        session = smtplib.SMTP('smtp.gmail.com', 587) 
-        session.starttls() # enable security
-        session.login(required_email_values['sender_address'], required_email_values['password']) # login with mail_id and password
-        session.sendmail(required_email_values['sender_address'], required_email_values['receiver_address'], message.as_string()) # Send an email with the excel file attached
-        session.quit()
-        print('Mail Sent')
+    # Create SMTP session for sending the mail
+    session = smtplib.SMTP('smtp.gmail.com', 587) 
+    session.starttls() # enable security
+    session.login(required_email_values['sender_address'], required_email_values['password']) # login with mail_id and password
+    session.sendmail(required_email_values['sender_address'], required_email_values['receiver_address'], message.as_string()) # Send an email with the excel file attached
+    session.quit()
+    print('Mail Sent')
     
     return
 
@@ -971,7 +975,7 @@ def verify_all_required_values(required_values, json_data, error_messages=None):
         if key in json_data:
             
             # Handles if the value at a key in the json_data file is null
-            if not json_data[key]:
+            if json_data[key] is None:
                 error_messages(key, 'missing', json_data)
                 file_correct = False
                 
@@ -988,7 +992,7 @@ def verify_all_required_values(required_values, json_data, error_messages=None):
     # Return file_correct for verification if all values were present
     return file_correct
 
-
+# TODO: Change this to just return a dictionary of the target values
 def verify_config_file_target_values(config):
     """Function to test and return a list of all the valid target values from the config file"""
     
@@ -1020,31 +1024,51 @@ def verify_config_file_target_values(config):
             
     return target_values  
 
-
-def verify_email_config_file(config_json_path):
-    """Function to verify that the email config file works and return all the required information if it does"""    
-    # Pull all the email data from a separate config file
-    email_config = load_json(config_json_path)
-    
-    if not email_config:
-        return
-    
-    # Try to pull all the required information from the email config file
-    try:
-        required_email_values = {
-            "sender_address": email_config['sender_address'],
-            "receiver_address": email_config['receiver_address'],
-            "password": email_config['password']
-        }
         
-    # Handle errors if any of the required information in the email config file is missing
-    except:
-        print("An error occurred while trying to retrieve data from the email config file. Verify email config file contains all the required information.")
-        return
+def verify_config_file_target_values_copy(config):
+    """Function to test and return a boolean expression representing if the config file contains valid target values"""
     
-    return required_email_values
+    # Establish all the potential target variables required
+    required_target_values = {
+        "target_cash_flow_monthly_min": lambda x: isinstance(x, (int, float)),
+        "target_percent_rule_min": lambda x: isinstance(x, (float)) and 0 < x < 1,
+        "target_net_operating_income_min": lambda x: isinstance(x, (int, float)),
+        "target_pro_forma_cap_min": lambda x: isinstance(x, (float)) and 0 < x < 1,
+        "target_five_year_annualized_return_min": lambda x: isinstance(x, (float)) and 0 < x < 1,
+        "target_cash_on_cash_return_min": lambda x: isinstance(x, (float)) and 0 < x < 1
+    }
+    
+    # Establish a list to keep track of if any target values were established
+    target_values_established = []
+    
+    # Loop through each of the target required keys and values 
+    for key, value in required_target_values.items():
+        # Determine if a value exits in config for a target key
+        if config[key] is not None:
+            # If a target value does not fit the required criteria return an error message and append false
+            if not value(config[key]):
+                print(f'"{key}" was entered incorrectly in the config file. Refer to the documentation on how to enter "{key}".')
+                target_values_established.append(False)
+            
+            # If the value does pass the test, append true
+            else:
+                target_values_established.append(True)
+    
+    # Return an error if the user selected to have featured houses, but they did not set any parameters
+    if not target_values_established:
+        print("'featured_house_required' was selected, but no target values were established. Refer to the documentation on how to use 'featured_house_required'.")
+        return False
+    
+    # Return false if any of the selected target values failed verification
+    elif False in target_values_established:
+        return False
+    
+    # If all variables passed, return true
+    else:
+        return True
         
-def verify_email_config_file_copy(config):
+        
+def verify_email_config_file(config):
     """Function to return a boolean expression to verify that the email config file works and that it contains all the required values to send emails"""
 
     # Establish all the variables required for the email config file

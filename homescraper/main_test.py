@@ -1,6 +1,5 @@
 from analysis_functions import analyze_all_houses, create_featured_house_email, create_house_analysis_excel_book, config_file_required_values_present, delete_file, load_json, send_featured_house_email, send_error_email
 from datetime import date
-from homescraper.spiders.homespider import HomespiderSpider
 from homescraper.spiders.rentspider import RentspiderSpider
 from homescraper.spiders.taxspider import TaxspiderSpider
 from scrapy.crawler import CrawlerProcess
@@ -17,6 +16,9 @@ if not config:
 # Verify all required values in the config file are present and accurate
 if not config_file_required_values_present(config):
     exit(1)
+
+# Load in homespider after the config file has been verified since it is dependent on the config file
+from homescraper.spiders.homespider import HomespiderSpider
 
 # # Get the settings for all of the spiders
 # settings = get_project_settings()
@@ -46,25 +48,25 @@ else:
     analyzed_houses, error_houses = analyze_all_houses(config, data)
     print(error_houses)
     
-    # Verify there are analyzed houses to send to the user
-    if len(analyzed_houses) == 0:
-        error_message = f"{len(error_houses)} houses were scraped, but none contained all the required information. Review scrapping process for more details."
-        print(error_message)
-        send_error_email(error_message, config)
-        exit(1)
+    # # Verify there are analyzed houses to send to the user
+    # if len(analyzed_houses) == 0:
+    #     error_message = f"{len(error_houses)} houses were scraped, but none contained all the required information. Review scrapping process for more details."
+    #     print(error_message)
+    #     send_error_email(error_message, config)
+    #     exit(1)
     
-    # Create a name for the excel file
+    # # Create a name for the excel file
     # excel_filename = str(date.today()) + "-house-analysis.xlsx"
     
-    # Create an excel book containing all of the houses that were scraped for analysis
+    # # Create an excel book containing all of the houses that were scraped for analysis
     # create_house_analysis_excel_book(analyzed_houses, excel_filename)
     
-    # Create the email html content for the analyzed houses
-    email_content_html = create_featured_house_email(analyzed_houses, config)
-    print(email_content_html)
+    # # Create the email html content for the analyzed houses
+    # email_content_html = create_featured_house_email(analyzed_houses, config)
+    # print(email_content_html)
     
-    # Send the html email content and excel file to the target user
+    # # Send the html email content and excel file to the target user
     # send_featured_house_email(excel_filename, email_content_html, config)
     
-    # Delete the excel file that was created
+    # # Delete the excel file that was created
     # delete_file(excel_filename)
