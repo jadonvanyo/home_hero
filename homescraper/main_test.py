@@ -46,7 +46,6 @@ if not data:
 else:   
     # Retrieve a list containing all the analyzed houses and one with any houses missing data
     analyzed_houses, error_houses = analyze_all_houses(config, data)
-    print(error_houses)
     
     # # Verify there are analyzed houses to send to the user
     # if len(analyzed_houses) == 0:
@@ -62,8 +61,8 @@ else:
     # create_house_analysis_excel_book(analyzed_houses, excel_filename)
     
     # # Create the email html content for the analyzed houses
-    # email_content_html = create_featured_house_email(analyzed_houses, config)
-    # print(email_content_html)
+    email_content_html = create_featured_house_email(analyzed_houses, config)
+    print(email_content_html)
     
     # # Send the html email content and excel file to the target user
     # send_featured_house_email(excel_filename, email_content_html, config)
