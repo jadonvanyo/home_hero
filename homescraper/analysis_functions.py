@@ -666,29 +666,6 @@ def config_file_required_values_present(config):
     if not verify_all_required_values(required_config_values, config, print_config_error_message):
         return False
     
-    # Check all the email config data in config file if the user requests to send emails
-    elif config['send_emails']:
-        # Establish all the variables required for email in the config file
-        required_config_email_values = {
-            "email_config_file_path": lambda x: isinstance(x, str),
-            "send_error_emails": lambda x: isinstance(x, bool),
-            "featured_house_required": lambda x: isinstance(x, bool)
-        }
-        
-        # Verify that all the required values for email in the config file exist and are valid
-        if not verify_all_required_values(required_config_email_values, config, print_config_error_message):
-            return False
-
-        # Verify that all the required information in the email config file is present
-        elif not verify_email_config_file(config):
-            return False
-        
-        # Determine whether the user wants to include featured houses in their email
-        elif config['featured_house_required']:
-            if not verify_config_file_target_values(config):
-                return False
-         
-    # Return true if all checks have passed without returning false
     return True
     
 
@@ -748,6 +725,21 @@ def create_featured_house_email(analyzed_houses, config):
         return email_content_html
 
 
+def create_target_values_dictionary(config):
+    """Function to return a dictionary containing all the user input target values in config"""
+    
+    # Dictionary to store all the target requested values
+    target_values = {}
+    
+    # Loop through each of the target required keys and values 
+    for key, value in config.items():
+        # Determine if a value exits in config for a target key
+        if value is not None:
+            target_values[f'{key}'] = value
+            
+    return target_values  
+
+
 def delete_file(file_path):
     """Function to delete a given file"""
     # Try to delete the file
@@ -766,6 +758,52 @@ def delete_file(file_path):
     # Handle any additional exceptions
     except Exception as e:
         print(f"Error deleting file {file_path}: {e}")
+
+
+def email_config_file_required_values_present(config):
+    """Function to verify and return a dictionary of all the required email values and return false otherwise"""
+    
+    # Load the email config file for verification
+    email_config = load_json(config['email_config_file_path'])
+    
+    # Return false if the email config file fails to load
+    if not email_config:
+        return False
+    
+    # Establish all the variables required for email in the config file
+    required_config_email_values = {
+        "email_config_file_path": lambda x: isinstance(x, str),
+        "send_error_emails": lambda x: isinstance(x, bool),
+        "featured_house_required": lambda x: isinstance(x, bool)
+    }
+    
+    def print_email_config_error_message(key, error, json_data=None):
+        """Function to define error messages for the email config file"""
+        # Error message for if a value is missing
+        if error == "missing":
+            print(f'"{key}" is not in the config file. Please enter "{key}" in the config file.')
+        # Error message for if a value is incorrect
+        elif error == "incorrect":
+            print(f'"{key}" is incorrectly entered in the config file. Review documentation for how to enter "{key}".')
+        # General error message to handle all other issues
+        else:
+            print(f"An error has occurred while verifying data from the config file.")
+    
+    # Verify that all the required values for email in the config file exist and are valid
+    if not verify_all_required_values(required_config_email_values, config, print_email_config_error_message):
+        return False
+
+    # Verify that all the required information in the email config file is present
+    elif not verify_email_config_file(config):
+        return False
+    
+    # Determine whether the user wants to include featured houses in their email
+    elif config['featured_house_required']:
+        if not verify_config_file_target_values(config):
+            return False
+        
+    # Return all the required information to send an email if all checks pass
+    return email_config
 
 
 def format_excel_sheet(sheet):
@@ -883,7 +921,7 @@ def load_json(json_path):
     # Handle errors if the email config file is not found
     except:
         print(f"An error occurred while trying to load '{json_path}'. Verify that the target json file name matches, that the file exists, and is complete.")
-        return 
+        return
 
 
 def send_error_email(error_message, config):
@@ -891,7 +929,7 @@ def send_error_email(error_message, config):
     
     # Verify that the user wants error messages
     if config['send_error_emails']:
-
+        # TODO: Load this once in the main file, move checks out of big verification
         # Retrieve all the required values from the email config file
         required_email_values = load_json(config['email_config_file_path'])
         
@@ -981,21 +1019,6 @@ def verify_all_required_values(required_values, json_data, error_messages=None):
     # Return file_correct for verification if all values were present
     return file_correct
 
-
-def create_target_values_dictionary(config):
-    """Function to return a dictionary containing all the user input target values in config"""
-    
-    # Dictionary to store all the target requested values
-    target_values = {}
-    
-    # Loop through each of the target required keys and values 
-    for key, value in config.items():
-        # Determine if a value exits in config for a target key
-        if value is not None:
-            target_values[f'{key}'] = value
-            
-    return target_values  
-
         
 def verify_config_file_target_values(config):
     """Function to test and return a boolean expression representing if the config file contains valid target values"""
@@ -1071,7 +1094,6 @@ def verify_email_config_file(config):
     
     # TODO: Update the email files to run from config only
     # TODO: Eliminate all other checks for the the email or config data
-    # TODO: Verify all email config data here instead of in the separate email functions
     if not verify_all_required_values(required_email_config_values, email_config, print_email_config_error_message):
         return False
          
