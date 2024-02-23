@@ -7,8 +7,6 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 
 
-# TODO: Verify that urls are given
-
 # Try to load the config file
 config = load_json("config.json")
 
@@ -20,20 +18,20 @@ if not config:
 if not config_file_required_values_present(config):
     exit(1)
 
-# Get the settings for all of the spiders
-settings = get_project_settings()
+# # Get the settings for all of the spiders
+# settings = get_project_settings()
 
-# Define any custom settings for this project of spiders
-process = CrawlerProcess(settings)
+# # Define any custom settings for this project of spiders
+# process = CrawlerProcess(settings)
 
-# Create a list of all the required spiders to gather the house info
-spiders = [HomespiderSpider, RentspiderSpider, TaxspiderSpider]
+# # Create a list of all the required spiders to gather the house info
+# spiders = [HomespiderSpider, RentspiderSpider, TaxspiderSpider]
 
-# Loop through each of the spiders until all the required information has been gathered
-for spider in spiders:
-    process.crawl(spider)
-    # Stop the script here until all crawling jobs are finished
-    process.start()
+# # Loop through each of the spiders until all the required information has been gathered
+# for spider in spiders:
+#     process.crawl(spider)
+#     # Stop the script here until all crawling jobs are finished
+#     process.start()
 
 # TODO: Update this to feed for the spiders
 # Try to pull the scraped home data
@@ -46,6 +44,7 @@ if not data:
 else:   
     # Retrieve a list containing all the analyzed houses and one with any houses missing data
     analyzed_houses, error_houses = analyze_all_houses(config, data)
+    print(error_houses)
     
     # Verify there are analyzed houses to send to the user
     if len(analyzed_houses) == 0:
@@ -65,7 +64,7 @@ else:
     print(email_content_html)
     
     # Send the html email content and excel file to the target user
-    # send_featured_house_email(excel_filename, email_content_html)
+    # send_featured_house_email(excel_filename, email_content_html, config)
     
     # Delete the excel file that was created
     # delete_file(excel_filename)

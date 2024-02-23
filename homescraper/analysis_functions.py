@@ -629,11 +629,11 @@ def analyze_all_houses(config, data):
         
     return analyzed_houses, error_houses
 
-
+# TODO: Rigorous testing of this function
 def config_file_required_values_present(config):
     """Function to return true if all the values required for analysis are in the config file are present and accurate"""
     
-    # Establish all the potential target variables required in the config file
+    # Establish all the variables required in the config file
     required_config_values = {
         "starturls": lambda x: isinstance(x, list) and len(x) > 0,
         "down_payment_decimal": lambda x: isinstance(x, (float)) and 0 <= x <= 1, 
@@ -646,7 +646,8 @@ def config_file_required_values_present(config):
         "expected_vacancy_monthly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
         "expected_capx_monthly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
         "expected_management_monthly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
-        "insurance_rate_yearly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25
+        "insurance_rate_yearly": lambda x: isinstance(x, (float)) and 0 <= x <= 0.25,
+        "send_emails": lambda x: isinstance(x, bool),
     }
     
     def print_config_error_message(key, error, json_data=None):
@@ -659,15 +660,47 @@ def config_file_required_values_present(config):
             print(f'"{key}" is incorrectly entered in the config file. Review documentation for how to enter "{key}".')
         # General error message to handle all other issues
         else:
-            print("An error has occurred while verifying data from the config file.")
+            print(f"An error has occurred while verifying data from the config file.")
     
-    # Return true if all the data in the config file was entered correctly
-    if verify_all_required_values(required_config_values, config, print_config_error_message):
-        return True
+    # Return False if any of the data in the config file was missing or entered incorrectly
+    if not verify_all_required_values(required_config_values, config, print_config_error_message):
+        return False
     
-    # Return false for all other cases
-    else:
-        return False  
+    # Check all the email config data in config file if the user requests to send emails
+    elif config['send_emails']:
+        # Establish all the variables required for email in the config file
+        required_config_email_values = {
+            "email_config_file_path": lambda x: isinstance(x, str),
+            "send_error_emails": lambda x: isinstance(x, bool),
+            "featured_house_required": lambda x: isinstance(x, bool)
+        }
+        
+        # Verify that all the required values for email in the config file exist and are valid
+        if not verify_all_required_values(required_config_email_values, config, print_config_error_message):
+            return False
+
+        # Establish all the variables required for the email config file
+        required_email_config_values = {
+            "sender_address": lambda x: isinstance(x, str) and "@" in x,
+            "receiver_address": lambda x: isinstance(x, str) and "@" in x,
+            "password": lambda x: isinstance(x, str)
+        }
+        
+        # Pull all the email data from a separate config file
+        email_config = load_json(config['email_config_file_path'])
+    
+        # Verify email config file can be opened
+        if not email_config:
+            return False
+        
+        # TODO: Update the email files to run from config only
+        # TODO: Eliminate all other checks for the the email or config data
+        # TODO: Verify all email config data here instead of in the separate email functions
+        if not verify_all_required_values(required_email_config_values, email_config, print_config_error_message):
+            return False
+         
+    # Return true if all checks have passed without returning false
+    return True
     
 
 def create_house_analysis_excel_book(analyzed_houses, excel_filename):
@@ -880,9 +913,8 @@ def send_error_email(error_message, config):
     # Verify that the user wants error messages
     if config['send_error_emails']:
 
-        # TODO: Pull the path for the email from the config file
         # Retrieve all the required values from the email config file
-        required_email_values = verify_email_config_file('/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
+        required_email_values = verify_email_config_file(config['email_config_file_path'])
         
         # Setup the MIME
         message = MIMEMultipart()
@@ -904,12 +936,11 @@ def send_error_email(error_message, config):
     return
 
 
-def send_featured_house_email(excel_filename, email_content_html):
+def send_featured_house_email(excel_filename, email_content_html, config):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
     
-    # TODO: Pull the path for the email from the config file
     # Retrieve all the required values from the email config file
-    required_email_values = verify_email_config_file('/Users/jadonvanyo/Desktop/developer-tools/email_config.json')
+    required_email_values = verify_email_config_file(config['email_config_file_path'])
 
     # Verify that the required values from the email config were retrieved
     if required_email_values:
@@ -1007,7 +1038,7 @@ def verify_config_file_target_values(config):
 
 
 def verify_email_config_file(config_json_path):
-    """Function to verify that the email config file works and return all the required information if it does"""
+    """Function to verify that the email config file works and return all the required information if it does"""    
     # Pull all the email data from a separate config file
     email_config = load_json(config_json_path)
     
