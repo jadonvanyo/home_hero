@@ -679,24 +679,8 @@ def config_file_required_values_present(config):
         if not verify_all_required_values(required_config_email_values, config, print_config_error_message):
             return False
 
-        # Establish all the variables required for the email config file
-        required_email_config_values = {
-            "sender_address": lambda x: isinstance(x, str) and "@" in x,
-            "receiver_address": lambda x: isinstance(x, str) and "@" in x,
-            "password": lambda x: isinstance(x, str)
-        }
-        
-        # Pull all the email data from a separate config file
-        email_config = load_json(config['email_config_file_path'])
-    
-        # Verify email config file can be opened
-        if not email_config:
-            return False
-        
-        # TODO: Update the email files to run from config only
-        # TODO: Eliminate all other checks for the the email or config data
-        # TODO: Verify all email config data here instead of in the separate email functions
-        if not verify_all_required_values(required_email_config_values, email_config, print_config_error_message):
+        # Verify that all the required information in the email config file is present
+        if not verify_email_config_file_copy(config):
             return False
          
     # Return true if all checks have passed without returning false
@@ -1060,3 +1044,40 @@ def verify_email_config_file(config_json_path):
     
     return required_email_values
         
+def verify_email_config_file_copy(config):
+    """Function to return a boolean expression to verify that the email config file works and that it contains all the required values to send emails"""
+
+    # Establish all the variables required for the email config file
+    required_email_config_values = {
+        "sender_address": lambda x: isinstance(x, str) and "@" in x,
+        "receiver_address": lambda x: isinstance(x, str) and "@" in x,
+        "password": lambda x: isinstance(x, str)
+    }
+    
+    def print_email_config_error_message(key, error, json_data=None):
+        """Function to define error messages for the config file"""
+        # Error message for if a value is missing
+        if error == "missing":
+            print(f'"{key}" is not in the email config file. Please enter "{key}" in the email config file.')
+        # Error message for if a value is incorrect
+        elif error == "incorrect":
+            print(f'"{key}" is incorrectly entered in the email config file. Review documentation for how to enter "{key}".')
+        # General error message to handle all other issues
+        else:
+            print(f"An error has occurred while verifying data from the config file.")
+    
+    # Pull all the email data from a separate config file
+    email_config = load_json(config['email_config_file_path'])
+
+    # Verify email config file can be opened
+    if not email_config:
+        return False
+    
+    # TODO: Update the email files to run from config only
+    # TODO: Eliminate all other checks for the the email or config data
+    # TODO: Verify all email config data here instead of in the separate email functions
+    if not verify_all_required_values(required_email_config_values, email_config, print_email_config_error_message):
+        return False
+         
+    # Return true if all checks have passed without returning false
+    return True
