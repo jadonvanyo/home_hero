@@ -927,18 +927,57 @@ def load_json(json_path):
 def send_error_email(error_message, config, required_email_values):
     """Function to send a custom error message to a user if any issues occur that they cannot see and exit the program"""
     
-    # Verify that the user wants error messages
-    if config['send_error_emails']:
+    # Verify that the user wants emails
+    if config['send_emails']:
         
+        # Verify that the user wants error messages emailed
+        if config['send_error_emails']:
+            
+            # Setup the MIME
+            message = MIMEMultipart()
+            message['From'] = required_email_values['sender_address']
+            message['To'] = required_email_values['receiver_address']
+            message['Subject'] = 'An error has occurred'   # The subject line
+
+            # Attach the plain text to also be sent with the email
+            message.attach(MIMEText(error_message, 'plain'))
+            
+            # Create SMTP session for sending the mail
+            session = smtplib.SMTP('smtp.gmail.com', 587) 
+            session.starttls() # enable security
+            session.login(required_email_values['sender_address'], required_email_values['password']) # login with mail_id and password
+            session.sendmail(required_email_values['sender_address'], required_email_values['receiver_address'], message.as_string()) # Send an email with the excel file attached
+            session.quit()
+            print('Mail Sent')
+        
+    return
+
+
+def send_featured_house_email(excel_filename, email_content_html, config, required_email_values):
+    """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
+        
+    # Verify that the user wants emails
+    if config['send_emails']:
         # Setup the MIME
         message = MIMEMultipart()
         message['From'] = required_email_values['sender_address']
         message['To'] = required_email_values['receiver_address']
-        message['Subject'] = 'An error has occurred'   # The subject line
+        message['Subject'] = f'Houses analyzed - {str(date.today())}'   # The subject line
 
-        # Attach the plain text to also be sent with the email
-        message.attach(MIMEText(error_message, 'plain'))
-        
+        # Attach the HTML to also be sent with the email
+        message.attach(MIMEText(email_content_html, 'html'))
+
+        # Try to open the excel file to send in an email
+        try:
+            # Open the excel file and include it as an attachment for the email
+            with open(excel_filename, 'rb') as file:
+                part = MIMEApplication(file.read(), Name=basename(excel_filename))
+                part["Content-Disposition"] = f'attachment; filename="{basename(excel_filename)}"'
+                message.attach(part)
+        except FileNotFoundError:
+            print("It appears the excel file was not created. Verify the excel file is being created before sending the email.")
+            return
+
         # Create SMTP session for sending the mail
         session = smtplib.SMTP('smtp.gmail.com', 587) 
         session.starttls() # enable security
@@ -946,40 +985,6 @@ def send_error_email(error_message, config, required_email_values):
         session.sendmail(required_email_values['sender_address'], required_email_values['receiver_address'], message.as_string()) # Send an email with the excel file attached
         session.quit()
         print('Mail Sent')
-        
-    return
-
-
-def send_featured_house_email(excel_filename, email_content_html, config, required_email_values):
-    """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
-    
-    # Setup the MIME
-    message = MIMEMultipart()
-    message['From'] = required_email_values['sender_address']
-    message['To'] = required_email_values['receiver_address']
-    message['Subject'] = f'Houses analyzed - {str(date.today())}'   # The subject line
-
-    # Attach the HTML to also be sent with the email
-    message.attach(MIMEText(email_content_html, 'html'))
-
-    # Try to open the excel file to send in an email
-    try:
-        # Open the excel file and include it as an attachment for the email
-        with open(excel_filename, 'rb') as file:
-            part = MIMEApplication(file.read(), Name=basename(excel_filename))
-            part["Content-Disposition"] = f'attachment; filename="{basename(excel_filename)}"'
-            message.attach(part)
-    except FileNotFoundError:
-        print("It appears the excel file was not created. Verify the excel file is being created before sending the email.")
-        return
-
-    # Create SMTP session for sending the mail
-    session = smtplib.SMTP('smtp.gmail.com', 587) 
-    session.starttls() # enable security
-    session.login(required_email_values['sender_address'], required_email_values['password']) # login with mail_id and password
-    session.sendmail(required_email_values['sender_address'], required_email_values['receiver_address'], message.as_string()) # Send an email with the excel file attached
-    session.quit()
-    print('Mail Sent')
     
     return
 

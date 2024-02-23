@@ -17,13 +17,13 @@ if not config:
 if not config_file_required_values_present(config):
     exit(1)
 
+# TODO: potentially move the if statement for sending emails into the function
 # Check all the email config data in config file if the user requests to send emails
 if config['send_emails']:
     # Try to load the email config file
     email_config = email_config_file_required_values_present(config)
-
-    print(email_config)
     
+    # If no 
     if not email_config:
         exit(1)
 
@@ -71,6 +71,7 @@ else:
     # # Create an excel book containing all of the houses that were scraped for analysis
     # create_house_analysis_excel_book(analyzed_houses, excel_filename)
     
+    # TODO: Move this into the send_featured_house_email function
     # # Create the email html content for the analyzed houses
     # email_content_html = create_featured_house_email(analyzed_houses, config)
     # print(email_content_html)
