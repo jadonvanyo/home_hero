@@ -717,38 +717,27 @@ def create_featured_house_email(analyzed_houses, config):
     
     # Verify that the user is looking for featured houses in their emails
     if config['featured_house_required']:
-        # TODO: Change this file and eliminate if and else statement below
         # Generate a dictionary of target keys and values from the config file
         target_values = create_target_values_dictionary(config)
         
-        # Generate the email to the user if the dictionary contains any items
-        if target_values:
-            # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
-            # email_content_plain = ""
-            email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
-            
-            # Loop through each of the houses in the dataset and add them to a list of analyzed houses
-            for house in analyzed_houses:
-                # Check to see if the analyzed house meets the investor's criteria
-                if house.featured_home_determiner(target_values):
-                    # Add the individual house HTMl content to the total HTML content
-                    email_content_html += house.email_format_html()
-                    
-                    # Add the individual house plain text content to the total plain text content
-                    # email_content_plain += house.email_format_plain()
-                    
-            # Close the html for the email content
-            email_content_html += "\t</body>\n</html>"
-            
-            return email_content_html
+        # Create the beginning of the email body for all of the analyzed houses in plain text and HTML
+        # email_content_plain = ""
+        email_content_html = "<html>\n\t<body>\n\t\t<h2>Featured Houses:</h2>"
         
-        # Handle errors when the user does not 
-        else:
-            print("Error generating featured house email, no target values entered.")
-            
-            email_content_html = "<html>\n\t<body>\n\t\t<h3>No Target Values Entered</h3>\n\t</body>\n</html>"
-            
-            return email_content_html
+        # Loop through each of the houses in the dataset and add them to a list of analyzed houses
+        for house in analyzed_houses:
+            # Check to see if the analyzed house meets the investor's criteria
+            if house.featured_home_determiner(target_values):
+                # Add the individual house HTMl content to the total HTML content
+                email_content_html += house.email_format_html()
+                
+                # Add the individual house plain text content to the total plain text content
+                # email_content_plain += house.email_format_plain()
+                
+        # Close the html for the email content
+        email_content_html += "\t</body>\n</html>"
+        
+        return email_content_html
     
     # Handle a case where the user has not asked for a featured house
     else:
