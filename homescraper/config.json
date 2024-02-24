@@ -1,5 +1,5 @@
 {
-    "starturls": ["https://www.zillow.com/ohio-city-cleveland-oh/duplex/", "https://www.zillow.com/lyndhurst-oh/duplex/"],
+    "starturls": ["https://www.zillow.com/lakewood-oh/duplex"],
     "down_payment_decimal": 0.12, 
     "closing_cost_buyer_decimal": 0.03,
     "closing_cost_seller_decimal": 0.08,
@@ -20,6 +20,6 @@
     "target_percent_rule_min": null,
     "target_net_operating_income_min": null,
     "target_pro_forma_cap_min": null,
-    "target_five_year_annualized_return_min": 0.15,
+    "target_five_year_annualized_return_min": 0.1,
     "target_cash_on_cash_return_min": null
 }

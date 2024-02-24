@@ -14,6 +14,7 @@ class HomescraperPipeline:
         
         adapter = ItemAdapter(item)
         
+        # TODO: Add if statement for the length of the address returned
         # Convert the address list to a single line
         raw_address = adapter.get('address')
         adapter['address'] = raw_address[0] + " " + raw_address[2]
