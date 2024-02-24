@@ -1,8 +1,14 @@
+import asyncio
+from twisted.internet import asyncioreactor
+asyncioreactor.install(asyncio.get_event_loop()) # Explicitly install and run a reactor before any imports
+
 from analysis_functions import analyze_all_houses, create_house_analysis_excel_book, config_file_required_values_present, delete_file, email_config_file_required_values_present, load_json, send_featured_house_email, send_error_email
 from datetime import date
 from homescraper.spiders.rentspider import RentspiderSpider
 from homescraper.spiders.taxspider import TaxspiderSpider
-from scrapy.crawler import CrawlerProcess
+from twisted.internet import reactor, defer
+from scrapy.crawler import CrawlerRunner
+from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
 
@@ -27,22 +33,24 @@ if not email_config:
 # Load in homespider after the config file has been verified since it is dependent on the config file
 from homescraper.spiders.homespider import HomespiderSpider
 
-# Get the settings for all of the spiders
+# Get and configure the settings for all the spiders
 settings = get_project_settings()
+configure_logging(settings)
 
-# Define any custom settings for this project of spiders
-process = CrawlerProcess(settings)
+# Create instance of CrawlerRunner class to execute multiple spiders in the script using project settings
+runner = CrawlerRunner(settings)
 
-# Create a list of all the required spiders to gather the house info
-spiders = [HomespiderSpider, TaxspiderSpider, RentspiderSpider]
+# Create a function to run the spiders sequentially and stop the twisted reactor after all the spiders have run
+@defer.inlineCallbacks
+def crawl():
+    yield runner.crawl(HomespiderSpider)
+    yield runner.crawl(TaxspiderSpider)
+    yield runner.crawl(RentspiderSpider)
+    reactor.stop()
 
-# Loop through each of the spiders until all the required information has been gathered
-for spider in spiders:
-    print(f"#################{spider}#################")
-    process.crawl(spider)
-
-# Stop the script here until all crawling jobs are finished
-process.start()
+# Call the crawl function to loop through the spiders sequentially
+crawl()
+reactor.run()  # the script will block here until the last crawl call is finished
 
 # Try to pull the scraped home data
 data = load_json("homedata.json")
