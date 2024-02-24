@@ -959,11 +959,15 @@ def send_error_email(error_message, config, required_email_values):
     return
 
 
-def send_featured_house_email(excel_filename, email_content_html, config, required_email_values):
+def send_featured_house_email(analyzed_houses, excel_filename, config, required_email_values):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
         
     # Verify that the user wants emails
     if config['send_emails']:
+        
+        # Create the email html content for the analyzed houses
+        email_content_html = create_featured_house_email(analyzed_houses, config)
+        
         # Setup the MIME
         message = MIMEMultipart()
         message['From'] = required_email_values['sender_address']

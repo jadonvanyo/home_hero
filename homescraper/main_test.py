@@ -69,13 +69,8 @@ else:
     # # Create an excel book containing all of the houses that were scraped for analysis
     # create_house_analysis_excel_book(analyzed_houses, excel_filename)
     
-    # TODO: Move this into the send_featured_house_email function
-    # # Create the email html content for the analyzed houses
-    # email_content_html = create_featured_house_email(analyzed_houses, config)
-    # print(email_content_html)
-    
     # # Send the html email content and excel file to the target user
-    # send_featured_house_email(excel_filename, email_content_html, config, email_config)
+    # send_featured_house_email(analyzed_houses, excel_filename, config, required_email_values)
     
     # TODO: Add the field to config file for deleting the excel file
     # # Delete the excel file that was created
