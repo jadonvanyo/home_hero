@@ -741,27 +741,25 @@ def create_target_values_dictionary(config):
     return target_values  
 
 
-def delete_file(config, file_path):
-    """Function to delete a given file if the user requests"""
-    # Determine if the user wants the file deleted
-    if config['delete_excel_file']:
-        # Try to delete the file
-        try:
-            os.remove(file_path)
-            print(f"File {file_path} has been successfully deleted.")
-            
-        # Handle issues if the file is not found
-        except FileNotFoundError:
-            print(f"File not found: {file_path}")
-            
-        # Handle issues if permission is needed to delete the file
-        except PermissionError as pe:
-            print(f"Permission error deleting file {file_path}: {pe}")
-            
-        # Handle any additional exceptions
-        except Exception as e:
-            print(f"Error deleting file {file_path}: {e}")
-            
+def delete_file(file_path):
+    """Function to delete a given file"""
+    # Try to delete the file
+    try:
+        os.remove(file_path)
+        print(f"File {file_path} has been successfully deleted.")
+        
+    # Handle issues if the file is not found
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+        
+    # Handle issues if permission is needed to delete the file
+    except PermissionError as pe:
+        print(f"Permission error deleting file {file_path}: {pe}")
+        
+    # Handle any additional exceptions
+    except Exception as e:
+        print(f"Error deleting file {file_path}: {e}")
+        
     return
 
 

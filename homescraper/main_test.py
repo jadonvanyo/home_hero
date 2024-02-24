@@ -81,5 +81,7 @@ else:
     # Send the html email content and excel file to the target user
     send_featured_house_email(analyzed_houses, excel_filename, config, email_config)
     
-    # Delete the excel file that was created
-    delete_file(config, excel_filename)
+    # Determine if the user wants the file deleted
+    if config['delete_excel_file']:
+        # Delete the excel file that was created
+        delete_file(config, excel_filename)
