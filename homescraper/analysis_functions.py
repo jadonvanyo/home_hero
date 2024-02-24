@@ -763,47 +763,53 @@ def delete_file(file_path):
 def email_config_file_required_values_present(config):
     """Function to verify and return a dictionary of all the required email values and return false otherwise"""
     
-    # Load the email config file for verification
-    email_config = load_json(config['email_config_file_path'])
-    
-    # Return false if the email config file fails to load
-    if not email_config:
-        return False
-    
-    # Establish all the variables required for email in the config file
-    required_config_email_values = {
-        "email_config_file_path": lambda x: isinstance(x, str),
-        "send_error_emails": lambda x: isinstance(x, bool),
-        "featured_house_required": lambda x: isinstance(x, bool)
-    }
-    
-    def print_email_config_error_message(key, error, json_data=None):
-        """Function to define error messages for the email config file"""
-        # Error message for if a value is missing
-        if error == "missing":
-            print(f'"{key}" is not in the config file. Please enter "{key}" in the config file.')
-        # Error message for if a value is incorrect
-        elif error == "incorrect":
-            print(f'"{key}" is incorrectly entered in the config file. Review documentation for how to enter "{key}".')
-        # General error message to handle all other issues
-        else:
-            print(f"An error has occurred while verifying data from the config file.")
-    
-    # Verify that all the required values for email in the config file exist and are valid
-    if not verify_all_required_values(required_config_email_values, config, print_email_config_error_message):
-        return False
-
-    # Verify that all the required information in the email config file is present
-    elif not verify_email_config_file(config):
-        return False
-    
-    # Determine whether the user wants to include featured houses in their email
-    elif config['featured_house_required']:
-        if not verify_config_file_target_values(config):
+    # Verify that the user wants emails
+    if config['send_emails']:
+        # Load the email config file for verification
+        email_config = load_json(config['email_config_file_path'])
+        
+        # Return false if the email config file fails to load
+        if not email_config:
             return False
         
-    # Return all the required information to send an email if all checks pass
-    return email_config
+        # Establish all the variables required for email in the config file
+        required_config_email_values = {
+            "email_config_file_path": lambda x: isinstance(x, str),
+            "send_error_emails": lambda x: isinstance(x, bool),
+            "featured_house_required": lambda x: isinstance(x, bool)
+        }
+        
+        def print_email_config_error_message(key, error, json_data=None):
+            """Function to define error messages for the email config file"""
+            # Error message for if a value is missing
+            if error == "missing":
+                print(f'"{key}" is not in the config file. Please enter "{key}" in the config file.')
+            # Error message for if a value is incorrect
+            elif error == "incorrect":
+                print(f'"{key}" is incorrectly entered in the config file. Review documentation for how to enter "{key}".')
+            # General error message to handle all other issues
+            else:
+                print(f"An error has occurred while verifying data from the config file.")
+        
+        # Verify that all the required values for email in the config file exist and are valid
+        if not verify_all_required_values(required_config_email_values, config, print_email_config_error_message):
+            return False
+
+        # Verify that all the required information in the email config file is present
+        elif not verify_email_config_file(config):
+            return False
+        
+        # Determine whether the user wants to include featured houses in their email
+        elif config['featured_house_required']:
+            if not verify_config_file_target_values(config):
+                return False
+            
+        # Return all the required information to send an email if all checks pass
+        return email_config
+    
+    # Return True if the user does not wish to receive emails
+    else:
+        return True
 
 
 def format_excel_sheet(sheet):
@@ -1090,8 +1096,7 @@ def verify_email_config_file(config):
     if not email_config:
         return False
     
-    # TODO: Update the email files to run from config only
-    # TODO: Eliminate all other checks for the the email or config data
+    # Verify that all the required values for the email config are included
     if not verify_all_required_values(required_email_config_values, email_config, print_email_config_error_message):
         return False
          

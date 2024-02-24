@@ -17,15 +17,12 @@ if not config:
 if not config_file_required_values_present(config):
     exit(1)
 
-# TODO: potentially move the if statement for sending emails into the function
 # Check all the email config data in config file if the user requests to send emails
-if config['send_emails']:
-    # Try to load the email config file
-    email_config = email_config_file_required_values_present(config)
-    
-    # If no 
-    if not email_config:
-        exit(1)
+email_config = email_config_file_required_values_present(config)
+
+# If the email config file cannot be loaded or does not have the required information, exit the program
+if not email_config:
+    exit(1)
 
 # Load in homespider after the config file has been verified since it is dependent on the config file
 from homescraper.spiders.homespider import HomespiderSpider
@@ -51,12 +48,13 @@ data = load_json("homedata2.json")
 
 # Check if there are any houses in the list pulled
 if not data:
-    print("No houses found")
+    error_message = "No houses were found during the search."
+    print(error_message)
+    send_error_email(error_message, config, email_config)
     
 else:   
     # Retrieve a list containing all the analyzed houses and one with any houses missing data
     analyzed_houses, error_houses = analyze_all_houses(config, data)
-    print(error_houses)
     
     # # Verify there are analyzed houses to send to the user
     # if len(analyzed_houses) == 0:
