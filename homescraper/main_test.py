@@ -74,4 +74,4 @@ else:
     
     # TODO: Add the field to config file for deleting the excel file
     # # Delete the excel file that was created
-    # delete_file(excel_filename)
+    # delete_file(config, excel_filename)

@@ -11,6 +11,7 @@
     "expected_capx_monthly": 0.1,
     "expected_management_monthly": 0.1,
     "insurance_rate_yearly": 0.006,
+    "delete_excel_file": false,
     "send_emails": true,
     "email_config_file_path": "/Users/jadonvanyo/Desktop/developer-tools/email_config.json",
     "send_error_emails": false,
