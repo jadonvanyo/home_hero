@@ -14,14 +14,16 @@ class HomescraperPipeline:
         
         adapter = ItemAdapter(item)
         
-        # TODO: Add if statement for the length of the address returned
         # Convert the address list to a single line
         raw_address = adapter.get('address')
-        adapter['address'] = raw_address[0] + " " + raw_address[2]
+        # Determine that the raw address is a list of more than 1 item
+        if len(raw_address) > 1:
+            adapter['address'] = raw_address[0] + " " + raw_address[2]
         
-        # Remove all the '$' and ',' from price
-        value = adapter.get('price').replace('$', '').replace(',', '')
-        adapter['price'] = value
+        # Remove all the '$' and ',' from price if they are in the price
+        if "$" and "," in adapter.get('price'):
+            value = adapter.get('price').replace('$', '').replace(',', '')
+            adapter['price'] = value
         
         # Test that there is a sqft value
         if not adapter.get('sqft'):
@@ -44,8 +46,9 @@ class TaxscraperPipeline:
         
         adapter = ItemAdapter(item)
         
-        # Remove all the '$' and ',' from tax
-        value = adapter.get('tax').replace('$', '').replace(',', '')
-        adapter['tax'] = value
+        # Remove all the '$' and ',' from tax if they are in the tax
+        if "$" and "," in adapter.get('tax'):
+            value = adapter.get('tax').replace('$', '').replace(',', '')
+            adapter['tax'] = value
         
         return item
