@@ -30,27 +30,27 @@ email_config = email_config_file_required_values_present(config)
 if not email_config:
     exit(1)
 
-# Load in homespider after the config file has been verified since it is dependent on the config file
-from homescraper.spiders.homespider import HomespiderSpider
+# # Load in homespider after the config file has been verified since it is dependent on the config file
+# from homescraper.spiders.homespider import HomespiderSpider
 
-# Get and configure the settings for all the spiders
-settings = get_project_settings()
-configure_logging(settings)
+# # Get and configure the settings for all the spiders
+# settings = get_project_settings()
+# configure_logging(settings)
 
-# Create instance of CrawlerRunner class to execute multiple spiders in the script using project settings
-runner = CrawlerRunner(settings)
+# # Create instance of CrawlerRunner class to execute multiple spiders in the script using project settings
+# runner = CrawlerRunner(settings)
 
-# Create a function to run the spiders sequentially and stop the twisted reactor after all the spiders have run
-@defer.inlineCallbacks
-def crawl():
-    yield runner.crawl(HomespiderSpider)
-    yield runner.crawl(TaxspiderSpider)
-    yield runner.crawl(RentspiderSpider)
-    reactor.stop()
+# # Create a function to run the spiders sequentially and stop the twisted reactor after all the spiders have run
+# @defer.inlineCallbacks
+# def crawl():
+#     yield runner.crawl(HomespiderSpider)
+#     yield runner.crawl(TaxspiderSpider)
+#     yield runner.crawl(RentspiderSpider)
+#     reactor.stop()
 
-# Call the crawl function to loop through the spiders sequentially
-crawl()
-reactor.run()  # the script will block here until the last crawl call is finished
+# # Call the crawl function to loop through the spiders sequentially
+# crawl()
+# reactor.run()  # the script will block here until the last crawl call is finished
 
 # Try to pull the scraped home data
 data = load_json("homedata.json")

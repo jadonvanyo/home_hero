@@ -70,8 +70,6 @@ class HomespiderSpider(scrapy.Spider):
         home_item['property_subtype'] = response.xpath('//ul/li/span[contains(text(), "Property subType")]/text()[3]').get()
         home_item['region'] = response.xpath('//ul/li/span[contains(text(), "Region")]/text()[3]').get()
         home_item['subdivision'] = response.xpath('//ul/li/span[contains(text(), "Subdivision")]/text()[3]').get()
-        home_item['tax'] = None
-        home_item['rent'] = None
         
         yield home_item
         
