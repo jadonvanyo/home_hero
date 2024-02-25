@@ -106,3 +106,4 @@ house_links = response.xpath('//div[1]/ul/li/div/div/article/div/div/a[contains(
 
 response.xpath('//div[contains(@data-testid, "macro-data-view")]/div/div/div/h1/text()').getall()
 response.xpath('//article/div/div/text()').get()
+response.xpath('//table/tbody/tr/th[contains(text(), "Structure Quality")]/following-sibling::td/text()').get()

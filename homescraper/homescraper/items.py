@@ -24,3 +24,5 @@ class HomeItem(scrapy.Item):
     rent = scrapy.Field()
     min_rent = scrapy.Field()
     max_rent = scrapy.Field()
+    structure_quality = scrapy.Field()
+    structure_condition = scrapy.Field()

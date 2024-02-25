@@ -75,10 +75,11 @@ class TaxspiderSpider(scrapy.Spider):
         # Extract house data from meta
         house = response.meta.get('house')
         
-        # TODO: Add additional data like structure condition, quality, property owner
         # Update the house data with tax information
         house['tax_url'] = response.url
         house['tax'] = response.xpath('//table[contains(@id, "taxes")]/tbody/tr[1]/td[2]/text()').get()
+        house['structure_quality'] = response.xpath('//table/tbody/tr/th[contains(text(), "Structure Quality")]/following-sibling::td/text()').get()
+        house['structure_condition'] = response.xpath('//table/tbody/tr/th[contains(text(), "Structure Condition")]/following-sibling::td/text()').get()
         
         yield house
         
