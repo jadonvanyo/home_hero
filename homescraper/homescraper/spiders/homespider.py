@@ -11,15 +11,15 @@ class HomespiderSpider(scrapy.Spider):
 
     # Overwrite any of the settings.py settings for this particular spider \
     custom_settings = {
-        # Close the spider after 6 items have been selected
-        'CLOSESPIDER_ITEMCOUNT': 6,
+        # Close the spider after a certain number of items have been scraped
+        'CLOSESPIDER_ITEMCOUNT': 10,
         
         # Override the default request headers:
         'DEFAULT_REQUEST_HEADERS': {
             'authority': 'www.zillow.com',
             'pragma': 'no-cache',
             'cache-control': 'no-cache',
-            'sec-ch-ua': '"Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"',
+            'sec-ch-ua': '"Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"', 
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-platform': '"macOS"',
             'upgrade-insecure-requests': '1',
@@ -34,7 +34,7 @@ class HomespiderSpider(scrapy.Spider):
         
         # Give a specific file and format to always save the data to
         'FEEDS': {
-            'homedata.json': {'format': 'json', 'overwrite': True}
+            'homedata1.json': {'format': 'json', 'overwrite': True}
         },
         
         # Configure custom item pipelines
