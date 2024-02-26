@@ -146,7 +146,7 @@ class ScrapeOpsFakeBrowserHeadersMiddleware:
         request.headers['sec-fetch-user'] = random_header['sec-fetch-user']
         request.headers['sec-fetch-mod'] = random_header['sec-fetch-mod']
         request.headers['sec-fetch-site'] = random_header['sec-fetch-site']
-        request.headers['sec-ch-ua-platform'] = random_header['sec-ch-ua-platform']
+        request.headers['sec-ch-ua-platform'] = f'"{random_header['sec-ch-ua-platform']}"'
         request.headers['sec-ch-ua-mobile'] = random_header['sec-ch-ua-mobile']
         request.headers['sec-ch-ua'] = random_header['sec-ch-ua']
         request.headers['accept'] = random_header['accept']

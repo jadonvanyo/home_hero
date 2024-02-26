@@ -7,4 +7,6 @@ response = requests.get(
       'num_results': '2'}
 )
 
+print(response['sec-ch-ua-platform'])
+
 print('Response Body: ', response.json())
