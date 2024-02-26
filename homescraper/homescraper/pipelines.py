@@ -37,28 +37,50 @@ class HomescraperPipeline:
             adapter['sqft'] = value
         
         # Remove the multifamily tag, strip, and lowercase for the property subtype
-        property_subtypes = [
-                'duplex',
-                'triplex',
-                'quadplex',
-                'quinplex'
-            ]
-        # TODO: Fix this mess
         if adapter.get('property_subtype'):
-            if ', Multi Family' in adapter.get('property_subtype'):
-                value = adapter.get('property_subtype').replace(', Multi Family', '').strip().lower()
-                adapter['property_subtype'] = value
-            elif adapter.get('description'):
-                for subtype in property_subtypes:
-                    if subtype in adapter.get('description').lower():
-                        adapter['property_subtype'] = subtype
-            
+            subtype = self.determine_property_subtype(adapter.get('property_subtype'))
+            if subtype is not None:
+                adapter['property_subtype'] = subtype
+            else:
+                if adapter.get('description'):
+                    adapter['property_subtype'] = self.determine_property_subtype(adapter.get('description'))
+                
         elif adapter.get('description'):
-            for subtype in property_subtypes:
-                if subtype in adapter.get('description').lower():
-                    adapter['property_subtype'] = subtype
+            adapter['property_subtype'] = self.determine_property_subtype(adapter.get('description'))
                     
         return item
+    
+    
+    def determine_property_subtype(self, string):
+        """Method to  determine if the property subtype is in a string of text. Return the property subtype if it is and return none otherwise."""
+        # Establish a list containing all the property subtypes
+        property_subtypes = [
+            'duplex',
+            'triplex',
+            'quadplex',
+            'quinplex'
+        ]
+        
+        # Establish a dictionary of other names that might be used to name a property
+        additional_property_subtypes = {
+            "double": "duplex",
+            "2-unit": "duplex",
+            "3-unit": "triplex",
+            "4-unit": "quadplex"
+        }
+        
+        # Look for each property subtype in the description of the house
+        for subtype in property_subtypes:
+            if subtype in string.strip().lower():
+                return subtype
+            
+        # Look for additional names for the property subtypes
+        for key, value in additional_property_subtypes.items():
+            if key in string.strip().lower():
+                return value
+            
+        return None
+                    
     
 class TaxscraperPipeline:
     def process_item(self, item, spider):
