@@ -60,8 +60,18 @@ DEFAULT_REQUEST_HEADERS = {
     # 'accept-language': 'en-GB,en;q=0.9,en-US;q=0.8,lt;q=0.7',
 }
 
+# TODO: DELETE this
+# Import API keys from separate file
+import json
+try:
+    with open('/Users/jadonvanyo/Desktop/developer-tools/api_keys.json', 'r') as json_file:
+        api_key_data = json.load(json_file)
+        scrapeops_api_key = api_key_data['scrapeops']
+except:
+    print("An error occured while trying to load API keys from separate file.")
+
 # Change the headers to escape being blocked by a website
-SCRAPEOPS_API_KEY = '4aac2734-0c08-4286-885f-91878b766e16'
+SCRAPEOPS_API_KEY = api_key_data # TODO: Enter your scrapeops api key here
 SCRAPEOPS_FAKE_HEADERS_ENABLED = True
 SCRAPEOPS_NUM_RESULTS = 34
 
@@ -76,7 +86,7 @@ SCRAPEOPS_NUM_RESULTS = 34
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
 #    "homescraper.middlewares.HomescraperDownloaderMiddleware": 543,
-    "homescraper.middlewares.ScrapeOpsFakeBrowserHeadersMiddleware": 200,
+    "homescraper.middlewares.ScrapeOpsFakeBrowserHeadersMiddleware": 200, # rotate request headers
 }
 
 # Enable or disable extensions
