@@ -25,12 +25,14 @@ NEWSPIDER_MODULE = "homescraper.spiders"
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 1 # TODO: Set this to 8 when proxy is off
+# TODO: Set this to 8 when proxy is off
+CONCURRENT_REQUESTS = 1
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 0 # TODO: Set this to 3 when proxy is off
+# TODO: Set this to 3 when proxy is off
+DOWNLOAD_DELAY = 1
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -43,7 +45,7 @@ DOWNLOAD_DELAY = 0 # TODO: Set this to 3 when proxy is off
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
-    'authority': 'www.countyoffice.org',
+    'authority': 'www.zillow.com',
     'referer': 'http://www.google.com/',
     'pragma': 'no-cache',
     'cache-control': 'no-cache',
@@ -57,7 +59,6 @@ import json
 with open('/Users/jadonvanyo/Desktop/developer-tools/api_keys.json', 'r') as json_file:
     api_key_data = json.load(json_file)
     scrapeops_api_key = api_key_data['scrapeops']
-    print(scrapeops_api_key)
 
 # Load scrapeops API key to avoid anti-bot tactics
 SCRAPEOPS_API_KEY = scrapeops_api_key # TODO: Enter your scrapeops api key here
@@ -76,12 +77,11 @@ SCRAPEOPS_PROXY_SETTINGS = {'country': 'us'}
 #    "homescraper.middlewares.HomescraperSpiderMiddleware": 543,
 #}
 
-# TODO: Create middleware to rotate proxies
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
 #    "homescraper.middlewares.HomescraperDownloaderMiddleware": 543,
-    "homescraper.middlewares.ScrapeOpsFakeBrowserHeadersMiddleware": 200, # rotate request headers
+    "homescraper.middlewares.ScrapeOpsFakeBrowserHeadersMiddleware": 300, # rotate request headers
     "homescraper.middlewares.ScrapeOpsProxyMiddleware": 400 # rotate proxies, this is helpful if you want to scrape mass amounts of data very quickly
 }
 

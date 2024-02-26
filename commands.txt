@@ -101,9 +101,10 @@ Property Subtype: response.xpath('//ul/li/span[contains(text(), "Property subTyp
 Days on Market: ???
 Region: response.xpath('//ul/li/span[contains(text(), "Region")]/text()[3]').get()
 Subdivision: response.xpath('//ul/li/span[contains(text(), "Subdivision")]/text()[3]').get()
+Structure Quality: response.xpath('//table/tbody/tr/th[contains(text(), "Structure Quality")]/following-sibling::td/text()').get()
 
 house_links = response.xpath('//div[1]/ul/li/div/div/article/div/div/a[contains(@data-test, "property-card-link")]/@href').getall()
 
 response.xpath('//div[contains(@data-testid, "macro-data-view")]/div/div/div/h1/text()').getall()
-response.xpath('//article/div/div/text()').get()
-response.xpath('//table/tbody/tr/th[contains(text(), "Structure Quality")]/following-sibling::td/text()').get()
+
+response.xpath('//a[contains(@title, "Next page")][contains(@aria-disabled, "false")]/@href').get()

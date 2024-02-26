@@ -20,6 +20,7 @@ class TaxspiderSpider(scrapy.Spider):
             'sec-fetch-dest': 'document',
         }, 
         
+        # TODO: DELETE this
         # Give a specific file and format to always save the data to
         'FEEDS': {
             'homedata.json': {'format': 'json', 'overwrite': True}

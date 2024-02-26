@@ -12,7 +12,7 @@ class HomespiderSpider(scrapy.Spider):
     # Overwrite any of the settings.py settings for this particular spider \
     custom_settings = {
         # Close the spider after a certain number of items have been scraped
-        'CLOSESPIDER_ITEMCOUNT': 10,
+        # 'CLOSESPIDER_ITEMCOUNT': 10,
         
         # Override the default request headers:
         'DEFAULT_REQUEST_HEADERS': {
@@ -23,7 +23,7 @@ class HomespiderSpider(scrapy.Spider):
             'sec-fetch-mode': 'navigate',
             'sec-fetch-dest': 'document',
         },
-        
+         # TODO: DELETE this
         # Give a specific file and format to always save the data to
         'FEEDS': {
             'homedata.json': {'format': 'json', 'overwrite': True}
@@ -46,8 +46,16 @@ class HomespiderSpider(scrapy.Spider):
             # Go into the home page and scrape the data
             yield response.follow(link, callback=self.parse_zillow_house_page)
             
-    
-    # TODO: Create a function to parse through the pages for many houses
+        # Load in the next page
+        next_page = response.xpath('//a[contains(@title, "Next page")][contains(@aria-disabled, "false")]/@href').get()
+        
+        # Determine if there is still a next page
+        if next_page is not None:
+            # TODO: verify that this is correct
+            next_page_url = "https://www.zillow.com" + next_page
+            # Follow the next page and perform the callback function on the response from following the page
+            yield response.follow(next_page_url, callback=self.parse)
+            
 
     def parse_zillow_house_page(self, response):
         """Crawl and gather all of the information on a particular house's page"""
