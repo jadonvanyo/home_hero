@@ -25,12 +25,12 @@ NEWSPIDER_MODULE = "homescraper.spiders"
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 8
+CONCURRENT_REQUESTS = 1 # TODO: Set this to 8 when proxy is off
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 0 # TODO: Set this to 3 when proxy is off
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -68,10 +68,16 @@ with open('/Users/jadonvanyo/Desktop/developer-tools/api_keys.json', 'r') as jso
     scrapeops_api_key = api_key_data['scrapeops']
     print(scrapeops_api_key)
 
-# Change the headers to escape being blocked by a website
+# Load scrapeops API key to avoid anti-bot tactics
 SCRAPEOPS_API_KEY = scrapeops_api_key # TODO: Enter your scrapeops api key here
+
+# Settings for the scrapeops fake request headers
 SCRAPEOPS_FAKE_HEADERS_ENABLED = True
 SCRAPEOPS_NUM_RESULTS = 34
+
+# Settings for the scrapeops proxy 
+SCRAPEOPS_PROXY_ENABLED = True
+SCRAPEOPS_PROXY_SETTINGS = {'country': 'us'}
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
@@ -85,6 +91,7 @@ SCRAPEOPS_NUM_RESULTS = 34
 DOWNLOADER_MIDDLEWARES = {
 #    "homescraper.middlewares.HomescraperDownloaderMiddleware": 543,
     "homescraper.middlewares.ScrapeOpsFakeBrowserHeadersMiddleware": 200, # rotate request headers
+    "homescraper.middlewares.ScrapeOpsProxyMiddleware": 400 # rotate proxies, this is helpful if you want to scrape mass amounts of data very quickly
 }
 
 # Enable or disable extensions
