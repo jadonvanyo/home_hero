@@ -63,15 +63,13 @@ DEFAULT_REQUEST_HEADERS = {
 # TODO: DELETE this
 # Import API keys from separate file
 import json
-try:
-    with open('/Users/jadonvanyo/Desktop/developer-tools/api_keys.json', 'r') as json_file:
-        api_key_data = json.load(json_file)
-        scrapeops_api_key = api_key_data['scrapeops']
-except:
-    print("An error occured while trying to load API keys from separate file.")
+with open('/Users/jadonvanyo/Desktop/developer-tools/api_keys.json', 'r') as json_file:
+    api_key_data = json.load(json_file)
+    scrapeops_api_key = api_key_data['scrapeops']
+    print(scrapeops_api_key)
 
 # Change the headers to escape being blocked by a website
-SCRAPEOPS_API_KEY = api_key_data # TODO: Enter your scrapeops api key here
+SCRAPEOPS_API_KEY = scrapeops_api_key # TODO: Enter your scrapeops api key here
 SCRAPEOPS_FAKE_HEADERS_ENABLED = True
 SCRAPEOPS_NUM_RESULTS = 34
 
