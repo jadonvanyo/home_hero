@@ -1,5 +1,5 @@
 {
-    "starturls": ["https://www.zillow.com/columbus-oh/duplex/"],
+    "starturls": ["https://www.zillow.com/lakewood-oh/duplex/"],
     "down_payment_decimal": 0.12, 
     "closing_cost_buyer_decimal": 0.03,
     "closing_cost_seller_decimal": 0.08,

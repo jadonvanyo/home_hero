@@ -17,6 +17,7 @@ class HomespiderSpider(scrapy.Spider):
         # Override the default request headers:
         'DEFAULT_REQUEST_HEADERS': {
             'authority': 'www.zillow.com',
+            'referer': 'http://www.google.com/',
             'pragma': 'no-cache',
             'cache-control': 'no-cache',
             # 'sec-ch-ua': '"Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"', 
@@ -34,7 +35,7 @@ class HomespiderSpider(scrapy.Spider):
         
         # Give a specific file and format to always save the data to
         'FEEDS': {
-            'homedata3.json': {'format': 'json', 'overwrite': True}
+            'homedata.json': {'format': 'json', 'overwrite': True}
         },
         
         # Configure custom item pipelines

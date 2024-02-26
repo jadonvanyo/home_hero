@@ -43,7 +43,7 @@ DOWNLOAD_DELAY = 3
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
-    'authority': 'www.zillow.com',
+    'authority': 'www.countyoffice.org',
     'referer': 'http://www.google.com/',
     'pragma': 'no-cache',
     'cache-control': 'no-cache',
@@ -71,7 +71,7 @@ SCRAPEOPS_NUM_RESULTS = 34
 #    "homescraper.middlewares.HomescraperSpiderMiddleware": 543,
 #}
 
-# TODO: Create middleware to rotate proxies and headers
+# TODO: Create middleware to rotate proxies
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
