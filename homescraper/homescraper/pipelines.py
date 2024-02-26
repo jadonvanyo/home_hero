@@ -19,6 +19,8 @@ class HomescraperPipeline:
         # Determine that the raw address is a list of more than 1 item
         if len(raw_address) > 1:
             adapter['address'] = raw_address[0] + " " + raw_address[2]
+        elif len(raw_address) == 1:
+            adapter['address'] = raw_address[0]
         
         # Remove all the '$' and ',' from price if they are in the price
         if "$" and "," in adapter.get('price'):
@@ -35,10 +37,27 @@ class HomescraperPipeline:
             adapter['sqft'] = value
         
         # Remove the multifamily tag, strip, and lowercase for the property subtype
-        if ', Multi Family' in adapter.get('property_subtype'):
-            value = adapter.get('property_subtype').replace(', Multi Family', '').strip().lower()
-            adapter['property_subtype'] = value
-        
+        property_subtypes = [
+                'duplex',
+                'triplex',
+                'quadplex',
+                'quinplex'
+            ]
+        # TODO: Fix this mess
+        if adapter.get('property_subtype'):
+            if ', Multi Family' in adapter.get('property_subtype'):
+                value = adapter.get('property_subtype').replace(', Multi Family', '').strip().lower()
+                adapter['property_subtype'] = value
+            elif adapter.get('description'):
+                for subtype in property_subtypes:
+                    if subtype in adapter.get('description').lower():
+                        adapter['property_subtype'] = subtype
+            
+        elif adapter.get('description'):
+            for subtype in property_subtypes:
+                if subtype in adapter.get('description').lower():
+                    adapter['property_subtype'] = subtype
+                    
         return item
     
 class TaxscraperPipeline:
