@@ -15,11 +15,26 @@ This project will scrape homes from Zillow based on a given Zillow URL and analy
 
 ## Background
 
-If your project requires more context, you can include a section that gives a background or story behind its creation.
+I used to spend hours a week analyzing potential investment properties on Zillow. I would go through the same repetitive task of finding the properties in a given area, looking for all the key information to analyze these properties (taxes, rents, insurance, mortgages, ect.), and plugging all these values into a spreadsheet that would calculate various financial metrics for the house, including monthly insurance, down payment cost, loan amount, closing costs, monthly principle and interest payments, taxes, total operating costs, suggested total rent, and many more. The task was tedious and repetitive, so like any good programmer I decided to automate the collection and data entry, so I could focus on the fun parts. I added the ability to send email to make the process even easier. Just run the script or set it up to run in the cloud and potential investment properties are delivered directly to your inbox. This script will give anyone the ability to easily analysis hundreds of potential investment properties on the MLS, freeing them up to focus on the more fun aspects of investing.
 
 ## Dependencies
 
-If your project relies on external libraries or software, list them here.
+This project requires the following Python libraries and packages. Ensure you have them installed to run the project successfully:
+
+- `openpyxl`: For creating and manipulating Excel files.
+- `scrapy`: For crawling and scraping websites. This includes `CrawlerRunner` and other scrapy utilities.
+- `twisted`: For asynchronous networking. The project uses Twisted's reactor and defer modules.
+- `tabulate`: For pretty-printing tabular data in HTML format.
+- `smtplib` and `email.mime`: For sending emails with attachments.
+- `os`, `json`, `asyncio`: For various utility functions such as file handling, JSON parsing, and asynchronous programming.
+
+You can use the following pip command to install the required Python packages:
+
+```bash
+pip install openpyxl scrapy twisted tabulate
+```
+
+This project also requires a scrapeops API key that can be obtained for free [here](https://scrapeops.io/). Just create a free account and copy and paste your scrapeops API key into the configuration file.
 
 ## Installation
 
