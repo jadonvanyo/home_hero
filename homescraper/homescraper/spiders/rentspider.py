@@ -18,12 +18,6 @@ class RentspiderSpider(scrapy.Spider):
             'sec-fetch-mode': 'navigate',
             'sec-fetch-dest': 'document',
         },
-        
-        # TODO: DELETE this
-        # Give a specific file and format to always save the data to
-        'FEEDS': {
-            'homedata.json': {'format': 'json', 'overwrite': True}
-        },
     }
 
     def parse(self, response):

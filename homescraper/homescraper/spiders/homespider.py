@@ -23,11 +23,6 @@ class HomespiderSpider(scrapy.Spider):
             'sec-fetch-mode': 'navigate',
             'sec-fetch-dest': 'document',
         },
-         # TODO: DELETE this
-        # Give a specific file and format to always save the data to
-        'FEEDS': {
-            'homedata.json': {'format': 'json', 'overwrite': True}
-        },
         
         # Configure custom item pipelines
         'ITEM_PIPELINES': {
@@ -51,7 +46,7 @@ class HomespiderSpider(scrapy.Spider):
         
         # Determine if there is still a next page
         if next_page is not None:
-            # TODO: verify that this is correct
+            # Create the url link for that next page
             next_page_url = "https://www.zillow.com" + next_page
             # Follow the next page and perform the callback function on the response from following the page
             yield response.follow(next_page_url, callback=self.parse)
