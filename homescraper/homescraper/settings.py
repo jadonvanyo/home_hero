@@ -1,3 +1,5 @@
+from analysis_functions import load_json
+
 # Scrapy settings for homescraper project
 #
 # For simplicity, this file contains only settings considered important or
@@ -53,14 +55,9 @@ DEFAULT_REQUEST_HEADERS = {
     'sec-fetch-dest': 'document',
 }
 
-# TODO: DELETE this for release
-# Import API keys from separate file
-import json
-with open('/Users/jadonvanyo/Desktop/developer-tools/api_keys.json', 'r') as json_file:
-    api_key_data = json.load(json_file)
-    scrapeops_api_key = api_key_data['scrapeops']
+# Load config file for the user's API key
+scrapeops_api_key = load_json("config.json")['scrapeops_api_key']
 
-# TODO: Move this to the config file
 # Load scrapeops API key to avoid anti-bot tactics
 SCRAPEOPS_API_KEY = scrapeops_api_key
 

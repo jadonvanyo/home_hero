@@ -1,4 +1,5 @@
 {
+    "scrapeops_api_key": "",
     "starturls": ["https://www.zillow.com/fort-lauderdale-fl/duplex/"],
     "down_payment_decimal": 0.12, 
     "closing_cost_buyer_decimal": 0.03,
@@ -12,7 +13,7 @@
     "expected_management_monthly": 0.1,
     "insurance_rate_yearly": 0.006,
     "delete_excel_file": false,
-    "send_emails": true,
+    "send_emails": false,
     "email_config_file_path": "/Users/jadonvanyo/Desktop/developer-tools/email_config.json",
     "send_error_emails": false,
     "featured_house_required": true,
