@@ -11,7 +11,6 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
-# TODO: Rename this main.py
 # Try to load the config file
 config = load_json("config.json")
 
