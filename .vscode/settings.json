@@ -28,5 +28,8 @@
         "testid",
         "toscrape",
         "xlwt"
+    ],
+    "python.analysis.extraPaths": [
+        "./homescraper"
     ]
 }
