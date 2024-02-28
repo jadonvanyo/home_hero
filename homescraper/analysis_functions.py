@@ -635,6 +635,7 @@ def config_file_required_values_present(config):
     
     # Establish all the variables required in the config file
     required_config_values = {
+        "scrapeops_api_key": lambda x: isinstance(x, str) and 35 < len(x) < 39,
         "starturls": lambda x: isinstance(x, list) and len(x) > 0,
         "down_payment_decimal": lambda x: isinstance(x, (float)) and 0 < x < 1, 
         "closing_cost_buyer_decimal": lambda x: isinstance(x, (float)) and 0 < x <= 0.25,

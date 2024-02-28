@@ -92,6 +92,11 @@ If you enabled email notifications in your configuration, you would also receive
 
 ## Configuration
 
+This section will review all the configurable options for the `config.json` file.
+
+- `scrapeops_api_key`(str): String of your Scrapeops API key.
+- `starturls`(list): List of strings each containing the URL for Zillow to begin scraping.
+
 ## Features
 
 List the key features of your project. What makes it stand out?
