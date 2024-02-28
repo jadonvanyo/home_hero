@@ -8,6 +8,7 @@ This project will scrape homes from Zillow based on a given Zillow URL and analy
 - [Dependencies](#dependencies)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Configuration](#configuration)
 - [Features](#features)
 - [Contributing](#contributing)
 - [Credits](#credits)
@@ -34,21 +35,62 @@ You can use the following pip command to install the required Python packages:
 pip install openpyxl scrapy twisted tabulate
 ```
 
-This project also requires a scrapeops API key that can be obtained for free [here](https://scrapeops.io/). Just create a free account and copy and paste your scrapeops API key into the configuration file.
+This project also requires a scrapeops API key that can be obtained for free [here](https://scrapeops.io/). Just create a free account and copy and paste your scrapeops API key into the config.json file.
+
+TODO: add section showing where to enter your scrapeops API key
 
 ## Installation
 
 Provide detailed instructions on how to install your project. Include any prerequisites, libraries, or third-party tools that are needed.
 
 ```bash
-git clone https://yourproject.git
-cd yourproject
-./install.sh
+git clone https://github.com/jayman779/home_hero.git
+cd home_hero
 ```
 
 ## Usage
 
-Explain how to use your project. Include code blocks and examples for common use cases.
+This project is designed to be fully configurable via a config.json file, allowing users to run a series of web scrapers and analyses without direct code manipulation. Follow the steps below to set up and execute the application.
+
+### Step 1: Configuration
+
+Before running the application, you must configure the config.json file with your specific parameters. This file includes various settings, such as URLs to scrape, financial assumptions, email settings, and preferences regarding output and notifications.
+
+```json
+{
+    "starturls": ["https://www.zillow.com/fort-lauderdale-fl/duplex/"],
+    "down_payment_decimal": 0.12, 
+    "closing_cost_buyer_decimal": 0.03,
+    ...
+    "email_config_file_path": "/path/to/email_config.json",
+    "send_error_emails": false,
+    "featured_house_required": true,
+    ...
+}
+```
+
+For a full explanation of each configuration option, refer to the [Configuration](#configuration) section.
+
+### Step 2: Running the Application
+
+With your config.json file set up, run the application using the following commands in the home_hero directory:
+
+```sh
+cd homescraper
+python main.py
+```
+
+> **_NOTE:_**  MacOS users will need to use `python3` instead of `python`.
+
+This command initiates the scraping process based on your `config.json` settings, followed by an analysis of the collected data. The results will be compiled into an Excel file, and, if configured, an email summary will be sent.
+
+### Step 3: Reviewing Results
+
+After execution, check the output Excel file named with the current date (e.g., `2024-03-15-house-analysis.xlsx`) in the project directory. This file contains a detailed analysis of each property scraped, including financial metrics and other relevant data.
+
+If you enabled email notifications in your configuration, you would also receive an email summary of the analysis, including featured houses that meet criteria that was enabled in your configuration or errors encountered during the scraping and analysis processes.
+
+## Configuration
 
 ## Features
 
