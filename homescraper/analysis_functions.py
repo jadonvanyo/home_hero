@@ -6,6 +6,7 @@ import json
 from openpyxl import Workbook
 import os
 from os.path import basename
+import requests # TODO: Add this to the README
 import smtplib
 from tabulate import tabulate
 
@@ -629,6 +630,7 @@ def analyze_all_houses(config, data):
         
     return analyzed_houses, error_houses
 
+# TODO: Change this function to return a list of errors
 # TODO: Rigorous testing of this function
 def config_file_required_values_present(config):
     """Function to return true if all the values required for analysis are in the config file are present and accurate"""
@@ -666,6 +668,14 @@ def config_file_required_values_present(config):
     
     # Return False if any of the data in the config file was missing or entered incorrectly
     if not verify_all_required_values(required_config_values, config, print_config_error_message):
+        return False
+    
+    # Test that the given API key can return a result
+    error_message = verify_scrapeops_api_key(config['scrapeops_api_key'])
+    
+    # Print the error message and return false if no API key is found
+    if error_message:
+        print(error_message)
         return False
     
     return True
@@ -1110,3 +1120,41 @@ def verify_email_config_file(config):
          
     # Return true if all checks have passed without returning false
     return True
+
+def verify_scrapeops_api_key(scrapeops_api_key):
+    """Function to validate that the user has entered a valid Scrapeops API Key."""
+
+    # Establish a variable to keep track of the error code message
+    error_message = None
+
+    # Attempt to get a sample user agent using the given API Key
+    response = str(requests.get(
+        url='https://headers.scrapeops.io/v1/user-agents',
+        params={
+            'api_key': f'{scrapeops_api_key}',
+            'num_results': '0',
+        }
+    ))
+    
+    # Return true if a 200 status code is in the response
+    if '200' in response:
+        return error_message
+    
+    # Return an error message if the response is not successful
+    else:
+        # Establish a dictionary of possible error codes and messages
+        status_codes = {
+            "<Response [400]>": "Bad Request. Ensure either the URL or query parameters are correctly formatted in `verify_scrapeops_api_key`.",
+            "<Response [401]>": "Invalid API Key entered, please enter a valid API Key in `config.json`.",
+            "<Response [403]>": "Invalid API Key entered, please enter a valid API Key in `config.json`.",
+            "<Response [404]>": "The requested page does not exist. Ensure that the URL that `verify_scrapeops_api_key` is trying to reach is still valid.",
+            "<Response [500]>": "After retrying for up to 2 minutes, the API was unable to receive a successful response."
+        }
+
+        # Get an error message from the list of possible status codes
+        error_message = status_codes.get(response, "An error has occurred while trying to validate given API Key.")
+        
+        # Return the error message
+        return error_message
+        
+    
