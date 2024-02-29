@@ -2,7 +2,7 @@ import asyncio
 from twisted.internet import asyncioreactor
 asyncioreactor.install(asyncio.get_event_loop()) # Explicitly install and run a reactor before any imports
 
-from analysis_functions import analyze_all_houses, create_house_analysis_excel_book, config_file_required_values_present, delete_file, email_config_file_required_values_present, load_json, send_featured_house_email, send_error_email
+from analysis_functions import analyze_all_houses, create_house_analysis_excel_book, config_file_required_values_present, delete_file, config_file_required_email_values_present, load_json, send_featured_house_email, send_error_email
 from datetime import date
 from homescraper.spiders.rentspider import RentspiderSpider
 from homescraper.spiders.taxspider import TaxspiderSpider
@@ -28,7 +28,7 @@ if error_messages:
     exit(1)
 
 # Check all the email config data in config file if the user requests to send emails
-email_config = email_config_file_required_values_present(config)
+email_config = config_file_required_email_values_present(config)
 
 # If the email config file cannot be loaded or does not have the required information, exit the program
 if not email_config:

@@ -635,7 +635,7 @@ def analyze_all_houses(config, data):
         
     return analyzed_houses, error_houses
 
-# TODO: Change this function to return a list of errors
+
 # TODO: Rigorous testing of this function
 def config_file_required_values_present(config):
     """Function to return a list of all the errors generated while trying to load in all the required values. Returning an empty list means no errors were generated"""
@@ -783,8 +783,8 @@ def delete_file(file_path):
         
     return
 
-
-def email_config_file_required_values_present(config):
+# TODO: Change this function to return a list of errors
+def config_file_required_email_values_present(config):
     """Function to verify and return a dictionary of all the required email values and return false otherwise"""
     
     # Verify that the user wants emails
@@ -1048,7 +1048,7 @@ def verify_all_required_values(required_values, json_data, error_message_pattern
     # Return a list of all the error messages generated
     return error_messages
 
-        
+# TODO: Change this function to return a list of errors    
 def verify_config_file_target_values(config):
     """Function to test and return a boolean expression representing if the config file contains valid target values"""
     
@@ -1091,7 +1091,7 @@ def verify_config_file_target_values(config):
     else:
         return True
         
-        
+# TODO: Change this function to return a list of errors
 def verify_email_config_file(config):
     """Function to return a boolean expression to verify that the email config file works and that it contains all the required values to send emails"""
 
@@ -1127,6 +1127,7 @@ def verify_email_config_file(config):
          
     # Return true if all checks have passed without returning false
     return True
+
 
 def verify_scrapeops_api_key(scrapeops_api_key):
     """Function to validate that the user has entered a valid Scrapeops API Key."""
