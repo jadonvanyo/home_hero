@@ -679,14 +679,12 @@ def config_file_required_values_present(config):
     # Extend the list of error messages with any error messages found when verifying all the values
     error_messages.extend(verify_all_required_values(required_config_values, config, config_error_message))
     
-    # TODO: use get instead of try and except
     # Test that the given API key can return a result if it exists
-    try:
+    if config.get('scrapeops_api_key'):
+        # Generate any potential error messages from verifying the api key
         error_message = verify_scrapeops_api_key(config['scrapeops_api_key'])
         if error_message:
             error_messages.append(error_message)
-    except:
-        pass
     
     # Return all the error messages created
     return error_messages
@@ -1088,8 +1086,8 @@ def verify_config_file_target_values(config):
 def verify_scrapeops_api_key(scrapeops_api_key):
     """Function to validate that the user has entered a valid Scrapeops API Key."""
 
-    # Establish a variable to keep track of the error code message
-    error_message = None
+    # # Establish a variable to keep track of the error code message
+    # error_message = None
 
     # Attempt to get a sample user agent using the given API Key
     response = str(requests.get(
