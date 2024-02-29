@@ -784,7 +784,7 @@ def delete_file(file_path):
         
     return
 
-# TODO: Change this function to return a list of errors
+
 def config_file_required_email_values_present(config):
     """Function to verify and return a dictionary of all the required email values and return false otherwise"""
     
@@ -1048,7 +1048,7 @@ def verify_all_required_values(required_values, json_data, error_message_pattern
     # Return a list of all the error messages generated
     return error_messages
 
-# TODO: Change this function to return a list of errors    
+
 def verify_config_file_target_values(config):
     """Function to test and return a list of error messages if any of the target values are outside of the specified range or no target values are found. It will return an empty list if no errors are found"""
     
@@ -1087,43 +1087,6 @@ def verify_config_file_target_values(config):
     
     # Return the list of all of the error messages generated
     return error_messages
-        
-# TODO: Eliminate this function
-def verify_email_config_file(config):
-    """Function to return a boolean expression to verify that the email config file works and that it contains all the required values to send emails"""
-
-    # Establish all the variables required for the email config file
-    required_email_config_values = {
-        "sender_address": lambda x: isinstance(x, str) and "@" in x,
-        "receiver_address": lambda x: isinstance(x, str) and "@" in x,
-        "password": lambda x: isinstance(x, str)
-    }
-    
-    def print_email_config_error_message(key, error, json_data=None):
-        """Function to define error messages for the config file"""
-        # Error message for if a value is missing
-        if error == "missing":
-            print(f'"{key}" is not in the email config file. Please enter "{key}" in the email config file.')
-        # Error message for if a value is incorrect
-        elif error == "incorrect":
-            print(f'"{key}" is incorrectly entered in the email config file. Review documentation for how to enter "{key}".')
-        # General error message to handle all other issues
-        else:
-            print(f"An error has occurred while verifying data from the config file.")
-    
-    # Pull all the email data from a separate config file
-    email_config = load_json(config['email_config_file_path'])
-
-    # Verify email config file can be opened
-    if not email_config:
-        return False
-    
-    # Verify that all the required values for the email config are included
-    if not verify_all_required_values(required_email_config_values, email_config, print_email_config_error_message):
-        return False
-         
-    # Return true if all checks have passed without returning false
-    return True
 
 
 def verify_scrapeops_api_key(scrapeops_api_key):
