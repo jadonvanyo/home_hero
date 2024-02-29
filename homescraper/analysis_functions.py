@@ -947,8 +947,8 @@ def load_json(json_path):
         print(f"An error occurred while trying to load '{json_path}'. Verify that the target json file name matches, that the file exists, and is complete.")
         return
 
-# TODO: Eliminate the required_email_values parameter and control everything from the config file
-def send_error_email(error_message, config, required_email_values):
+
+def send_error_email(error_message, config):
     """Function to send a custom error message to a user if any issues occur that they cannot see"""
     
     # Verify that the user wants emails
@@ -959,8 +959,8 @@ def send_error_email(error_message, config, required_email_values):
             
             # Setup the MIME
             message = MIMEMultipart()
-            message['From'] = required_email_values['sender_address']
-            message['To'] = required_email_values['receiver_address']
+            message['From'] = config['email_sender_address']
+            message['To'] = config['email_receiver_address']
             message['Subject'] = 'An error has occurred'   # The subject line
 
             # Attach the plain text to also be sent with the email
@@ -969,15 +969,15 @@ def send_error_email(error_message, config, required_email_values):
             # Create SMTP session for sending the mail
             session = smtplib.SMTP('smtp.gmail.com', 587) 
             session.starttls() # enable security
-            session.login(required_email_values['sender_address'], required_email_values['password']) # login with mail_id and password
-            session.sendmail(required_email_values['sender_address'], required_email_values['receiver_address'], message.as_string()) # Send an email with the excel file attached
+            session.login(config['email_sender_address'], config['email_2FA_password']) # login with mail_id and password
+            session.sendmail(config['email_sender_address'], config['email_receiver_address'], message.as_string()) # Send an email with the excel file attached
             session.quit()
             print('Mail Sent')
         
     return
 
-# TODO: Eliminate the required_email_values parameter and control everything from the config file
-def send_featured_house_email(analyzed_houses, excel_filename, config, required_email_values):
+
+def send_featured_house_email(analyzed_houses, excel_filename, config):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
         
     # Verify that the user wants emails
@@ -988,8 +988,8 @@ def send_featured_house_email(analyzed_houses, excel_filename, config, required_
         
         # Setup the MIME
         message = MIMEMultipart()
-        message['From'] = required_email_values['sender_address']
-        message['To'] = required_email_values['receiver_address']
+        message['From'] = config['email_sender_address']
+        message['To'] = config['email_receiver_address']
         message['Subject'] = f'Houses analyzed - {str(date.today())}'   # The subject line
 
         # Attach the HTML to also be sent with the email
@@ -1009,8 +1009,8 @@ def send_featured_house_email(analyzed_houses, excel_filename, config, required_
         # Create SMTP session for sending the mail
         session = smtplib.SMTP('smtp.gmail.com', 587) 
         session.starttls() # enable security
-        session.login(required_email_values['sender_address'], required_email_values['password']) # login with mail_id and password
-        session.sendmail(required_email_values['sender_address'], required_email_values['receiver_address'], message.as_string()) # Send an email with the excel file attached
+        session.login(config['email_sender_address'], config['email_2FA_password']) # login with mail_id and password
+        session.sendmail(config['email_sender_address'], config['email_receiver_address'], message.as_string()) # Send an email with the excel file attached
         session.quit()
         print('Mail Sent')
     

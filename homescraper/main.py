@@ -27,11 +27,13 @@ if error_messages:
         print(error)
     exit(1)
 
-# Check all the email config data in config file if the user requests to send emails
-email_config = config_file_required_email_values_present(config)
+# Generate any error messages from the required email values in the config file
+error_messages = config_file_required_email_values_present(config)
 
-# If the email config file cannot be loaded or does not have the required information, exit the program
-if not email_config:
+# Verify all required email values in the config file are present and accurate
+if error_messages:
+    for error in error_messages:
+        print(error)
     exit(1)
 
 # Load in homespider after the config file has been verified since it is dependent on the config file
@@ -59,11 +61,12 @@ reactor.run()  # the script will block here until the last crawl call is finishe
 # Try to pull the scraped home data
 data = load_json("homedata.json")
 
+# TODO: Remove all email_config
 # Check if there are any houses in the list pulled
 if not data:
     error_message = "No houses were found during the search."
     print(error_message)
-    send_error_email(error_message, config, email_config)
+    send_error_email(error_message, config)
     
 else:   
     # Retrieve a list containing all the analyzed houses and one with any houses missing data
@@ -73,7 +76,7 @@ else:
     if len(analyzed_houses) == 0:
         error_message = f"{len(error_houses)} houses were scraped, but none contained all the required information. Review scrapping process for more details."
         print(error_message)
-        send_error_email(error_message, config, email_config)
+        send_error_email(error_message, config)
         exit(1)
     
     # Create a name for the excel file
@@ -83,7 +86,7 @@ else:
     create_house_analysis_excel_book(analyzed_houses, excel_filename)
     
     # Send the html email content and excel file to the target user
-    send_featured_house_email(analyzed_houses, excel_filename, config, email_config)
+    send_featured_house_email(analyzed_houses, excel_filename, config)
     
     # Determine if the user wants the file deleted
     if config['delete_excel_file']:
