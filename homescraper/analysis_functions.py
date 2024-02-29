@@ -818,10 +818,6 @@ def config_file_required_email_values_present(config):
         
         # Extend the list of error messages with any error messages found when verifying all the values
         error_messages.extend(verify_all_required_values(required_config_email_values, config, email_config_error_message))
-
-        # # Verify that all the required information in the email config file is present
-        # elif not verify_email_config_file(config):
-        #     return False
         
         # Determine whether the user wants to include featured houses in their email
         if config.get('featured_house_required'):
@@ -953,9 +949,9 @@ def load_json(json_path):
         print(f"An error occurred while trying to load '{json_path}'. Verify that the target json file name matches, that the file exists, and is complete.")
         return
 
-
+# TODO: Eliminate the required_email_values parameter and control everything from the config file
 def send_error_email(error_message, config, required_email_values):
-    """Function to send a custom error message to a user if any issues occur that they cannot see and exit the program"""
+    """Function to send a custom error message to a user if any issues occur that they cannot see"""
     
     # Verify that the user wants emails
     if config['send_emails']:
@@ -982,7 +978,7 @@ def send_error_email(error_message, config, required_email_values):
         
     return
 
-
+# TODO: Eliminate the required_email_values parameter and control everything from the config file
 def send_featured_house_email(analyzed_houses, excel_filename, config, required_email_values):
     """Function to send an email containing the spreadsheet and any featured houses to a specified user"""
         
