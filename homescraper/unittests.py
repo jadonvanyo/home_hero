@@ -1,5 +1,5 @@
 import unittest
-from analysis_functions import config_file_required_values_present
+from analysis_functions import config_file_required_values_present, config_file_required_email_values_present
 
 class TestConfigFileRequiredValuesPresent(unittest.TestCase):
 
@@ -129,5 +129,173 @@ class TestConfigFileRequiredValuesPresent(unittest.TestCase):
         }
         self.assertEqual(config_file_required_values_present(config), ['"closing_cost_buyer_decimal" is incorrectly entered in the config file. Review documentation for how to enter "closing_cost_buyer_decimal".', '"loan_term_yrs" is incorrectly entered in the config file. Review documentation for how to enter "loan_term_yrs".'])
 
+class TestConfigFileRequiredEmailValuesPresent(unittest.TestCase):
+    
+    def test_all_values_correct(self):
+        """Test case where all config email values are correct."""
+        config = {
+            "send_emails": True,
+            "email_sender_address": "sender.example@gmail.com",
+            "email_receiver_address": "reciver.example@gmail.com",
+            "email_2FA_password": "example_password",
+            "send_error_emails": False,
+            "featured_house_required": True,
+            "target_cash_flow_monthly_min": -200,
+            "target_percent_rule_min": None,
+            "target_net_operating_income_min": None,
+            "target_pro_forma_cap_min": None,
+            "target_five_year_annualized_return_min": 0.1,
+            "target_cash_on_cash_return_min": None
+        }
+        
+        self.assertEqual(config_file_required_email_values_present(config), [])
+        
+    def test_missing_email_password(self):
+        """Test case where one of the main values is missing."""
+        config = {
+            "send_emails": True,
+            "email_sender_address": "sender.example@gmail.com",
+            "email_receiver_address": "reciver.example@gmail.com",
+            # email password has been omitted
+            "send_error_emails": False,
+            "featured_house_required": True,
+            "target_cash_flow_monthly_min": -200,
+            "target_percent_rule_min": None,
+            "target_net_operating_income_min": None,
+            "target_pro_forma_cap_min": None,
+            "target_five_year_annualized_return_min": 0.1,
+            "target_cash_on_cash_return_min": None
+        }
+        
+        self.assertEqual(config_file_required_email_values_present(config), ['"email_2FA_password" is not in the config file. Please enter "email_2FA_password" in the config file.'])
+
+    def test_send_emails_false_errors_after(self):
+        """Test case where send_emails is false and there are additional errors afterwards that do not need to be detected."""
+        config = {
+            "send_emails": False,
+            "email_sender_address": "sender.example@gmail.com",
+            "email_receiver_address": "reciver.example@gmail.com",
+            # email password has been omitted
+            "send_error_emails": False,
+            "featured_house_required": True,
+            "target_cash_flow_monthly_min": -200,
+            "target_percent_rule_min": "None", # This is the wrong type
+            "target_net_operating_income_min": None,
+            "target_pro_forma_cap_min": None,
+            "target_five_year_annualized_return_min": 25, # This is out of the value range
+            "target_cash_on_cash_return_min": None
+        }
+        
+        self.assertEqual(config_file_required_email_values_present(config), [])
+        
+    def test_one_incorrect_target_value_type(self):
+        """Test case where one of the target values is the wrong type."""
+        config = {
+            "send_emails": True,
+            "email_sender_address": "sender.example@gmail.com",
+            "email_receiver_address": "reciver.example@gmail.com",
+            "email_2FA_password": "example_password",
+            "send_error_emails": False,
+            "featured_house_required": True,
+            "target_cash_flow_monthly_min": -200,
+            "target_percent_rule_min": "None", # This is the wrong type
+            "target_net_operating_income_min": None,
+            "target_pro_forma_cap_min": None,
+            "target_five_year_annualized_return_min": 0.1,
+            "target_cash_on_cash_return_min": None
+        }
+        
+        self.assertEqual(config_file_required_email_values_present(config), ['"target_percent_rule_min" was entered incorrectly in the config file. Refer to the documentation on how to enter "target_percent_rule_min".'])
+        
+    def test_missing_target_value(self):
+        """Test case where one of the target values is the wrong type."""
+        config = {
+            "send_emails": True,
+            "email_sender_address": "sender.example@gmail.com",
+            "email_receiver_address": "reciver.example@gmail.com",
+            "email_2FA_password": "example_password",
+            "send_error_emails": False,
+            "featured_house_required": True,
+            "target_cash_flow_monthly_min": None,
+            # Target percent rule min has been omitted
+            "target_net_operating_income_min": None,
+            "target_pro_forma_cap_min": None,
+            "target_five_year_annualized_return_min": 0.1,
+            "target_cash_on_cash_return_min": None
+        }
+        
+        self.assertEqual(config_file_required_email_values_present(config), [])
+        
+    def test_no_target_values(self):
+        """Test case where a featured house is requested, but no target values are given."""
+        config = {
+            "send_emails": True,
+            "email_sender_address": "sender.example@gmail.com",
+            "email_receiver_address": "reciver.example@gmail.com",
+            "email_2FA_password": "example_password",
+            "send_error_emails": False,
+            "featured_house_required": True,
+            "target_cash_flow_monthly_min": None,
+            "target_percent_rule_min": None,
+            "target_net_operating_income_min": None,
+            "target_pro_forma_cap_min": None,
+            "target_five_year_annualized_return_min": None,
+            "target_cash_on_cash_return_min": None
+        }
+        
+        self.assertEqual(config_file_required_email_values_present(config), ["'featured_house_required' was selected, but no target values were established. Refer to the documentation on how to use 'featured_house_required'."])
+        
+    def test_all_target_values_missing(self):
+        """Test case where a featured house is requested, but all target values are missing."""
+        config = {
+            "send_emails": True,
+            "email_sender_address": "sender.example@gmail.com",
+            "email_receiver_address": "reciver.example@gmail.com",
+            "email_2FA_password": "example_password",
+            "send_error_emails": False,
+            "featured_house_required": True,
+            # All the target values are missing
+        }
+        
+        self.assertEqual(config_file_required_email_values_present(config), ["'featured_house_required' was selected, but no target values were established. Refer to the documentation on how to use 'featured_house_required'."])
+        
+    def test_two_target_values_out_bounds_values(self):
+        """Test case where two of the target values are outside of the set boundaries."""
+        config = {
+            "send_emails": True,
+            "email_sender_address": "sender.example@gmail.com",
+            "email_receiver_address": "reciver.example@gmail.com",
+            "email_2FA_password": "example_password",
+            "send_error_emails": False,
+            "featured_house_required": True,
+            "target_cash_flow_monthly_min": None,
+            "target_percent_rule_min": 3,
+            "target_net_operating_income_min": None,
+            "target_pro_forma_cap_min": None,
+            "target_five_year_annualized_return_min": 15,
+            "target_cash_on_cash_return_min": None
+        }
+        
+        self.assertEqual(config_file_required_email_values_present(config), ['"target_percent_rule_min" was entered incorrectly in the config file. Refer to the documentation on how to enter "target_percent_rule_min".', '"target_five_year_annualized_return_min" was entered incorrectly in the config file. Refer to the documentation on how to enter "target_five_year_annualized_return_min".'])
+        
+    def test_all_values_correct(self):
+        """Test case where featured house variable is missing."""
+        config = {
+            "send_emails": True,
+            "email_sender_address": "sender.example@gmail.com",
+            "email_receiver_address": "reciver.example@gmail.com",
+            "email_2FA_password": "example_password",
+            "send_error_emails": False,
+            # featured_house_required is missing
+            "target_cash_flow_monthly_min": -200,
+            "target_percent_rule_min": None,
+            "target_net_operating_income_min": None,
+            "target_pro_forma_cap_min": None,
+            "target_five_year_annualized_return_min": 0.1,
+            "target_cash_on_cash_return_min": None
+        }
+        
+        self.assertEqual(config_file_required_email_values_present(config), ['"featured_house_required" is not in the config file. Please enter "featured_house_required" in the config file.'])
+        
 if __name__ == '__main__':
     unittest.main()
