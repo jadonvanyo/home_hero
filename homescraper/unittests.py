@@ -45,8 +45,8 @@ class TestConfigFileRequiredValuesPresent(unittest.TestCase):
         }
         self.assertEqual(config_file_required_values_present(config), ["Invalid API Key entered, please enter a valid API Key in `config.json`."])
 
-    def test_empty_value(self):
-        """Test case where one value is missing."""
+    def test_empty_scrapeops_api_key_value(self):
+        """Test case where one value is empty."""
         config = {
             "scrapeops_api_key": "", # Empty scrapeops api key
             "starturls": ["https://www.zillow.com/fort-lauderdale-fl/duplex/"],
@@ -64,12 +64,12 @@ class TestConfigFileRequiredValuesPresent(unittest.TestCase):
             "delete_excel_file": False,
             "send_emails": False,
         }
-        self.assertEqual(config_file_required_values_present(config), ['"scrapeops_api_key" is incorrectly entered in the config file. Review documentation for how to enter "scrapeops_api_key".', 'Invalid API Key entered, please enter a valid API Key in `config.json`.'])
+        self.assertEqual(config_file_required_values_present(config), ['"scrapeops_api_key" is incorrectly entered in the config file. Review documentation for how to enter "scrapeops_api_key".'])
 
-    def test_missing_value(self):
-        """Test case where one value is missing."""
+    def test_missing_scrapeops_api_key(self):
+        """Test case where the Scrapeops API key is missing."""
         config = {
-            # Omitting "scrapeops_api_key" to simulate a missing value
+            # Omitting "scrapeops_api_key"
             "starturls": ["https://www.zillow.com/fort-lauderdale-fl/duplex/"],
             "down_payment_decimal": 0.12, 
             "closing_cost_buyer_decimal": 0.03,
@@ -128,6 +128,27 @@ class TestConfigFileRequiredValuesPresent(unittest.TestCase):
             "send_emails": False,
         }
         self.assertEqual(config_file_required_values_present(config), ['"closing_cost_buyer_decimal" is incorrectly entered in the config file. Review documentation for how to enter "closing_cost_buyer_decimal".', '"loan_term_yrs" is incorrectly entered in the config file. Review documentation for how to enter "loan_term_yrs".'])
+        
+    def test_scrapeops_api_key_incorrect_value(self):
+        """Test case where scrapeops_api_key value is outside of the boundary."""
+        config = {
+            "scrapeops_api_key": "thisistooshort", # scrapeops api key outside of value boundary
+            "starturls": ["https://www.zillow.com/fort-lauderdale-fl/duplex/"],
+            "down_payment_decimal": 0.12, 
+            "closing_cost_buyer_decimal": 0.03,
+            "closing_cost_seller_decimal": 0.08,
+            "expected_annual_growth": 0.02,
+            "interest_rate": 0.06,
+            "loan_term_yrs": 30,
+            "expected_repairs_monthly": 0.05,
+            "expected_vacancy_monthly": 0.09,
+            "expected_capx_monthly": 0.1,
+            "expected_management_monthly": 0.1,
+            "insurance_rate_yearly": 0.006,
+            "delete_excel_file": False,
+            "send_emails": False,
+        }
+        self.assertEqual(config_file_required_values_present(config), ['"scrapeops_api_key" is incorrectly entered in the config file. Review documentation for how to enter "scrapeops_api_key".', 'Invalid API Key entered, please enter a valid API Key in `config.json`.'])
 
 class TestConfigFileRequiredEmailValuesPresent(unittest.TestCase):
     
@@ -147,7 +168,6 @@ class TestConfigFileRequiredEmailValuesPresent(unittest.TestCase):
             "target_five_year_annualized_return_min": 0.1,
             "target_cash_on_cash_return_min": None
         }
-        
         self.assertEqual(config_file_required_email_values_present(config), [])
         
     def test_missing_email_password(self):
@@ -166,7 +186,6 @@ class TestConfigFileRequiredEmailValuesPresent(unittest.TestCase):
             "target_five_year_annualized_return_min": 0.1,
             "target_cash_on_cash_return_min": None
         }
-        
         self.assertEqual(config_file_required_email_values_present(config), ['"email_2FA_password" is not in the config file. Please enter "email_2FA_password" in the config file.'])
 
     def test_send_emails_false_errors_after(self):
@@ -185,7 +204,6 @@ class TestConfigFileRequiredEmailValuesPresent(unittest.TestCase):
             "target_five_year_annualized_return_min": 25, # This is out of the value range
             "target_cash_on_cash_return_min": None
         }
-        
         self.assertEqual(config_file_required_email_values_present(config), [])
         
     def test_one_incorrect_target_value_type(self):
@@ -204,7 +222,6 @@ class TestConfigFileRequiredEmailValuesPresent(unittest.TestCase):
             "target_five_year_annualized_return_min": 0.1,
             "target_cash_on_cash_return_min": None
         }
-        
         self.assertEqual(config_file_required_email_values_present(config), ['"target_percent_rule_min" was entered incorrectly in the config file. Refer to the documentation on how to enter "target_percent_rule_min".'])
         
     def test_missing_target_value(self):
@@ -223,7 +240,6 @@ class TestConfigFileRequiredEmailValuesPresent(unittest.TestCase):
             "target_five_year_annualized_return_min": 0.1,
             "target_cash_on_cash_return_min": None
         }
-        
         self.assertEqual(config_file_required_email_values_present(config), [])
         
     def test_no_target_values(self):
@@ -242,7 +258,6 @@ class TestConfigFileRequiredEmailValuesPresent(unittest.TestCase):
             "target_five_year_annualized_return_min": None,
             "target_cash_on_cash_return_min": None
         }
-        
         self.assertEqual(config_file_required_email_values_present(config), ["'featured_house_required' was selected, but no target values were established. Refer to the documentation on how to use 'featured_house_required'."])
         
     def test_all_target_values_missing(self):
@@ -256,7 +271,6 @@ class TestConfigFileRequiredEmailValuesPresent(unittest.TestCase):
             "featured_house_required": True,
             # All the target values are missing
         }
-        
         self.assertEqual(config_file_required_email_values_present(config), ["'featured_house_required' was selected, but no target values were established. Refer to the documentation on how to use 'featured_house_required'."])
         
     def test_two_target_values_out_bounds_values(self):
@@ -275,7 +289,6 @@ class TestConfigFileRequiredEmailValuesPresent(unittest.TestCase):
             "target_five_year_annualized_return_min": 15,
             "target_cash_on_cash_return_min": None
         }
-        
         self.assertEqual(config_file_required_email_values_present(config), ['"target_percent_rule_min" was entered incorrectly in the config file. Refer to the documentation on how to enter "target_percent_rule_min".', '"target_five_year_annualized_return_min" was entered incorrectly in the config file. Refer to the documentation on how to enter "target_five_year_annualized_return_min".'])
         
     def test_all_values_correct(self):
@@ -294,7 +307,6 @@ class TestConfigFileRequiredEmailValuesPresent(unittest.TestCase):
             "target_five_year_annualized_return_min": 0.1,
             "target_cash_on_cash_return_min": None
         }
-        
         self.assertEqual(config_file_required_email_values_present(config), ['"featured_house_required" is not in the config file. Please enter "featured_house_required" in the config file.'])
         
 if __name__ == '__main__':
