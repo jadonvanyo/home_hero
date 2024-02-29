@@ -18,8 +18,13 @@ config = load_json("config.json")
 if not config:
     exit(1)
 
+# Generate any error messages from the required values in the config file
+error_messages = config_file_required_values_present(config)
+
 # Verify all required values in the config file are present and accurate
-if not config_file_required_values_present(config):
+if error_messages:
+    for error in error_messages:
+        print(error)
     exit(1)
 
 # Check all the email config data in config file if the user requests to send emails

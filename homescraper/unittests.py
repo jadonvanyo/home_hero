@@ -22,12 +22,12 @@ class TestConfigFileRequiredValuesPresent(unittest.TestCase):
             "delete_excel_file": False,
             "send_emails": False,
         }
-        self.assertTrue(config_file_required_values_present(config))
+        self.assertEqual(config_file_required_values_present(config), [])
 
     def test_invalid_scrapeops_api_key(self):
         """Test case where there is an invalid Scrapeops API key."""
         config = {
-            "scrapeops_api_key": "a" * 36,
+            "scrapeops_api_key": "a" * 36, # Invalid API key given
             "starturls": ["https://www.zillow.com/fort-lauderdale-fl/duplex/"],
             "down_payment_decimal": 0.12, 
             "closing_cost_buyer_decimal": 0.03,
@@ -43,7 +43,7 @@ class TestConfigFileRequiredValuesPresent(unittest.TestCase):
             "delete_excel_file": False,
             "send_emails": False,
         }
-        self.assertFalse(config_file_required_values_present(config))
+        self.assertEqual(config_file_required_values_present(config), ["Invalid API Key entered, please enter a valid API Key in `config.json`."])
 
     def test_empty_value(self):
         """Test case where one value is missing."""
@@ -64,7 +64,7 @@ class TestConfigFileRequiredValuesPresent(unittest.TestCase):
             "delete_excel_file": False,
             "send_emails": False,
         }
-        self.assertFalse(config_file_required_values_present(config))
+        self.assertEqual(config_file_required_values_present(config), ['"scrapeops_api_key" is incorrectly entered in the config file. Review documentation for how to enter "scrapeops_api_key".', 'Invalid API Key entered, please enter a valid API Key in `config.json`.'])
 
     def test_missing_value(self):
         """Test case where one value is missing."""
@@ -85,12 +85,12 @@ class TestConfigFileRequiredValuesPresent(unittest.TestCase):
             "delete_excel_file": False,
             "send_emails": False,
         }
-        self.assertFalse(config_file_required_values_present(config))
+        self.assertEqual(config_file_required_values_present(config), ['"scrapeops_api_key" is not in the config file. Please enter "scrapeops_api_key" in the config file.'])
 
     def test_incorrect_value_type(self):
         """Test case where one value has an incorrect type."""
         config = {
-            "scrapeops_api_key": "4aac8234-0r08-4286-345f-91878b766e57",
+            "scrapeops_api_key": "d875dca3-61b5-4126-9181-24e588fe58d3",
             "starturls": "https://www.zillow.com/fort-lauderdale-fl/duplex/",  # Incorrect type: should be a list
             "down_payment_decimal": 0.12, 
             "closing_cost_buyer_decimal": 0.03,
@@ -106,12 +106,12 @@ class TestConfigFileRequiredValuesPresent(unittest.TestCase):
             "delete_excel_file": False,
             "send_emails": False,
         }
-        self.assertFalse(config_file_required_values_present(config))
+        self.assertEqual(config_file_required_values_present(config), ['"starturls" is incorrectly entered in the config file. Review documentation for how to enter "starturls".'])
         
     def test_incorrect_value_type_2(self):
         """Test case where two values have an incorrect type."""
         config = {
-            "scrapeops_api_key": "4aac8234-0r08-4286-345f-91878b766e57",
+            "scrapeops_api_key": "d875dca3-61b5-4126-9181-24e588fe58d3",
             "starturls": ["https://www.zillow.com/fort-lauderdale-fl/duplex/"],
             "down_payment_decimal": 0.12, 
             "closing_cost_buyer_decimal": 'taco', # enter a string
@@ -127,7 +127,7 @@ class TestConfigFileRequiredValuesPresent(unittest.TestCase):
             "delete_excel_file": False,
             "send_emails": False,
         }
-        self.assertFalse(config_file_required_values_present(config))
+        self.assertEqual(config_file_required_values_present(config), ['"closing_cost_buyer_decimal" is incorrectly entered in the config file. Review documentation for how to enter "closing_cost_buyer_decimal".', '"loan_term_yrs" is incorrectly entered in the config file. Review documentation for how to enter "loan_term_yrs".'])
 
 if __name__ == '__main__':
     unittest.main()

@@ -602,30 +602,35 @@ def analyze_all_houses(config, data):
         "tax": lambda x: is_convertible_to_float(x) and float(x) > 0
     }
     
-    def print_house_json_error_message(key, error, json_data):
+    def house_json_error_message(key, error, json_data):
         """Function to define error messages for the homedata.json file"""
         # Error message for if a value is missing
         if error == "missing":
-            print(f'"{key}" is missing for {json_data['address']} in the housedata.json file.')
+            error_message = f'"{key}" is missing for {json_data['address']} in the housedata.json file.'
         # Error message for if a value is incorrect
         elif error == "incorrect":
-            print(f'"{key}" for {json_data['address']} is incorrectly entered in the housedata.json file.')
+            error_message = f'"{key}" for {json_data['address']} is incorrectly entered in the housedata.json file.'
         # Error message to handle if it was not a number that was entered
         elif error == "number":
-            print(f'"{key}" for {json_data['address']} is not a valid number in the housedata.json file.')
+            error_message = f'"{key}" for {json_data['address']} is not a valid number in the housedata.json file.'
         # General error message to handle all other issues
         else:
-            print("An error has occurred while verifying data from the housedata.json file.")
+            error_message = "An error has occurred while verifying data from the housedata.json file."
+            
+        return error_message
 
     # Loop through each of the houses in the dataset and create an excel sheet for that house
     for house_data in data:
-        # Verify that all the data required for analyzing the house is present
-        if verify_all_required_values(required_house_values, house_data, print_house_json_error_message):
+        # Append error messages to the list if any error messages are generated 
+        error_messages = verify_all_required_values(required_house_values, house_data, house_json_error_message)
+        if not error_messages:
             house = House(config, house_data)
             analyzed_houses.append(house)
         
         # If the calculation values for a house cannot be verified, add it to a list of error_houses
         else:
+            for error in error_messages:
+                print(error)
             error_houses.append(house_data['address'])
         
     return analyzed_houses, error_houses
@@ -633,7 +638,10 @@ def analyze_all_houses(config, data):
 # TODO: Change this function to return a list of errors
 # TODO: Rigorous testing of this function
 def config_file_required_values_present(config):
-    """Function to return true if all the values required for analysis are in the config file are present and accurate"""
+    """Function to return a list of all the errors generated while trying to load in all the required values. Returning an empty list means no errors were generated"""
+    
+    # Establish error messages for feedback to the user
+    error_messages = []
     
     # Establish all the variables required in the config file
     required_config_values = {
@@ -654,31 +662,33 @@ def config_file_required_values_present(config):
         "send_emails": lambda x: isinstance(x, bool),
     }
     
-    def print_config_error_message(key, error, json_data=None):
+    def config_error_message(key, error, json_data=None):
         """Function to define error messages for the config file"""
         # Error message for if a value is missing
         if error == "missing":
-            print(f'"{key}" is not in the config file. Please enter "{key}" in the config file.')
+            error_message = f'"{key}" is not in the config file. Please enter "{key}" in the config file.'
         # Error message for if a value is incorrect
         elif error == "incorrect":
-            print(f'"{key}" is incorrectly entered in the config file. Review documentation for how to enter "{key}".')
+            error_message = f'"{key}" is incorrectly entered in the config file. Review documentation for how to enter "{key}".'
         # General error message to handle all other issues
         else:
-            print(f"An error has occurred while verifying data from the config file.")
+            error_message = "An error has occurred while verifying data from the config file."
+            
+        return error_message
     
     # Return False if any of the data in the config file was missing or entered incorrectly
-    if not verify_all_required_values(required_config_values, config, print_config_error_message):
-        return False
+    error_messages.extend(verify_all_required_values(required_config_values, config, config_error_message))
     
-    # Test that the given API key can return a result
-    error_message = verify_scrapeops_api_key(config['scrapeops_api_key'])
+    # Test that the given API key can return a result if it exists
+    try:
+        error_message = verify_scrapeops_api_key(config['scrapeops_api_key'])
+        if error_message:
+            error_messages.append(error_message)
+    except:
+        pass
     
-    # Print the error message and return false if no API key is found
-    if error_message:
-        print(error_message)
-        return False
-    
-    return True
+    # Return all the error messages created
+    return error_messages
     
 
 def create_house_analysis_excel_book(analyzed_houses, excel_filename):
@@ -1013,10 +1023,10 @@ def send_featured_house_email(analyzed_houses, excel_filename, config, required_
     return
 
 
-def verify_all_required_values(required_values, json_data, error_messages=None):
-    """Function to return True if all the required values are included and within specified ranges for any JSON data"""
-    # Variable to track if the data in the json_data file has been entered incorrectly
-    file_correct = True
+def verify_all_required_values(required_values, json_data, error_message_pattern=None):
+    """Function to return a list of all the errors generated if the required values are not included and/or within specified ranges for any JSON data"""
+    # Variable to track of the error messages generated
+    error_messages = []
     
     # Loop through each of the keys and values required for the json_data file
     for key, value in required_values.items():
@@ -1025,21 +1035,18 @@ def verify_all_required_values(required_values, json_data, error_messages=None):
             
             # Handles if the value at a key in the json_data file is null
             if json_data[key] is None:
-                error_messages(key, 'missing', json_data)
-                file_correct = False
+                error_messages.append(error_message_pattern(key, 'missing', json_data))
                 
             # Handles if the value in the json_data file does not fall in the limits of the required values
             elif not value(json_data[key]):
-                error_messages(key, 'incorrect', json_data)
-                file_correct = False
+                error_messages.append(error_message_pattern(key, 'incorrect', json_data))
         
         # Handles if a key is missing in the json_data file
         else:
-            error_messages(key, 'missing', json_data)
-            file_correct = False
+            error_messages.append(error_message_pattern(key, 'missing', json_data))
     
-    # Return file_correct for verification if all values were present
-    return file_correct
+    # Return a list of all the error messages generated
+    return error_messages
 
         
 def verify_config_file_target_values(config):
@@ -1138,7 +1145,7 @@ def verify_scrapeops_api_key(scrapeops_api_key):
     
     # Return true if a 200 status code is in the response
     if '200' in response:
-        return error_message
+        return None
     
     # Return an error message if the response is not successful
     else:
