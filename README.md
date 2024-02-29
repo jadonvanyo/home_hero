@@ -39,6 +39,7 @@ pip install openpyxl scrapy twisted tabulate
 
 This project also requires a scrapeops API key that can be obtained for free [here](https://scrapeops.io/). Just create a free account and copy and paste your scrapeops API key into the `config.json` file for `scrapeops_api_key`.
 
+TODO: Finish this section
 ## Installation
 
 Provide detailed instructions on how to install your project. Include any prerequisites, libraries, or third-party tools that are needed.
@@ -97,13 +98,29 @@ If you enabled email notifications in your configuration, you would also receive
 
 This section will review all the configurable options for the `config.json` file.
 
-- `scrapeops_api_key`(str): String of your Scrapeops API key.
-- `starturls`(list): List of strings each containing the URL for Zillow to begin scraping.
+- `scrapeops_api_key` (str): String of your Scrapeops API key.
+- `starturls` (list): List of strings each containing the URL for Zillow to begin scraping. Must contain at least one URL.
+- `down_payment_decimal` (float): Decimal representation of the expected down payment percentage. Must be between 0 and 1.
+- `closing_cost_buyer_decimal` (float): Decimal representation of the expected closing costs percentage covered by the buyer. This is a percentage of the home purchase price. Must be between 0 and 0.25.
+- `closing_cost_seller_decimal` (float): Decimal representation of the expected closing costs percentage covered by the seller. This is a percentage of the home sale price. Must be between 0 and 0.25.
+- `expected_annual_growth` (float): Decimal representation of the expected annual growth of the property and rent values percentage. Must be between 0 and 2.
+- `interest_rate` (float): Decimal representation of the expected interest rate percentage on the property loan. Must be between 0 and 1.
+- `loan_term_yrs` (int): Integer representing the expected number of years for the house loan. Must be between 0 and 50.
+- `expected_repairs_monthly` (float): Decimal representation of the expected percentage of monthly rent that will need to go towards repairs for the house each month. Must be between 0 and 0.25.
+- `expected_vacancy_monthly` (float): Decimal representation of the expected percentage of monthly rent that will need to go towards potential vacancies for the house each month. Must be between 0 and 0.25.
+- `expected_capx_monthly` (float): Decimal representation of the expected percentage of monthly rent that will need to go towards capital expenditures for the house each month. Must be between 0 and 0.25.
+- `expected_management_monthly` (float): Decimal representation of the expected percentage of monthly rent that will need to go towards property management for the house each month. Must be between 0 and 0.25.
+- `insurance_rate_yearly` (float): Decimal representation of the expected yearly insurance as a percentage of the home's purchased value. Must be between 0 and 0.25.
+- `delete_excel_file` (bool): A boolean value representing if you want the excel file deleted after it has been created (`true`) or not (`false`). This should help prevent the files from building up if you are having them emailed. Must be `true` or `false`.
+- `send_emails` (bool): A boolean value representing if you want to receive an email containing all excel file (`true`) or not (`false`). An excel file will be generated, regardless of if an email is requested. Must be `true` or `false`.
+- `email_receiver_address` (str): A string containing the email address of the intended receiver of the house analysis email.
 
+TODO: Finish this section
 ## Features
 
 List the key features of your project. What makes it stand out?
 
+TODO: Finish this section
 ## Contributing
 
 If you're open to contributions, explain how others can contribute to your project. Outline the process they should follow.
@@ -114,10 +131,12 @@ If you're open to contributions, explain how others can contribute to your proje
 4. Push to the Branch (git push origin feature/AmazingFeature)
 5. Open a Pull Request
 
+TODO: Finish this section
 ## Credits
 
 Acknowledge those who contributed to the project.
 
+TODO: Finish this section
 ## License
 
 State the license under which your project is released, and include a link to the license text.
