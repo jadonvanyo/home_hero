@@ -24,9 +24,10 @@ This project requires the following Python libraries and packages. Ensure you ha
 
 - `openpyxl`: For creating and manipulating Excel files.
 - `scrapy`: For crawling and scraping websites. This includes `CrawlerRunner` and other scrapy utilities.
+- `smtplib` and `email.mime`: For sending emails with attachments.
 - `twisted`: For asynchronous networking. The project uses Twisted's reactor and defer modules.
 - `tabulate`: For pretty-printing tabular data in HTML format.
-- `smtplib` and `email.mime`: For sending emails with attachments.
+- `requests`: For sending HTTP requests and handling responses.
 - `os`, `json`, `asyncio`: For various utility functions such as file handling, JSON parsing, and asynchronous programming.
 
 You can use the following pip command to install the required Python packages:
@@ -34,10 +35,9 @@ You can use the following pip command to install the required Python packages:
 ```bash
 pip install openpyxl scrapy twisted tabulate
 ```
+> **_NOTE:_**  MacOS users will need to use `pip3` instead of `pip`.
 
-This project also requires a scrapeops API key that can be obtained for free [here](https://scrapeops.io/). Just create a free account and copy and paste your scrapeops API key into the config.json file.
-
-TODO: add section showing where to enter your scrapeops API key
+This project also requires a scrapeops API key that can be obtained for free [here](https://scrapeops.io/). Just create a free account and copy and paste your scrapeops API key into the `config.json` file for `scrapeops_api_key`.
 
 ## Installation
 
@@ -50,19 +50,22 @@ cd home_hero
 
 ## Usage
 
-This project is designed to be fully configurable via a config.json file, allowing users to run a series of web scrapers and analyses without direct code manipulation. Follow the steps below to set up and execute the application.
+This project is designed to be fully configurable via a `config.json` file, allowing users to run a series of web scrapers and analyses without direct code manipulation. Follow the steps below to set up and execute the application.
 
 ### Step 1: Configuration
 
-Before running the application, you must configure the config.json file with your specific parameters. This file includes various settings, such as URLs to scrape, financial assumptions, email settings, and preferences regarding output and notifications.
+Before running the application, you must configure the `config.json` file with your specific parameters. This file includes various settings, such as URLs to scrape, financial assumptions, email settings, and preferences regarding output and notifications.
 
 ```json
 {
+    "scrapeops_api_key": "your-scrapeops-api-key",
     "starturls": ["https://www.zillow.com/fort-lauderdale-fl/duplex/"],
     "down_payment_decimal": 0.12, 
     "closing_cost_buyer_decimal": 0.03,
     ...
-    "email_config_file_path": "/path/to/email_config.json",
+    "email_receiver_address": "example_receiver@email.com",
+    "email_sender_address": "example_sender@email.com",
+    "email_2FA_password": "example_sender_email_password",
     "send_error_emails": false,
     "featured_house_required": true,
     ...
@@ -73,7 +76,7 @@ For a full explanation of each configuration option, refer to the [Configuration
 
 ### Step 2: Running the Application
 
-With your config.json file set up, run the application using the following commands in the home_hero directory:
+With your `config.json` file set up, run the application using the following commands in the home_hero directory:
 
 ```sh
 cd homescraper

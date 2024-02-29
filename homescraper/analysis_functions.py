@@ -6,7 +6,7 @@ import json
 from openpyxl import Workbook
 import os
 from os.path import basename
-import requests # TODO: Add this to the README
+import requests
 import smtplib
 from tabulate import tabulate
 
