@@ -98,7 +98,7 @@ If you enabled email notifications in your configuration, you would also receive
 
 This section will review all the configurable options for the `config.json` file.
 
-- `scrapeops_api_key` (str): String of your Scrapeops API key.
+- `scrapeops_api_key` (str): A string containing your Scrapeops API key. This will be validated.
 - `starturls` (list): List of strings each containing the URL for Zillow to begin scraping. Must contain at least one URL.
 - `down_payment_decimal` (float): Decimal representation of the expected down payment percentage. Must be between 0 and 1.
 - `closing_cost_buyer_decimal` (float): Decimal representation of the expected closing costs percentage covered by the buyer. This is a percentage of the home purchase price. Must be between 0 and 0.25.
