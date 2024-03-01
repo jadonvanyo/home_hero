@@ -49,6 +49,18 @@ git clone https://github.com/jayman779/home_hero.git
 cd home_hero
 ```
 
+### Gmail Two Factor Authentification Password
+
+If you want to send emails to a Gmail account, you will need to obtain a two factor authentification password using the following steps:
+1. Go to your Google Account.
+2. Select Security.
+3. Under "Signing in to Google," select 2-Step Verification.
+4. At the bottom of the page, select App passwords.
+5. Enter "home_hero" for the name associated with the password.
+6. Select Generate.
+7. To enter the app password, follow the instructions on your screen. The app password is the 16-character code that generates on your device.
+8. Select Done.
+
 ## Usage
 
 This project is designed to be fully configurable via a `config.json` file, allowing users to run a series of web scrapers and analyses without direct code manipulation. Follow the steps below to set up and execute the application.
@@ -115,7 +127,7 @@ This section will review all the configurable options for the `config.json` file
 - `send_emails` (bool): A boolean value representing if you want to receive an email containing all excel file (`true`) or not (`false`). An excel file will be generated, regardless of if an email is requested. Must be `true` or `false`.
 - `email_receiver_address` (str): A string containing the email address of the intended receiver of the house analysis email.
 - `email_sender_address` (str): A string containing the email address of the sender of the house analysis email.
-- `email_2FA_password` (str): A string containing the Gmail 2 factor authenticication password.
+- `email_2FA_password` (str): A string containing the password for the sender's email address, or the senders 2 factor authentification .
 
 TODO: Finish this section
 ## Features
