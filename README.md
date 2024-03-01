@@ -114,6 +114,8 @@ This section will review all the configurable options for the `config.json` file
 - `delete_excel_file` (bool): A boolean value representing if you want the excel file deleted after it has been created (`true`) or not (`false`). This should help prevent the files from building up if you are having them emailed. Must be `true` or `false`.
 - `send_emails` (bool): A boolean value representing if you want to receive an email containing all excel file (`true`) or not (`false`). An excel file will be generated, regardless of if an email is requested. Must be `true` or `false`.
 - `email_receiver_address` (str): A string containing the email address of the intended receiver of the house analysis email.
+- `email_sender_address` (str): A string containing the email address of the sender of the house analysis email.
+- `email_2FA_password` (str): A string containing the Gmail 2 factor authenticication password.
 
 TODO: Finish this section
 ## Features
