@@ -125,9 +125,12 @@ This section will review all the configurable options for the `config.json` file
 - `insurance_rate_yearly` (float): Decimal representation of the expected yearly insurance as a percentage of the home's purchased value. Must be between 0 and 0.25.
 - `delete_excel_file` (bool): A boolean value representing if you want the excel file deleted after it has been created (`true`) or not (`false`). This should help prevent the files from building up if you are having them emailed. Must be `true` or `false`.
 - `send_emails` (bool): A boolean value representing if you want to receive an email containing all excel file (`true`) or not (`false`). An excel file will be generated, regardless of if an email is requested. Must be `true` or `false`.
-- `email_receiver_address` (str): A string containing the email address of the intended receiver of the house analysis email. This e
-- `email_sender_address` (str): A string containing the email address of the sender of the house analysis email.
-- `email_2FA_password` (str): A string containing the password for the sender's email address, or the senders 2 factor authentification if the sender is using a Gmail accont. Go [here](#gmail_two_factor_authentification_password_setup) see how to obtain a Gmail 2 Factor Authentification Password. This field is only required if `send_emails` is `true`.
+- `email_receiver_address` (str): A string containing the email address of the intended receiver of the house analysis email. This field is only required if `send_emails` is `true`.
+- `email_sender_address` (str): A string containing the email address of the sender of the house analysis email. This field is only required if `send_emails` is `true`.
+- `email_2FA_password` (str): A string containing the password for the sender's email address, or the senders 2 factor authentification if the sender is using a Gmail accont. Go [here](#gmail-two-factor-authentification-password-setup) see how to obtain a Gmail 2 Factor Authentification Password. This field is only required if `send_emails` is `true`.
+- `send_error_emails` (bool): A boolean value representing if the email reciever wants to recieve error message emails if any issues arrise in the scrapping process (`true`) or not (`false`). This field is only required if `send_emails` is `true`.
+- `featured_house_required` (bool): A boolean value representing if the email reciever wants to recieve a list of featured houses based on the target values entered (`true`) or not (`false`). This field is only required if `send_emails` is `true`.
+- `target_cash_flow_monthly_min` (int): An integer value representing the minimum monthly cash flow in dollars that the user wants from any of the scrapped properties. This field is optional only if `send_emails` and `featured_house_required` are `true`.
 
 TODO: Finish this section
 ## Features
