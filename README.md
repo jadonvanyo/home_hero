@@ -1,6 +1,6 @@
 # Home Hero
 
-This project will scrape homes from Zillow based on a given Zillow URL and analyze these home's investment potential based on the user's input. The analyzed homes will be given to the user as an Excel file that can be accessed via the project folder or emailed directly to the user. This project was made due to me and some pf my friends spending hours each week looking for and analyzing houses on the MLS. This project takes a process that used to take a few hours each week down to a few minutes.
+This project will scrape homes from Zillow based on a given Zillow URL and analyze these home's investment potential based on the user's input. The analyzed homes will be given to the user as an Excel file that can be accessed via the project folder or emailed directly to the user. This project was made due to me and some pf my friends spending hours each week looking for and analyzing houses on the MLS. This project takes a process that used to take a few hours each week down to a few minutes. Anything you want to.
 
 ## Table of Contents
 
