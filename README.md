@@ -49,7 +49,7 @@ git clone https://github.com/jayman779/home_hero.git
 cd home_hero
 ```
 
-### Gmail Two Factor Authentification Password
+### Gmail Two Factor Authentification Password Setup
 
 If you want to send emails to a Gmail account, you will need to obtain a two factor authentification password using the following steps:
 1. Go to your Google Account.
@@ -125,9 +125,9 @@ This section will review all the configurable options for the `config.json` file
 - `insurance_rate_yearly` (float): Decimal representation of the expected yearly insurance as a percentage of the home's purchased value. Must be between 0 and 0.25.
 - `delete_excel_file` (bool): A boolean value representing if you want the excel file deleted after it has been created (`true`) or not (`false`). This should help prevent the files from building up if you are having them emailed. Must be `true` or `false`.
 - `send_emails` (bool): A boolean value representing if you want to receive an email containing all excel file (`true`) or not (`false`). An excel file will be generated, regardless of if an email is requested. Must be `true` or `false`.
-- `email_receiver_address` (str): A string containing the email address of the intended receiver of the house analysis email.
+- `email_receiver_address` (str): A string containing the email address of the intended receiver of the house analysis email. This e
 - `email_sender_address` (str): A string containing the email address of the sender of the house analysis email.
-- `email_2FA_password` (str): A string containing the password for the sender's email address, or the senders 2 factor authentification .
+- `email_2FA_password` (str): A string containing the password for the sender's email address, or the senders 2 factor authentification if the sender is using a Gmail accont. Go [here](#gmail_two_factor_authentification_password_setup) see how to obtain a Gmail 2 Factor Authentification Password. This field is only required if `send_emails` is `true`.
 
 TODO: Finish this section
 ## Features
