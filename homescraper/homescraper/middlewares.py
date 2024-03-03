@@ -155,8 +155,9 @@ class ScrapeOpsFakeBrowserHeadersMiddleware:
         request.headers['user-agent'] = random_header['user-agent']
         request.headers['upgrade-insecure-requests'] = random_header['upgrade-insecure-requests']
         
-        print("*************** New Header ***************")
-        print(request.headers)
+        # Display the new headers as they are created
+        # print("*************** New Header ***************")
+        # print(request.headers)
         
 
 class ScrapeOpsProxyMiddleware:

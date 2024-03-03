@@ -11,6 +11,9 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
+# TODO: Reset API Key
+# TODO: Verify tax and rent spiders work
+
 # Try to load the config file
 config = load_json("config.json")
 
@@ -61,7 +64,6 @@ reactor.run()  # the script will block here until the last crawl call is finishe
 # Try to pull the scraped home data
 data = load_json("homedata.json")
 
-# TODO: Remove all email_config
 # Check if there are any houses in the list pulled
 if not data:
     error_message = "No houses were found during the search."

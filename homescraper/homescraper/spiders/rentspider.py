@@ -27,6 +27,7 @@ class RentspiderSpider(scrapy.Spider):
         with open('homedata.json') as file:
             data = json.load(file)
             
+        # TODO: Need to handle the case when a proxy is being used
         # Loop through each house in the home data and pull the address information
         for house in data:
             value = house.get('url').split("/")[4].lower()

@@ -1,6 +1,7 @@
 from homescraper.items import HomeItem
 import json
 import scrapy
+from settings import SCRAPEOPS_PROXY_ENABLED as proxy_enabled
 
 class TaxspiderSpider(scrapy.Spider):
     name = "taxspider"
@@ -32,17 +33,33 @@ class TaxspiderSpider(scrapy.Spider):
         # Get all of the house data from homedata.json
         with open('homedata.json') as file:
             data = json.load(file)
-            
-        # Loop through each house in the home data and pull the address information
-        for house in data:
-            value = house.get('url').split("/")[4].lower()
-            value = value.split("-")
-            address_number = value[0]
-            value = "-".join(value[1:-1])
-            tax_url = "https://www.countyoffice.org/" + value + "-property-records/"
-            
-            # Navigate to the street page with the address numbers
-            yield response.follow(tax_url, callback=self.parse_street_page, meta={'address_number': address_number, 'house': house})
+        
+        # TODO: Need to handle the case when a proxy is being used
+        # Verify if the proxy has been enabled from the settings file
+        if proxy_enabled:
+            # Loop through each house in the home data and pull the address information for the proxy
+            for house in data:
+                value = house.get('url').split("%2F")[4].lower()
+                value = value.split("-")
+                address_number = value[0]
+                value = "-".join(value[1:-1])
+                tax_url = "https://www.countyoffice.org/" + value + "-property-records/"
+                
+                # Navigate to the street page with the address numbers
+                yield response.follow(tax_url, callback=self.parse_street_page, meta={'address_number': address_number, 'house': house})
+                
+        # Handle cases where the proxy was not enabled
+        else:
+            # Loop through each house in the home data and pull the address information
+            for house in data:
+                value = house.get('url').split("/")[4].lower()
+                value = value.split("-")
+                address_number = value[0]
+                value = "-".join(value[1:-1])
+                tax_url = "https://www.countyoffice.org/" + value + "-property-records/"
+                
+                # Navigate to the street page with the address numbers
+                yield response.follow(tax_url, callback=self.parse_street_page, meta={'address_number': address_number, 'house': house})
         
     def parse_street_page(self, response):
         """Parse the tax page and navigate further based on address_number"""

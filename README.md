@@ -136,7 +136,7 @@ For a full explanation of each configuration option, refer to the [Configuration
 
 The project is preset to be optimized for scraping 1 to 25 houses at a time. If you want to scrape more houses quicker, you can set up proxies for the spider to avoid being blocked for anti-bot behavior. You can do this using the Scrapeops API, but be aware that you will need to start buying credits for rotating the proxies.
 
-In order to run the proxies while scraping, you will want to uncomment the following lines of code in the `settings.py`:
+In order to run the proxies while scraping, you will want to set the following lines of code in the `settings.py` to the respective values:
 
 ```python
 SCRAPEOPS_PROXY_ENABLED = True
