@@ -172,33 +172,33 @@ If you enabled email notifications in your configuration, you would also receive
 ## Configuration
 
 This section will review all the configurable options for the `config.json` file.
-TODO: Change ` to "
-- `scrapeops_api_key` (str): A string containing your Scrapeops API key. This will be validated. See [Configure ScrapeOps API Key](#configure-scrapeops-api-key) for more details on obtaining this key.
-- `starturls` (list): List of strings each containing the URL for Zillow to begin scraping. Must contain at least one URL.
-- `down_payment_decimal` (float): Decimal representation of the expected down payment percentage. Must be between 0 and 1.
-- `closing_cost_buyer_decimal` (float): Decimal representation of the expected closing costs percentage covered by the buyer. This is a percentage of the home purchase price. Must be between 0 and 0.25.
-- `closing_cost_seller_decimal` (float): Decimal representation of the expected closing costs percentage covered by the seller. This is a percentage of the home sale price. Must be between 0 and 0.25.
-- `expected_annual_growth` (float): Decimal representation of the expected annual growth of the property and rent values percentage. Must be between 0 and 2.
-- `interest_rate` (float): Decimal representation of the expected interest rate percentage on the property loan. Must be between 0 and 1.
-- `loan_term_yrs` (int): Integer representing the expected number of years for the house loan. Must be between 0 and 50.
-- `expected_repairs_monthly` (float): Decimal representation of the expected percentage of monthly rent that will need to go towards repairs for the house each month. Must be between 0 and 0.25.
-- `expected_vacancy_monthly` (float): Decimal representation of the expected percentage of monthly rent that will need to go towards potential vacancies for the house each month. Must be between 0 and 0.25.
-- `expected_capx_monthly` (float): Decimal representation of the expected percentage of monthly rent that will need to go towards capital expenditures for the house each month. Must be between 0 and 0.25.
-- `expected_management_monthly` (float): Decimal representation of the expected percentage of monthly rent that will need to go towards property management for the house each month. Must be between 0 and 0.25.
-- `insurance_rate_yearly` (float): Decimal representation of the expected yearly insurance as a percentage of the home's purchased value. Must be between 0 and 0.25.
-- `delete_excel_file` (bool): A boolean value representing if you want the excel file deleted after it has been created (`true`) or not (`false`). This should help prevent the files from building up if you are having them emailed. Must be `true` or `false`.
-- `send_emails` (bool): A boolean value representing if you want to receive an email containing all excel file (`true`) or not (`false`). An excel file will be generated, regardless of if an email is requested. Must be `true` or `false`.
-- `email_receiver_address` (str): A string containing the email address of the intended receiver of the house analysis email. This field is only required if `send_emails` is `true`.
-- `email_sender_address` (str): A string containing the email address of the sender of the house analysis email. This field is only required if `send_emails` is `true`.
-- `email_2FA_password` (str): A string containing the password for the sender's email address, or the senders 2 factor authentication if the sender is using a Gmail account. Go [here](#gmail-two-factor-authentication-password-setup) see how to obtain a Gmail 2 Factor Authentication Password. This field is only required if `send_emails` is `true`.
-- `send_error_emails` (bool): A boolean value representing if the email receiver wants to receive error message emails if any issues arise in the scrapping process (`true`) or not (`false`). This field is only required if `send_emails` is `true`.
-- `featured_house_required` (bool): A boolean value representing if the email receiver wants to receive a list of featured houses based on the target values entered (`true`) or not (`false`). This field is only required if `send_emails` is `true`.
-- `target_cash_flow_monthly_min` (int or float): An integer or float value representing the minimum monthly cash flow in dollars that the user wants from any of the scrapped properties. This field is optional only if `send_emails` and `featured_house_required` are `true`.
-- `target_percent_rule_min` (float): A float value representing the minimum percentage of the purchase price that the user wants the monthly rent to be represented as a decimal. Must be between 0 and 1. This field is optional only if `send_emails` and `featured_house_required` are `true`.
-- `target_net_operating_income_min` (int or float): An integer or float value representing the minimum net operating income that a user want the property to make yearly. This field is optional only if `send_emails` and `featured_house_required` are `true`.
-- `target_pro_forma_cap_min` (float): Decimal representation of the minimum pro forma cap that a user wants from a given property. Must be between 0 and 1. This field is optional only if `send_emails` and `featured_house_required` are `true`.
-- `target_five_year_annualized_return_min` (float): Decimal representation of the minimum annualized return as a percentage after selling the property after 5 years of ownership. Must be between 0 and 1. This field is optional only if `send_emails` and `featured_house_required` are `true`.
-- `target_cash_on_cash_return_min` (float): Decimal representation of the minimum cash on cash return that a user wants from a property. Must be between 0 and 1. This field is optional only if `send_emails` and `featured_house_required` are `true`.
+
+- "scrapeops_api_key" (str): A string containing your Scrapeops API key. This will be validated. See [Configure ScrapeOps API Key](#configure-scrapeops-api-key) for more details on obtaining this key.
+- "starturls" (list): List of strings each containing the URL for Zillow to begin scraping. Must contain at least one URL.
+- "down_payment_decimal" (float): Decimal representation of the expected down payment percentage. Must be between 0 and 1.
+- "closing_cost_buyer_decimal" (float): Decimal representation of the expected closing costs percentage covered by the buyer. This is a percentage of the home purchase price. Must be between 0 and 0.25.
+- "closing_cost_seller_decimal" (float): Decimal representation of the expected closing costs percentage covered by the seller. This is a percentage of the home sale price. Must be between 0 and 0.25.
+- "expected_annual_growth" (float): Decimal representation of the expected annual growth of the property and rent values percentage. Must be between 0 and 2.
+- "interest_rate" (float): Decimal representation of the expected interest rate percentage on the property loan. Must be between 0 and 1.
+- "loan_term_yrs" (int): Integer representing the expected number of years for the house loan. Must be between 0 and 50.
+- "expected_repairs_monthly" (float): Decimal representation of the expected percentage of monthly rent that will need to go towards repairs for the house each month. Must be between 0 and 0.25.
+- "expected_vacancy_monthly" (float): Decimal representation of the expected percentage of monthly rent that will need to go towards potential vacancies for the house each month. Must be between 0 and 0.25.
+- "expected_capx_monthly" (float): Decimal representation of the expected percentage of monthly rent that will need to go towards capital expenditures for the house each month. Must be between 0 and 0.25.
+- "expected_management_monthly" (float): Decimal representation of the expected percentage of monthly rent that will need to go towards property management for the house each month. Must be between 0 and 0.25.
+- "insurance_rate_yearly" (float): Decimal representation of the expected yearly insurance as a percentage of the home's purchased value. Must be between 0 and 0.25.
+- "delete_excel_file" (bool): A boolean value representing if you want the excel file deleted after it has been created (`true`) or not (`false`). This should help prevent the files from building up if you are having them emailed. Must be `true` or `false`.
+- "send_emails" (bool): A boolean value representing if you want to receive an email containing all excel file (`true`) or not (`false`). An excel file will be generated, regardless of if an email is requested. Must be `true` or `false`.
+- "email_receiver_address" (str): A string containing the email address of the intended receiver of the house analysis email. This field is only required if "send_emails" is `true`.
+- "email_sender_address" (str): A string containing the email address of the sender of the house analysis email. This field is only required if "send_emails" is `true`.
+- "email_2FA_password" (str): A string containing the password for the sender's email address, or the senders 2 factor authentication if the sender is using a Gmail account. Go [here](#gmail-two-factor-authentication-password-setup) see how to obtain a Gmail 2 Factor Authentication Password. This field is only required if "send_emails" is `true`.
+- "send_error_emails" (bool): A boolean value representing if the email receiver wants to receive error message emails if any issues arise in the scrapping process (`true`) or not (`false`). This field is only required if "send_emails" is `true`.
+- "featured_house_required" (bool): A boolean value representing if the email receiver wants to receive a list of featured houses based on the target values entered (`true`) or not (`false`). This field is only required if "send_emails" is `true`.
+- "target_cash_flow_monthly_min" (int or float): An integer or float value representing the minimum monthly cash flow in dollars that the user wants from any of the scrapped properties. This field is optional only if "send_emails" and "featured_house_required" are `true`.
+- "target_percent_rule_min" (float): A float value representing the minimum percentage of the purchase price that the user wants the monthly rent to be represented as a decimal. Must be between 0 and 1. This field is optional only if "send_emails" and "featured_house_required" are `true`.
+- "target_net_operating_income_min" (int or float): An integer or float value representing the minimum net operating income that a user want the property to make yearly. This field is optional only if "send_emails" and "featured_house_required" are `true`.
+- "target_pro_forma_cap_min" (float): Decimal representation of the minimum pro forma cap that a user wants from a given property. Must be between 0 and 1. This field is optional only if "send_emails" and "featured_house_required" are `true`.
+- "target_five_year_annualized_return_min" (float): Decimal representation of the minimum annualized return as a percentage after selling the property after 5 years of ownership. Must be between 0 and 1. This field is optional only if "send_emails" and "featured_house_required" are `true`.
+- "target_cash_on_cash_return_min" (float): Decimal representation of the minimum cash on cash return that a user wants from a property. Must be between 0 and 1. This field is optional only if "send_emails" and "featured_house_required" are `true`.
 
 Here is an example of a properly formatted configuration that will send an email containing the excel sheet of all the analyzed houses and any featured houses that exceed -$200 in monthly cash flow and a 10% annualized return after 5 years:
 
