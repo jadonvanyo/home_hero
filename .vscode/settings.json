@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "apng",
+        "asyncio",
         "bookdata",
         "bookscraper",
         "bookspider",
@@ -21,6 +22,7 @@
         "Rentspider",
         "scrapeops",
         "scrapy",
+        "smtplib",
         "sqft",
         "startproject",
         "starturls",

@@ -1,6 +1,6 @@
 # Home Hero
 
-This project will scrape homes from Zillow based on a given Zillow URL and analyze these home's investment potential based on the user's input. The analyzed homes will be given to the user as an Excel file that can be accessed via the project folder or emailed directly to the user. This project was made due to me and some pf my friends spending hours each week looking for and analyzing houses on the MLS. This project takes a process that used to take a few hours each week down to a few minutes. Anything you want to.
+This project will scrape homes from Zillow based on a given Zillow URL and analyze these home's investment potential based on the user's input. The analyzed homes will be given to the user as an Excel file that can be accessed via the project folder or emailed directly to the user. This project was made due to me and some pf my friends spending hours each week looking for and analyzing houses on the MLS. This project takes a process that used to take a few hours each week down to a few minutes.
 
 ## Table of Contents
 
@@ -49,9 +49,9 @@ git clone https://github.com/jayman779/home_hero.git
 cd home_hero
 ```
 
-### Gmail Two Factor Authentification Password Setup
+### Gmail Two Factor Authentication Password Setup
 
-If you want to send emails to a Gmail account, you will need to obtain a two factor authentification password using the following steps:
+If you want to send emails to a Gmail account, you will need to obtain a two factor authentication password using the following steps:
 1. Go to your Google Account.
 2. Select Security.
 3. Under "Signing in to Google," select 2-Step Verification.
@@ -127,10 +127,48 @@ This section will review all the configurable options for the `config.json` file
 - `send_emails` (bool): A boolean value representing if you want to receive an email containing all excel file (`true`) or not (`false`). An excel file will be generated, regardless of if an email is requested. Must be `true` or `false`.
 - `email_receiver_address` (str): A string containing the email address of the intended receiver of the house analysis email. This field is only required if `send_emails` is `true`.
 - `email_sender_address` (str): A string containing the email address of the sender of the house analysis email. This field is only required if `send_emails` is `true`.
-- `email_2FA_password` (str): A string containing the password for the sender's email address, or the senders 2 factor authentification if the sender is using a Gmail accont. Go [here](#gmail-two-factor-authentification-password-setup) see how to obtain a Gmail 2 Factor Authentification Password. This field is only required if `send_emails` is `true`.
-- `send_error_emails` (bool): A boolean value representing if the email reciever wants to recieve error message emails if any issues arrise in the scrapping process (`true`) or not (`false`). This field is only required if `send_emails` is `true`.
-- `featured_house_required` (bool): A boolean value representing if the email reciever wants to recieve a list of featured houses based on the target values entered (`true`) or not (`false`). This field is only required if `send_emails` is `true`.
-- `target_cash_flow_monthly_min` (int): An integer value representing the minimum monthly cash flow in dollars that the user wants from any of the scrapped properties. This field is optional only if `send_emails` and `featured_house_required` are `true`.
+- `email_2FA_password` (str): A string containing the password for the sender's email address, or the senders 2 factor authentication if the sender is using a Gmail account. Go [here](#gmail-two-factor-authentication-password-setup) see how to obtain a Gmail 2 Factor Authentication Password. This field is only required if `send_emails` is `true`.
+- `send_error_emails` (bool): A boolean value representing if the email receiver wants to receive error message emails if any issues arise in the scrapping process (`true`) or not (`false`). This field is only required if `send_emails` is `true`.
+- `featured_house_required` (bool): A boolean value representing if the email receiver wants to receive a list of featured houses based on the target values entered (`true`) or not (`false`). This field is only required if `send_emails` is `true`.
+- `target_cash_flow_monthly_min` (int or float): An integer or float value representing the minimum monthly cash flow in dollars that the user wants from any of the scrapped properties. This field is optional only if `send_emails` and `featured_house_required` are `true`.
+- `target_percent_rule_min` (float): A float value representing the minimum percentage of the purchase price that the user wants the monthly rent to be represented as a decimal. Must be between 0 and 1. This field is optional only if `send_emails` and `featured_house_required` are `true`.
+- `target_net_operating_income_min` (int or float): An integer or float value representing the minimum net operating income that a user want the property to make yearly. This field is optional only if `send_emails` and `featured_house_required` are `true`.
+- `target_pro_forma_cap_min` (float): Decimal representation of the minimum pro forma cap that a user wants from a given property. Must be between 0 and 1. This field is optional only if `send_emails` and `featured_house_required` are `true`.
+- `target_five_year_annualized_return_min` (float): Decimal representation of the minimum annualized return as a percentage after selling the property after 5 years of ownership. Must be between 0 and 1. This field is optional only if `send_emails` and `featured_house_required` are `true`.
+- `target_cash_on_cash_return_min` (float): Decimal representation of the minimum cash on cash return that a user wants from a property. Must be between 0 and 1. This field is optional only if `send_emails` and `featured_house_required` are `true`.
+
+Here is an example of a properly formatted configuration that will send an email containing the excel sheet of all the analyzed houses and any featured houses that exceed -$200 in monthly cash flow and a 10% annualized return after 5 years:
+
+```json
+{
+    "scrapeops_api_key": "user_scrapeops_api_key",
+    "starturls": ["https://www.zillow.com/ft-lauderdale-fl/duplex/"],
+    "down_payment_decimal": 0.12, 
+    "closing_cost_buyer_decimal": 0.03,
+    "closing_cost_seller_decimal": 0.08,
+    "expected_annual_growth": 0.02,
+    "interest_rate": 0.06,
+    "loan_term_yrs": 30,
+    "expected_repairs_monthly": 0.05,
+    "expected_vacancy_monthly": 0.09,
+    "expected_capx_monthly": 0.1,
+    "expected_management_monthly": 0.1,
+    "insurance_rate_yearly": 0.006,
+    "delete_excel_file": false,
+    "send_emails": true,
+    "email_receiver_address": "example_receiver@email.com",
+    "email_sender_address": "example_sender@email.com",
+    "email_2FA_password": "example_sender_email_password",
+    "send_error_emails": false,
+    "featured_house_required": true,
+    "target_cash_flow_monthly_min": -200,
+    "target_percent_rule_min": null,
+    "target_net_operating_income_min": null,
+    "target_pro_forma_cap_min": null,
+    "target_five_year_annualized_return_min": 0.1,
+    "target_cash_on_cash_return_min": null
+}
+```
 
 TODO: Finish this section
 ## Features
