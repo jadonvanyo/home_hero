@@ -636,7 +636,7 @@ def analyze_all_houses(config, data):
     return analyzed_houses, error_houses
 
 
-# TODO: Rigorous testing of this function
+
 def config_file_required_values_present(config):
     """Function to return a list of all the errors generated while trying to load in all the required values. Returning an empty list means no errors were generated"""
     

@@ -42,11 +42,54 @@ This project also requires a scrapeops API key that can be obtained for free [he
 TODO: Finish this section
 ## Installation
 
-Provide detailed instructions on how to install your project. Include any prerequisites, libraries, or third-party tools that are needed.
+This project is built using Python and requires a Python environment to run. Follow these steps to set up and run the project on your local machine.
+
+### Prerequisites
+
+- Python 3.7 or newer
+- pip (Python package installer)
+
+### Clone the repository
+
+First, clone the repository to your local machine:
 
 ```bash
 git clone https://github.com/jayman779/home_hero.git
 cd home_hero
+```
+
+### Setup Python Virtual Environment
+
+It's recommended to use a virtual environment for Python projects to manage dependencies. Create and activate a virtual environment:
+
+```bash
+python -m venv venv
+# On Windows
+venv\Scripts\activate
+# On MacOS/Linux
+source venv/bin/activate
+```
+
+### Install Dependencies
+
+Install the required Python libraries mentioned in the Dependencies section using pip:
+
+```bash
+pip install openpyxl scrapy twisted tabulate
+```
+> **_NOTE:_**  MacOS users will need to use `pip3` instead of `pip`.
+
+### Configure ScrapeOps API Key
+
+As mentioned in the [Dependencies](#dependencies) section, this project requires a [ScrapeOps](https://scrapeops.io/) API key. After obtaining your API key from ScrapeOps, insert it into the `config.json` file.
+
+Open `config.json` with a text editor and replace "your-scrapeops-api-key" with your actual ScrapeOps API key:
+
+```json
+{
+    "scrapeops_api_key": "PASTE_YOUR_KEY_HERE",
+    ...
+}
 ```
 
 ### Gmail Two Factor Authentication Password Setup
@@ -61,6 +104,10 @@ If you want to send emails to a Gmail account, you will need to obtain a two fac
 6. Select Generate.
 7. To enter the app password, follow the instructions on your screen. The app password is the 16-character code that generates on your device.
 8. Select Done.
+
+### Final Steps
+
+After completing the above steps, you should be ready to use the project. Proceed to the [Usage](#usage) section for instructions on running the project and analyzing potential investment properties.
 
 ## Usage
 
@@ -127,7 +174,7 @@ If you enabled email notifications in your configuration, you would also receive
 
 This section will review all the configurable options for the `config.json` file.
 
-- `scrapeops_api_key` (str): A string containing your Scrapeops API key. This will be validated.
+- `scrapeops_api_key` (str): A string containing your Scrapeops API key. This will be validated. See [Configure ScrapeOps API Key](#configure-scrapeops-api-key) for more details on obtaining this key.
 - `starturls` (list): List of strings each containing the URL for Zillow to begin scraping. Must contain at least one URL.
 - `down_payment_decimal` (float): Decimal representation of the expected down payment percentage. Must be between 0 and 1.
 - `closing_cost_buyer_decimal` (float): Decimal representation of the expected closing costs percentage covered by the buyer. This is a percentage of the home purchase price. Must be between 0 and 0.25.
