@@ -1,6 +1,6 @@
 # Home Hero
 
-This project will scrape homes from Zillow based on a given Zillow URL and analyze these home's investment potential based on the user's input. The analyzed homes will be given to the user as an Excel file that can be accessed via the project folder or emailed directly to the user. This project was made due to me and some pf my friends spending hours each week looking for and analyzing houses on the MLS. This project takes a process that used to take a few hours each week down to a few minutes.
+This project will scrape homes from Zillow using the Scrapy framework given a list of Zillow URLs and analyze these home's investment potential based on the user's input. The analyzed homes will be given to the user as an Excel file that can be accessed via the project folder or emailed directly to the user. This project was made due to me and some pf my friends spending hours each week looking for and analyzing houses on the MLS. This project takes a process that used to take a few hours each week down to a few minutes.
 
 ## Table of Contents
 
@@ -39,7 +39,6 @@ pip install openpyxl scrapy twisted tabulate
 
 This project also requires a scrapeops API key that can be obtained for free [here](https://scrapeops.io/). Just create a free account and copy and paste your scrapeops API key into the `config.json` file for `scrapeops_api_key`.
 
-TODO: Finish this section
 ## Installation
 
 This project is built using Python and requires a Python environment to run. Follow these steps to set up and run the project on your local machine.
@@ -173,7 +172,7 @@ If you enabled email notifications in your configuration, you would also receive
 ## Configuration
 
 This section will review all the configurable options for the `config.json` file.
-
+TODO: Change ` to "
 - `scrapeops_api_key` (str): A string containing your Scrapeops API key. This will be validated. See [Configure ScrapeOps API Key](#configure-scrapeops-api-key) for more details on obtaining this key.
 - `starturls` (list): List of strings each containing the URL for Zillow to begin scraping. Must contain at least one URL.
 - `down_payment_decimal` (float): Decimal representation of the expected down payment percentage. Must be between 0 and 1.
@@ -234,10 +233,37 @@ Here is an example of a properly formatted configuration that will send an email
 }
 ```
 
-TODO: Finish this section
 ## Features
 
-List the key features of your project. What makes it stand out?
+Home Hero automates the tedious process of analyzing potential investment properties on Zillow, offering a range of features designed to save time and provide valuable insights. Here are the key features that make Home Hero an essential tool for real estate investors:
+
+### Automated Property Scraping
+- **Bulk Property Analysis:** Automatically scrape details of multiple properties from a given Zillow URL, allowing for the analysis of dozens of properties at once.
+- **Cleans Scraped Data:** Automatically cleans all the data scraped to return prices, taxes, rent, addresses, number of bedrooms, bathrooms, and property subtypes that are easy to manipulate and analyze.
+- **Customizable Search:** Users can specify the URLs of the Zillow listings they're interested in, making the search as broad or as narrow as desired.
+- **Comprehensive Data Collection:** The scraping process will return the property address, price, number of bedrooms, bathrooms, square footage, house description, year built, property subtype, region and subdivision the house is located in, yearly taxes, expected monthly rent per unit, minimum and maximum expected rents, structure quality and condition, and URLs from where all the information was found.
+
+### Comprehensive Financial Analysis
+- **Detailed Financial Metrics:** Calculates a variety of financial metrics for each property, including monthly insurance, down payment cost, loan amount, closing costs, monthly principle and interest payments, taxes, total operating costs, suggested total rent, estimated monthly cash flows, net operating income, estimated yearly returns, and much more.
+- **Investment Potential Evaluation:** Analyzes homes based on user-defined financial assumptions, helping investors to identify properties with the best investment potential.
+
+### Excel Report Generation
+- **Customizable Reports:** Generates an Excel file with a detailed analysis of each property, including all calculated financial metrics, which can be accessed directly from the project folder.
+- **Automated Email Delivery:** Offers the option to have the Excel file emailed directly to the user, further simplifying the investment analysis process.
+
+### Easy Configuration
+- **Fully Configurable via JSON:** All aspects of the project can be configured through a config.json file, including URLs to scrape, financial assumptions, email settings, and output preferences, eliminating the need for direct code manipulation.
+
+### Advanced Features
+- **Proxy Support for High-Volume Scraping:** Supports the use of proxies through the ScrapeOps API to avoid being blocked for anti-bot behavior, enabling the scraping of a large number of houses quickly.
+- **Email Notifications for Errors and Highlights:** Can be configured to send email notifications for errors encountered during the scraping and analysis processes, as well as summaries including featured houses that meet specific criteria. Featured house emails will include: A link to the house's listing page, key property details such as price, type (property subtype), layout (bedrooms, bathrooms, square footage), price per square foot, and estimated monthly rent with a link to the rent information, financial metrics including monthly operating expenses, total monthly expenses, monthly cash flow, adherence to the 1% rule, cash flow based on the 50% rule, and the estimated total cash needed for the purchase, a table showing a yearly breakdown for the first five years of financial metrics, and a brief description of the property
+- **Extensive Error Handling:** All values from the configuration file are checked and verified to handle many potential errors that may arise when attempting to complete the configuration file.
+
+### User-Friendly
+- **Gmail Two-Factor Authentication Support:** Includes detailed instructions for setting up a two-factor authentication password for Gmail, ensuring secure email delivery of reports.
+- **Comprehensive Documentation:** Offers thorough documentation, including a step-by-step installation guide, comprehensive configuration instructions, and a detailed usage section, making it accessible for users with varying levels of technical expertise.
+
+Home Hero transforms the labor-intensive task of property analysis into a streamlined, automated process, making it easier than ever for investors to assess the investment potential of real estate listings on Zillow.
 
 ## Contributing
 
