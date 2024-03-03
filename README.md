@@ -52,6 +52,7 @@ cd home_hero
 ### Gmail Two Factor Authentication Password Setup
 
 If you want to send emails to a Gmail account, you will need to obtain a two factor authentication password using the following steps:
+
 1. Go to your Google Account.
 2. Select Security.
 3. Under "Signing in to Google," select 2-Step Verification.
@@ -186,14 +187,14 @@ If you're open to contributions, explain how others can contribute to your proje
 4. Push to the Branch (git push origin feature/AmazingFeature)
 5. Open a Pull Request
 
-TODO: Finish this section
 ## Credits
 
-Acknowledge those who contributed to the project.
+This project was developed by Jadon Vanyo. Special thanks to the following resources for guidance and inspiration:
 
-TODO: Finish this section
+- **Web Scraping Tutorial:** A comprehensive tutorial on web scraping using Python by Joe Kearney distibuted by freeCodeCamp.org on YouTube. This tutorial was instrumental in helping me understand the fundamentals of web scraping using Scrapy and apply them to this project. Watch the tutorial [here](https://www.youtube.com/watch?v=mBoX_JCKZTE&t=11517s).
+
+I would also like to express my gratitude to the developers and contributors of the libraries and tools used in this project. Their hard work and dedication to open source have made this project possible.
+
 ## License
-
-State the license under which your project is released, and include a link to the license text.
 
 Distributed under the MIT License. See LICENSE for more information.
