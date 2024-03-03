@@ -88,6 +88,22 @@ Before running the application, you must configure the `config.json` file with y
 
 For a full explanation of each configuration option, refer to the [Configuration](#configuration) section.
 
+The project is preset to be optimized for scraping 1 to 25 houses at a time. If you want to scrape more houses quicker, you can set up proxies for the spider to avoid being blocked for anti-bot behavior. You can do this using the Scrapeops API, but be aware that you will need to start buying credits for rotating the proxies.
+
+In order to run the proxies while scraping, you will want to uncomment the following lines of code in the `settings.py`:
+
+```python
+SCRAPEOPS_PROXY_ENABLED = True
+SCRAPEOPS_PROXY_SETTINGS = {'country': 'us'}
+```
+
+In addition, set the following parameters in `settings.py` to speed up the scraping process:
+
+```python
+CONCURRENT_REQUESTS = 1
+DOWNLOAD_DELAY = 1
+```
+
 ### Step 2: Running the Application
 
 With your `config.json` file set up, run the application using the following commands in the home_hero directory:
@@ -176,16 +192,25 @@ TODO: Finish this section
 
 List the key features of your project. What makes it stand out?
 
-TODO: Finish this section
 ## Contributing
 
-If you're open to contributions, explain how others can contribute to your project. Outline the process they should follow.
+Thank you for your interest in contributing to this project! Contributions are welcome from anyone who wishes to improve or expand the project.
 
-1. Fork the Project
-2. Create your Feature Branch (git checkout -b feature/AmazingFeature)
-3. Commit your Changes (git commit -m 'Add some AmazingFeature')
-4. Push to the Branch (git push origin feature/AmazingFeature)
-5. Open a Pull Request
+Here are some ways you can contribute:
+
+- **Reporting bugs:** If you find a bug, please open an issue detailing the problem, how to reproduce it, and any other relevant information.
+- **Suggesting enhancements:** Have an idea for a new feature or think something could be improved? Open an issue to suggest your enhancement.
+- **Submitting pull requests:** Feel free to fork the repository and submit pull requests with your changes or additions. Whether it's fixing a typo, addressing an issue, or adding a new feature, all contributions are appreciated.
+
+### How to Contribute
+
+1. Fork the repository on GitHub.
+2. Clone your fork to your local machine (`git clone YOUR_FORK`).
+3. Create your Branch for changes (`git checkout -b YOUR_CHANGES`).
+4. Make your changes and commit them with clear, descriptive messages (`git commit -m 'Detailed description of your amazing changes'`).
+5. Push to the Branch (`git push origin YOUR_CHANGES`)
+6. Submit a pull request against the main branch of this repository.
+7. Wait for feedback or approval from the project maintainers.
 
 ## Credits
 
