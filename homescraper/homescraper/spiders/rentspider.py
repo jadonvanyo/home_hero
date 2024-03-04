@@ -1,6 +1,7 @@
 import json
 import re
 import scrapy
+from homescraper.settings import SCRAPEOPS_PROXY_ENABLED as proxy_enabled
 
 
 class RentspiderSpider(scrapy.Spider):
@@ -27,14 +28,25 @@ class RentspiderSpider(scrapy.Spider):
         with open('homedata.json') as file:
             data = json.load(file)
             
-        # TODO: Need to handle the case when a proxy is being used
-        # Loop through each house in the home data and pull the address information
-        for house in data:
-            value = house.get('url').split("/")[4].lower()
-            rent_url = "https://www.zillow.com/rental-manager/price-my-rental/results/" + value + "/"
-        
-            # Navigate to the street page with the address numbers
-            yield response.follow(rent_url, callback=self.parse_rent_page, meta={'house': house})
+        # Verify if the proxy has been enabled from the settings file
+        if proxy_enabled:
+            # Loop through each house in the home data and pull the address information
+            for house in data:
+                value = house.get('url').split("%2F")[4].lower()
+                rent_url = "https://www.zillow.com/rental-manager/price-my-rental/results/" + value + "/"
+            
+                # Navigate to the street page with the address numbers
+                yield response.follow(rent_url, callback=self.parse_rent_page, meta={'house': house})
+
+        # Handle cases where the proxy was not enabled
+        else:
+            # Loop through each house in the home data and pull the address information
+            for house in data:
+                value = house.get('url').split("/")[4].lower()
+                rent_url = "https://www.zillow.com/rental-manager/price-my-rental/results/" + value + "/"
+            
+                # Navigate to the street page with the address numbers
+                yield response.follow(rent_url, callback=self.parse_rent_page, meta={'house': house})
 
     def parse_rent_page(self, response):
         """Crawl and gather the rent information for a given house"""

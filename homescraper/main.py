@@ -93,4 +93,4 @@ else:
     # Determine if the user wants the file deleted
     if config['delete_excel_file']:
         # Delete the excel file that was created
-        delete_file(config, excel_filename)
+        delete_file(excel_filename)

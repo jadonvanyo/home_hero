@@ -636,6 +636,52 @@ def analyze_all_houses(config, data):
     return analyzed_houses, error_houses
 
 
+def config_file_required_email_values_present(config):
+    """Function to verify and return a dictionary of all the required email values and return false otherwise"""
+    
+    # Establish error messages for feedback to the user
+    error_messages = []
+    
+    # Verify that the user wants emails
+    if config['send_emails']:
+        # Establish all the variables required for email in the config file
+        required_config_email_values = {
+            "email_sender_address": lambda x: isinstance(x, str) and "@" in x,
+            "email_receiver_address": lambda x: isinstance(x, str) and "@" in x,
+            "email_2FA_password": lambda x: isinstance(x, str),
+            "send_error_emails": lambda x: isinstance(x, bool),
+            "featured_house_required": lambda x: isinstance(x, bool)       
+        }
+        
+        def email_config_error_message(key, error, json_data=None):
+            """Function to define error messages for the email config file"""
+            # Error message for if a value is missing
+            if error == "missing":
+                error_message = f'"{key}" is not in the config file. Please enter "{key}" in the config file.'
+            # Error message for if a value is incorrect
+            elif error == "incorrect":
+                error_message = f'"{key}" is incorrectly entered in the config file. Review documentation for how to enter "{key}".'
+            # General error message to handle all other issues
+            else:
+                error_message = "An error has occurred while verifying data from the config file."
+                
+            return error_message
+        
+        # Extend the list of error messages with any error messages found when verifying all the values
+        error_messages.extend(verify_all_required_values(required_config_email_values, config, email_config_error_message))
+        
+        # Determine whether the user wants to include featured houses in their email
+        if config.get('featured_house_required'):
+            # Extend the list of error messages with any error messages where found when verifying all the target values
+            error_messages.extend(verify_config_file_target_values(config))
+            
+        # Return all the error messages generated
+        return error_messages
+    
+    # Return an empty list of error messages if the user does not want emails
+    else:
+        return error_messages
+
 
 def config_file_required_values_present(config):
     """Function to return a list of all the errors generated while trying to load in all the required values. Returning an empty list means no errors were generated"""
@@ -781,53 +827,6 @@ def delete_file(file_path):
         print(f"Error deleting file {file_path}: {e}")
         
     return
-
-
-def config_file_required_email_values_present(config):
-    """Function to verify and return a dictionary of all the required email values and return false otherwise"""
-    
-    # Establish error messages for feedback to the user
-    error_messages = []
-    
-    # Verify that the user wants emails
-    if config['send_emails']:
-        # Establish all the variables required for email in the config file
-        required_config_email_values = {
-            "email_sender_address": lambda x: isinstance(x, str) and "@" in x,
-            "email_receiver_address": lambda x: isinstance(x, str) and "@" in x,
-            "email_2FA_password": lambda x: isinstance(x, str),
-            "send_error_emails": lambda x: isinstance(x, bool),
-            "featured_house_required": lambda x: isinstance(x, bool)       
-        }
-        
-        def email_config_error_message(key, error, json_data=None):
-            """Function to define error messages for the email config file"""
-            # Error message for if a value is missing
-            if error == "missing":
-                error_message = f'"{key}" is not in the config file. Please enter "{key}" in the config file.'
-            # Error message for if a value is incorrect
-            elif error == "incorrect":
-                error_message = f'"{key}" is incorrectly entered in the config file. Review documentation for how to enter "{key}".'
-            # General error message to handle all other issues
-            else:
-                error_message = "An error has occurred while verifying data from the config file."
-                
-            return error_message
-        
-        # Extend the list of error messages with any error messages found when verifying all the values
-        error_messages.extend(verify_all_required_values(required_config_email_values, config, email_config_error_message))
-        
-        # Determine whether the user wants to include featured houses in their email
-        if config.get('featured_house_required'):
-            # Extend the list of error messages with any error messages where found when verifying all the target values
-            error_messages.extend(verify_config_file_target_values(config))
-            
-        # Return all the error messages generated
-        return error_messages
-    
-    # Return an empty list of error messages if the user does not want emails
-    else:
-        return error_messages
 
 
 def format_excel_sheet(sheet):

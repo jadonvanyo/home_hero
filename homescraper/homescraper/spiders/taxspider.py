@@ -1,7 +1,6 @@
-from homescraper.items import HomeItem
 import json
 import scrapy
-from settings import SCRAPEOPS_PROXY_ENABLED as proxy_enabled
+from homescraper.settings import SCRAPEOPS_PROXY_ENABLED as proxy_enabled
 
 class TaxspiderSpider(scrapy.Spider):
     name = "taxspider"
@@ -34,7 +33,6 @@ class TaxspiderSpider(scrapy.Spider):
         with open('homedata.json') as file:
             data = json.load(file)
         
-        # TODO: Need to handle the case when a proxy is being used
         # Verify if the proxy has been enabled from the settings file
         if proxy_enabled:
             # Loop through each house in the home data and pull the address information for the proxy
