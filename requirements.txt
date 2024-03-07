@@ -1,0 +1,10 @@
+anyio==4.2.0
+itemadapter==0.8.0
+itemloaders==1.1.0
+openpyxl==3.1.2
+requests==2.31.0
+Scrapy==2.11.0
+scrapy-rotating-proxies==0.6.2
+tabulate==0.9.0
+Twisted==22.10.0
+urllib3==2.1.0
