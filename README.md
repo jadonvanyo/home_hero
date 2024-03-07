@@ -37,6 +37,12 @@ pip install openpyxl scrapy twisted tabulate
 ```
 > **_NOTE:_**  MacOS users will need to use `pip3` instead of `pip`.
 
+Alternatively, you can install the the required dependencies using the `requirements.txt` file. Use the following command while in the home_hero directory:
+
+```bash
+pip install -r requirements.txt
+```
+
 This project also requires a scrapeops API key that can be obtained for free [here](https://scrapeops.io/). Just create a free account and copy and paste your scrapeops API key into the `config.json` file for `scrapeops_api_key`.
 
 ## Installation
@@ -77,6 +83,12 @@ Install the required Python libraries mentioned in the Dependencies section usin
 pip install openpyxl scrapy twisted tabulate
 ```
 > **_NOTE:_**  MacOS users will need to use `pip3` instead of `pip`.
+
+Alternatively, you can install the the required dependencies using the `requirements.txt` file. Use the following command while in the home_hero directory:
+
+```bash
+pip install -r requirements.txt
+```
 
 ### Configure ScrapeOps API Key
 
